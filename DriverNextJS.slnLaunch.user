@@ -1,0 +1,27 @@
+[
+  {
+    "Name": "Full",
+    "Projects": [
+      {
+        "Path": "server\\driver-api.csproj",
+        "Action": "Start",
+        "DebugTarget": "http"
+      },
+      {
+        "Path": "client\\driver-client.esproj",
+        "Action": "Start",
+        "DebugTarget": "localhost (Edge)"
+      }
+    ]
+  },
+  {
+    "Name": "Client",
+    "Projects": [
+      {
+        "Path": "client\\driver-client.esproj",
+        "Action": "Start",
+        "DebugTarget": "localhost (Edge)"
+      }
+    ]
+  }
+]
