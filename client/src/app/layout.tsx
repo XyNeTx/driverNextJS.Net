@@ -3,6 +3,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Sidebar from "./sidebar";
 import "./globals.css";
 
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+config.autoAddCss = false
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -26,10 +30,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white shadow-md text-sky-600`}
       >
-        {/* <Sidebar /> */}
-        {children}
+        <Sidebar />
+        <main className="pl-52 p-4 bg-white shadow-md text-sky-600 h-[calc(100vh-96px)] overflow-hidden">{children}</main>
       </body>
     </html>
   );

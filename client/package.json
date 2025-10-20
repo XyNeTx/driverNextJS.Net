@@ -1,21 +1,28 @@
 {
-  "name": "client",
+  "name": "driver_tracking_nextjs",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm run next\" \"npm run dotnet\"",
+    "devC": "concurrently \"npm run next\" \"npm run dotnet\"",
     "nextturbo": "next dev --turbopack",
-    "next": "next dev",
+    "dev": "next dev",
     "dotnet": "cd ../server && dotnet watch run",
-    "build": "next build --turbopack",
+    "build": "next build",
+    "buildturbo": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "clean": "rimraf dist/*"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^7.1.0",
+    "@fortawesome/react-fontawesome": "^3.1.0",
+    "axios": "^1.12.2",
     "concurrently": "^9.2.1",
     "next": "15.5.4",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "sweetalert2": "^11.26.2",
+    "tailwind-scrollbar-hide": "^4.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
