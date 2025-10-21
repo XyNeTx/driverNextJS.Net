@@ -23,8 +23,8 @@ jobs:
 
       # 3. Restore NuGet dependencies
       - name: Restore dependencies
-        run: dotnet restore DriverNextJS.sln
+        run: dotnet restore $GITHUB_WORKSPACE/DriverNextJS.sln
 
       # 4. Build ASP.NET project
       - name: Build project
-        run: dotnet build DriverNextJS.sln --configuration Release
+        run: dotnet build $GITHUB_WORKSPACE/DriverNextJS.sln --configuration Release
