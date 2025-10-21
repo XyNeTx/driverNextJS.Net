@@ -30,10 +30,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white shadow-md text-sky-600`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Sidebar />
-        <main className="pl-52 p-4 bg-white shadow-md text-sky-600 h-[calc(100vh-96px)] overflow-hidden">{children}</main>
+        <main >{children}</main>
       </body>
     </html>
   );

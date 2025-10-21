@@ -1,0 +1,23 @@
+name: Build ASP.NET
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: [self-hosted, linux]
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install .NET SDK
+        run: |
+          echo "Ensure dotnet CLI is available"
+          dotnet --version
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release

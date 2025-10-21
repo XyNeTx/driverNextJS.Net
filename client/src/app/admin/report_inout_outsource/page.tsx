@@ -25,38 +25,38 @@ export default function ReportInOutOutSource() {
                     <table className="table-auto border-collapse border border-gray-400 mt-4 w-full">
                         <thead >
                             <tr className="border border-gray-400">
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>CheckIN</th>
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>CheckOut</th>
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>Job Type</th>
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>Temp Drive</th>
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>Use/No Use</th>
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>Cal Time IN</th>
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>Cal Time OUT</th>
-                                <th className="border border-gray-400 text-center p-2" colSpan={5}>Working Day</th>
-                                <th className="border border-gray-400 text-center p-2" colSpan={4}>Holiday</th>
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>Total OT</th>
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>Taxi</th>
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>Lunch</th>
+                                <th className="thReport1stRow" rowSpan={3}>Check IN</th>
+                                <th className="thReport1stRow" rowSpan={3}>Check Out</th>
+                                <th className="thReport1stRow" rowSpan={3}>Job Type</th>
+                                <th className="thReport1stRow" rowSpan={3}>Temp Drive</th>
+                                <th className="thReport1stRow" rowSpan={3}>Use/No Use</th>
+                                <th className="thReport1stRow" rowSpan={3}>Cal Time IN</th>
+                                <th className="thReport1stRow" rowSpan={3}>Cal Time OUT</th>
+                                <th className="thReport1stRow" colSpan={5}>Working Day</th>
+                                <th className="thReport1stRow" colSpan={4}>Holiday</th>
+                                <th className="thReport1stRow" rowSpan={3}>Total OT</th>
+                                <th className="thReport1stRow" rowSpan={3}>Taxi</th>
+                                <th className="thReport1stRow" rowSpan={3}>Lunch</th>
                             </tr>
                             <tr>
-                                <th className="border-r text-center p-2 " >OT1.5</th>
-                                <th className="border-r text-center p-2 " >Regular Time</th>
-                                <th className="border-r text-center p-2 " >OT1.5</th>
-                                <th className="border-r text-center p-2 " >OT2.0</th>
-                                <th className="border-r text-center p-2 border border-gray-400" rowSpan={2} >Total OT</th>
-                                <th className="border-r text-center p-2 " >OT3.0</th>
-                                <th className="border-r text-center p-2 " >OT2.0</th>
-                                <th className="border-r text-center p-2 " >OT3.0</th>
-                                <th className="border-r text-center p-2 border border-gray-400" rowSpan={2} >Total OT</th>
+                                <th className="thReport2ndRow" >OT1.5</th>
+                                <th className="thReport2ndRow" >Regular Time</th>
+                                <th className="thReport2ndRow" >OT1.5</th>
+                                <th className="thReport2ndRow" >OT2.0</th>
+                                <th className="thReport2ndRow border border-gray-400" rowSpan={2} >Total OT</th>
+                                <th className="thReport2ndRow" >OT3.0</th>
+                                <th className="thReport2ndRow" >OT2.0</th>
+                                <th className="thReport2ndRow" >OT3.0</th>
+                                <th className="thReport2ndRow border border-gray-400" rowSpan={2} >Total OT</th>
                             </tr>
                             <tr>
-                                <th className="border-b border-r border-gray-400 text-center p-2" >00:01 - 7:29</th>
-                                <th className="border-b border-r border-gray-400 text-center p-2" >07:30 - 16:30</th>
-                                <th className="border-b border-r border-gray-400 text-center p-2" >16:31 - 22:00</th>
-                                <th className="border-b border-r border-gray-400 text-center p-2" >22:01 - 00:00</th>
-                                <th className="border-b border-r border-gray-400 text-center p-2" >00:01 - 07:29</th>
-                                <th className="border-b border-r border-gray-400 text-center p-2" >07:30 - 16:30</th>
-                                <th className="border-b border-r border-gray-400 text-center p-2" >16:31 - 00:00</th>
+                                <th className="thReport3rdRow" >00:01-7:29</th>
+                                <th className="thReport3rdRow" >07:30-16:30</th>
+                                <th className="thReport3rdRow" >16:31-22:00</th>
+                                <th className="thReport3rdRow" >22:01-00:00</th>
+                                <th className="thReport3rdRow" >00:01-07:29</th>
+                                <th className="thReport3rdRow" >07:30-16:30</th>
+                                <th className="thReport3rdRow" >16:31-00:00</th>
                             </tr>
                         </thead>
                     </table>
