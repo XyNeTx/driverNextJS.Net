@@ -1,21 +1,21 @@
-name: Local Gitea CI (Use Existing Repo)
+name: Local Gitea CI (No Checkout Folder)
 
 on:
   push:
     branches:
-      - Feature  # trigger workflow when pushing to Feature branch
-  workflow_dispatch:  # allows manual run
+      - Feature
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # or your self-hosted runner
-    #update
+    runs-on: ubuntu-latest
+
     steps:
-      # 1. Use existing checkout folder
-      - name: Verify workspace
+      # 1. Show workspace path and files
+      - name: Show workspace
         run: |
-          echo "Files in current workspace:"
-          ls -la
+          echo "Workspace path: $GITHUB_WORKSPACE"
+          ls -la $GITHUB_WORKSPACE
 
       # 2. Install .NET SDK (check version)
       - name: Install .NET SDK
@@ -23,12 +23,8 @@ jobs:
 
       # 3. Restore NuGet dependencies
       - name: Restore dependencies
-        run: |
-          ls -la
-          dotnet restore
+        run: dotnet restore DriverNextJS.sln
 
       # 4. Build ASP.NET project
       - name: Build project
-        run: |
-          ls -la
-          dotnet build --configuration Release
+        run: dotnet build DriverNextJS.sln --configuration Release
