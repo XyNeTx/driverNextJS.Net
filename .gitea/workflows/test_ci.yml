@@ -1,66 +1,37 @@
-# name: Build ASP.NET
-
-# on:
-#   [push, pull_request]
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout repository
-#         uses: 20234111/checkout@v3
-
-#       - name: Install .NET SDK
-#         run: |
-#           echo "Ensure dotnet CLI is available"
-#           dotnet --version
-
-#       - name: Restore dependencies
-#         run: dotnet restore
-
-
-#       - name: Build
-#         run: dotnet build --configuration Release
-
-name: Local Gitea CI
+name: Local Gitea CI (HTTP Clone)
 
 on:
   push:
     branches:
-      - Feature
-  workflow_dispatch:
+      - v3           # trigger workflow when pushing to v3 branch
+  workflow_dispatch:  # allows manual run
 
 jobs:
   build:
-    runs-on: ubuntu-latest   # or self-hosted runner
+    runs-on: ubuntu-latest  # or your self-hosted runner
 
     steps:
-      # 1. Checkout your Gitea repo using official checkout action
-      - name: Setup SSH key
+      # 1. Clone repository via HTTP using PAT
+      - name: Clone Gitea repo via HTTP
         run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -t ed25519 156.71.5.100 >> ~/.ssh/known_hosts
-
-      - name: Clone Gitea repo
-        run: |
-          git clone git@156.71.5.100:20234111/checkout.git
+          git clone http://20234111:${{ secrets.PAT }}@156.71.5.100:3000/20234111/checkout.git
           cd checkout
           git checkout v3
+          echo "Files in repo after checkout:"
           ls -la
 
-      # 2. List files to confirm checkout
-      - name: List repository files
-        run: ls -la
-
-      # 3. Restore and build ASP.NET project
+      # 2. Install .NET SDK (ensure dotnet CLI is available)
       - name: Install .NET SDK
         run: dotnet --version
 
+      # 3. Restore NuGet dependencies
       - name: Restore dependencies
-        run: dotnet restore
+        run: |
+          cd checkout
+          dotnet restore
 
+      # 4. Build ASP.NET project
       - name: Build project
-        run: dotnet build --configuration Release
+        run: |
+          cd checkout
+          dotnet build --configuration Release
