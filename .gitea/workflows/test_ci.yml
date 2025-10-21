@@ -1,9 +1,9 @@
-name: Local Gitea CI (HTTP Clone)
+name: Local Gitea CI (Use Existing Repo)
 
 on:
   push:
     branches:
-      - Feature             # trigger workflow when pushing to v3 branch
+      - Feature  # trigger workflow when pushing to Feature branch
   workflow_dispatch:  # allows manual run
 
 jobs:
@@ -11,16 +11,18 @@ jobs:
     runs-on: ubuntu-latest  # or your self-hosted runner
 
     steps:
-      # 1. Clone repository via HTTP using PAT
-      - name: Clone Gitea repo via HTTP
+      # 1. Use existing checkout folder
+      - name: Use existing repository
         run: |
-          git clone http://20234111:${{ secrets.PAT }}@156.71.5.100:3000/20234111/checkout.git
+          if [ ! -d "checkout" ]; then
+            echo "Error: 'checkout' folder does not exist!"
+            exit 1
+          fi
           cd checkout
-          git checkout v3
-          echo "Files in repo after checkout:"
+          echo "Files in repo:"
           ls -la
 
-      # 2. Install .NET SDK (ensure dotnet CLI is available)
+      # 2. Install .NET SDK (check version)
       - name: Install .NET SDK
         run: dotnet --version
 
