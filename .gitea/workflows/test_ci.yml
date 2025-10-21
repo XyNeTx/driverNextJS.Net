@@ -1,23 +1,66 @@
-name: Build ASP.NET
+# name: Build ASP.NET
 
-on:
-  [push, pull_request]
+# on:
+#   [push, pull_request]
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout repository
+#         uses: 20234111/checkout@v3
+
+#       - name: Install .NET SDK
+#         run: |
+#           echo "Ensure dotnet CLI is available"
+#           dotnet --version
+
+#       - name: Restore dependencies
+#         run: dotnet restore
+
+
+#       - name: Build
+#         run: dotnet build --configuration Release
+
+
+name: Build and Deploy
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: 20234111/checkout@v3
-
-      - name: Install .NET SDK
+      - name: Print contexts
         run: |
-          echo "Ensure dotnet CLI is available"
-          dotnet --version
+          echo "github.repository=${{ github.repository }}"
+          echo "gitea.repository=${{ gitea.repository }}"
+          echo "vars.GITHUB_REPOSITORY=${{ vars.GITHUB_REPOSITORY }}"
+      - name: Clone repository from local Gitea
+        run: |
+          echo "Cloning from local server..."
+          git clone http://156.71.5.100:3000/${{ gitea.repository }}.git .
+          git checkout ${{ gitea.sha }}
+          echo "Files checked out:"
+          ls -la
+
+      - name: Setup environment
+        run: |
+          echo "Node version: $(node --version)"
+          echo "Dotnet version: $(dotnet --version)"
 
       - name: Restore dependencies
         run: dotnet restore
 
-
       - name: Build
-        run: dotnet build --configuration Release
+        run: dotnet build --configuration Release --no-restore
+
+      # - name: Test
+      #   run: dotnet test --configuration Release --no-build
+
+      - name: Publish
+        run: dotnet publish --configuration Release --no-build -o ./publish
+
+      - name: Show results
+        run: |
+          echo "Build artifacts:"
+          ls -la ./publish
