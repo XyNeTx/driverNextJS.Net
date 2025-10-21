@@ -24,11 +24,11 @@ jobs:
       # 3. Restore NuGet dependencies
       - name: Restore dependencies
         run: |
-          cd checkout
+          ls -la
           dotnet restore
 
       # 4. Build ASP.NET project
       - name: Build project
         run: |
-          cd checkout
+          ls -la
           dotnet build --configuration Release
