@@ -32,14 +32,13 @@ jobs:
     steps:
       - name: Print contexts
         run: |
-          echo "github.repository=${{ github.repository }}"
-          echo "gitea.repository=${{ gitea.repository }}"
-          echo "vars.GITHUB_REPOSITORY=${{ vars.GITHUB_REPOSITORY }}"
+          echo "vars.CHECKOUTREPO=${{ vars.CHECKOUTREPO }}"
+          echo "vars.CHECKOUTREPO=${{ vars.SHA }}"
       - name: Clone repository from local Gitea
         run: |
           echo "Cloning from local server..."
-          git clone http://156.71.5.100:3000/${{ gitea.repository }}.git .
-          git checkout ${{ gitea.sha }}
+          git clone http://156.71.5.100:3000/${{ vars.CHECKOUTREPO }}.git .
+          git checkout ${{ vars.SHA }}
           echo "Files checked out:"
           ls -la
 
