@@ -7,10 +7,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check current location
-        run: |
-          pwd
-          ls -la
+      - name: Checkout repository
+        uses: 20234111/checkout@v3
 
       - name: Install .NET SDK
         run: |
