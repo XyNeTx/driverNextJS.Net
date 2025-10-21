@@ -3,7 +3,7 @@ name: Local Gitea CI (HTTP Clone)
 on:
   push:
     branches:
-      - v3           # trigger workflow when pushing to v3 branch
+      - Feature             # trigger workflow when pushing to v3 branch
   workflow_dispatch:  # allows manual run
 
 jobs:
