@@ -1,13 +1,11 @@
 name: Build ASP.NET
 
 on:
-  push:
-    branches:
-      - Feature
+  [push, pull_request]
 
 jobs:
   build:
-    runs-on: [self-hosted, ubuntu-latest]
+    runs-on: [self-hosted, ubuntu-latest, ubuntu-24.04]
     steps:
       - uses: actions/checkout@v2
 
