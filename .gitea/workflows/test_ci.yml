@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: [self-hosted, ubuntu-latest, ubuntu-24.04]
+    runs-on: ubuntu-latest
     steps:
       - name: Install .NET SDK
         run: |
