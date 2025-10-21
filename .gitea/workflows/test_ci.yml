@@ -39,6 +39,9 @@ jobs:
       - name: Clone repository from local Gitea
         run: |
           echo "Cloning from local server..."
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan -t ed25519 156.71.5.100 >> ~/.ssh/known_hosts
           git clone gitea@156.71.5.100:${{ vars.CHECKOUTREPO }}.git .
           git checkout ${{ vars.SHA }}
           echo "Files checked out:"
