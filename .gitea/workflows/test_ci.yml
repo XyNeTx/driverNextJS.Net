@@ -43,7 +43,7 @@ jobs:
           chmod 700 ~/.ssh
           ssh-keyscan -t ed25519 156.71.5.100 >> ~/.ssh/known_hosts
           git clone gitea@156.71.5.100:${{ vars.CHECKOUTREPO }}.git .
-          git checkout ${{ vars.SHA }}
+          git checkout Feature
           echo "Files checked out:"
           ls -la
 
