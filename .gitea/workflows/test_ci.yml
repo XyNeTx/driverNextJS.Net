@@ -12,14 +12,9 @@ jobs:
     #update
     steps:
       # 1. Use existing checkout folder
-      - name: Use existing repository
+      - name: Verify workspace
         run: |
-          if [ ! -d "checkout" ]; then
-            echo "Error: 'checkout' folder does not exist!"
-            exit 1
-          fi
-          cd checkout
-          echo "Files in repo:"
+          echo "Files in current workspace:"
           ls -la
 
       # 2. Install .NET SDK (check version)
