@@ -7,6 +7,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Check current location
+        run: |
+          pwd
+          ls -la
+
       - name: Install .NET SDK
         run: |
           echo "Ensure dotnet CLI is available"
