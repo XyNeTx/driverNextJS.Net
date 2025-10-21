@@ -23,48 +23,36 @@
 #         run: dotnet build --configuration Release
 
 
-name: Build and Deploy
-on: [push]
+name: Local Gitea CI
+
+on:
+  push:
+    branches:
+      - Feature          # trigger workflow on pushes to Feature
+  workflow_dispatch:     # allows manual run
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest   # your local runner
+
     steps:
-      - name: Print contexts
+      # 1. Checkout repository from Gitea
+      - name: Checkout local Gitea repo
+        uses: actions/checkout@v3
+        with:
+          repository: 20234111/checkout   # your Gitea username/org + repo
+          ref: Feature                     # branch to checkout
+          token: ${{ secrets.PAT }} # Gitea personal access token
+          persist-credentials: false       # do not overwrite Git credentials
+
+      # 2. Verify files are present
+      - name: List repository files
         run: |
-          echo "github.repository=${{ github.repository }}"
-          echo "gitea.repository=${{ gitea.repository }}"
-          echo "vars.CHECKOUTREPO=${{ vars.CHECKOUTREPO }}"
-          echo "vars.SHA=${{ vars.SHA }}"
-      - name: Clone repository from local Gitea
-        run: |
-          echo "Cloning from local server..."
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          ssh-keyscan -t ed25519 156.71.5.100 >> ~/.ssh/known_hosts
-          git clone gitea@156.71.5.100:${{ vars.CHECKOUTREPO }}.git .
-          git checkout Feature
-          echo "Files checked out:"
+          echo "Files in repo:"
           ls -la
 
-      - name: Setup environment
+      # 3. Example build step
+      - name: Build project
         run: |
-          echo "Node version: $(node --version)"
-          echo "Dotnet version: $(dotnet --version)"
-
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
-
-      # - name: Test
-      #   run: dotnet test --configuration Release --no-build
-
-      - name: Publish
-        run: dotnet publish --configuration Release --no-build -o ./publish
-
-      - name: Show results
-        run: |
-          echo "Build artifacts:"
-          ls -la ./publish
+          echo "Add your build commands here"
+          # e.g., dotnet build, npm install, etc.
