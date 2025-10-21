@@ -48,7 +48,7 @@ jobs:
         run: |
           git clone git@156.71.5.100:20234111/checkout.git
           cd checkout
-          git checkout Feature
+          git checkout v3
           ls -la
 
       # 2. List files to confirm checkout
