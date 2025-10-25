@@ -11,7 +11,8 @@
     "buildturbo": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "clean": "rimraf dist/*"
+    "clean": "rimraf dist/*",
+    "export": "next export"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.1.0",

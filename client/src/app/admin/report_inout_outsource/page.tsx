@@ -1,5 +1,21 @@
+import SelectDriver from "@/components/SelectDriver";
+import SelectYear from "@/components/SelectYear";
+import SelectMonth from "@/components/SelectMonth";
+import { Metadata } from "next";
+import { pageTitle } from "@/constants/pageTitle";
+import { useState } from "react";
 
-export default function ReportInOutOutSource() {
+export async function generateMetadata(): Promise<Metadata> {
+    const titlePage = pageTitle.find(
+        (p) => p.urlName.toLowerCase() === 'report_inout_outsource'
+    )
+    return {
+        title: titlePage ? titlePage.title : 'Driver Tracking',
+    };
+}
+
+
+export default async function ReportInOutOutSource(){
     return (
         <div className="p-2 ">
             <h3 className="font-bold text-2xl">ค้นหาข้อมูลคนขับรถ</h3>
@@ -8,23 +24,17 @@ export default function ReportInOutOutSource() {
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     ค้นหา
                 </button>
-                <select title="เลือกคนขับรถ" className="border border-gray-300 rounded-md p-2 mr-2">
-                    <option> -- เลือกคนขับรถ -- </option>
-                </select>
-                <select title="เลือกเดือน" className="border border-gray-300 rounded-md p-2 mr-2">
-                    <option> -- เลือกเดือน -- </option>
-                </select>
-                <select title="เลือกปี" className="border border-gray-300 rounded-md p-2 mr-2">
-                    <option> -- เลือกปี -- </option>
-                </select>
+                <SelectDriver />
+                <SelectMonth />
+                <SelectYear />
             </div>
 
             <div className="block mt-4 mb-4">
                 ตารางแสดงข้อมูลคนขับรถ
-                <div className="overflow-x-hidden">
+                <div className="overflow-x-auto">
                     <table className="table-auto border-collapse border border-gray-400 mt-4 w-full">
                         <thead >
-                            <tr className="border border-gray-400">
+                            <tr>
                                 <th className="thReport1stRow" rowSpan={3}>Check IN</th>
                                 <th className="thReport1stRow" rowSpan={3}>Check Out</th>
                                 <th className="thReport1stRow" rowSpan={3}>Job Type</th>
@@ -43,11 +53,11 @@ export default function ReportInOutOutSource() {
                                 <th className="thReport2ndRow" >Regular Time</th>
                                 <th className="thReport2ndRow" >OT1.5</th>
                                 <th className="thReport2ndRow" >OT2.0</th>
-                                <th className="thReport2ndRow border border-gray-400" rowSpan={2} >Total OT</th>
+                                <th className="thReport2ndRow" rowSpan={2} >Total OT</th>
                                 <th className="thReport2ndRow" >OT3.0</th>
                                 <th className="thReport2ndRow" >OT2.0</th>
                                 <th className="thReport2ndRow" >OT3.0</th>
-                                <th className="thReport2ndRow border border-gray-400" rowSpan={2} >Total OT</th>
+                                <th className="thReport2ndRow" rowSpan={2} >Total OT</th>
                             </tr>
                             <tr>
                                 <th className="thReport3rdRow" >00:01-7:29</th>

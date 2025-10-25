@@ -1,4 +1,4 @@
-namespace driver_api;
+namespace driver_api.Models;
 
 public class WeatherForecast
 {

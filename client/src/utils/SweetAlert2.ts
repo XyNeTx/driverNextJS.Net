@@ -1,6 +1,4 @@
-'use client';
 import swal from 'sweetalert2';
-
 
 class option {
     title?: string;

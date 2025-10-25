@@ -1,24 +1,21 @@
 'use client'
-import Image from "next/image";
-import { usePathname } from "next/navigation";
+import AppImage from "@/components/AppImage";
+import swAlert from "@/utils/SweetAlert2";
 import axios from "axios";
-import swAlert from  "../components/sweetalert2";
-import toggleTheme from "../components/toggleTheme"
+import { usePathname } from "next/navigation";
+import { pageTitle } from "@/constants/pageTitle";
 
-const pageName = [
-    {
-        name: "ตารางเข้าออกงานคนขับรถ (Outsource)",
-        urlName: "report_inout_outsource"
-    }
-]
+const Logout = async () => {
 
-const Logout = () => {
-    return swAlert({
+    await swAlert({
         title: "ออกจากระบบ",
         text: "ยืนยัน!",
         icon: "info",
-    }).then(function (isConfirm : any) {
-        if (isConfirm.isConfirmed == true) {
+    })
+    .then(function (isConfirm)
+    {
+        //console.log(isConfirm);
+        if (isConfirm == true) {
             axios.post("https://hmmtweb01.hinothailand.com/Drivers/Service.aspx", { Controller: "Logout" },
                 { headers:
                     {
@@ -28,15 +25,15 @@ const Logout = () => {
                     withCredentials: true
                 }
             )
-                .then(function (response) {
-                    if (response) {
-                        document.cookie = "BROWSERID= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
-                        document.cookie = "BROWSERCURRENT= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
-                        document.cookie = "BROWSERDEVICES= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
-                        document.cookie = "BROWSERACCESS= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
-                        location.reload();
-                    }
-                });
+            .then(function (response) {
+                if (response) {
+                    document.cookie = "BROWSERID= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
+                    document.cookie = "BROWSERCURRENT= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
+                    document.cookie = "BROWSERDEVICES= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
+                    document.cookie = "BROWSERACCESS= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
+                    location.reload();
+                }
+            });
         }
     }
     );
@@ -52,13 +49,14 @@ const toggleSidebar = () => {
 };
 
 
+
 export default function Sidebar() {
     const pathname = usePathname(); // e.g. "/RequestApprove"
     //console.log(pathname);
     const lastSegment = pathname.split("/").pop() ?? "not found";
     //console.log(lastSegment);
 
-    const currentPage = pageName.find(
+    const currentPage = pageTitle.find(
         (p) => p.urlName.toLowerCase() === lastSegment.toLowerCase()
     );
 
@@ -68,7 +66,7 @@ export default function Sidebar() {
             <div className="nav-header">
                 <div>
                     <a href="https://hmmtweb01.hinothailand.com/Drivers/Home.aspx" className="logo">
-                        <Image src="/bus-driver.png" alt="Logo" width={75} height={75} />
+                        <AppImage src="/bus-driver.png" alt="Logo" width={75} height={75} />
                         <span className="sr-only">Driver NextJS</span>
                     </a>
                 </div>
@@ -83,12 +81,11 @@ export default function Sidebar() {
                     </a>
                 </div>
                 <div className="flex-1 ps-6">
-                    {currentPage && (
-                        <h3 className="font-bold text-lg">{currentPage.name}</h3>
-                    )}
-                </div>
-                <div className="p-4">
-                    <button onClick={toggleTheme}>Toggle</button>
+                    {currentPage &&
+                        (
+                            <h3 className="font-bold text-lg">{currentPage.name}</h3>
+                        )
+                    }
                 </div>
                 <div className="mr-8">
                     <a href="#" onClick={Logout} className="btn-logout font-bold">Sitthiporn Polmart</a>
