@@ -13,11 +13,19 @@ const arrMonth = [
     { value: '12', label: 'เดือน : December' },
 ]
 
+interface SelectProps {
+  value: string;
+  onChange: (val: string) => void;
+}
 
-export default async function SelectMonth() {
+
+export default function SelectMonth({value,onChange} : SelectProps) {
     return (
         <>
-            <select title="เลือกเดือน" className="border border-gray-300 rounded-md p-2 mr-2">
+            <select
+                value={value}
+                onChange={(e)=> onChange(e.target.value)}
+                title="เลือกเดือน" className="border border-gray-300 rounded-md p-2 mr-2">
                 <option> -- เลือกเดือน -- </option>
                 {arrMonth.map((month) => (
                     <option key={month.value} value={month.value}>{month.label}</option>

@@ -62,7 +62,7 @@ export default function Sidebar() {
 
     return (
         <>
-        <div className="p-2">
+        <div className="p-2 nav">
             <div className="nav-header">
                 <div>
                     <a href="https://hmmtweb01.hinothailand.com/Drivers/Home.aspx" className="logo">

@@ -30,7 +30,40 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
     }
 
-    public async Task CalculateOutsourceReportAsync(string EmployeeCode, string Year , string Month)
+    public async Task<List<Driver_Outsource>> GetReportDriverOutSourceAsync(VM_CalReport vM_CalReport)
+    {
+        try
+        {
+            var yearMonth = DateTime.ParseExact(vM_CalReport.Year + vM_CalReport.Month, "yyyyMM", null);
+            var data = await _wfContext.Driver_Outsource.AsNoTracking()
+                .Where(x => x.Check_In.Month == yearMonth.Month
+                && x.Check_In.Year == yearMonth.Year
+                && x.EmployeeCode == vM_CalReport.EmployeeCode).ToListAsync();
+
+            // if (data.Count > 0)
+            // {
+            //     return data;
+            // }
+            // else
+            // {
+                await CalculateOutsourceReportAsync(vM_CalReport.EmployeeCode, vM_CalReport.Year, vM_CalReport.Month);
+
+                data = await _wfContext.Driver_Outsource.AsNoTracking()
+                .Where(x => x.Check_In.Month == yearMonth.Month
+                && x.Check_In.Year == yearMonth.Year
+                && x.EmployeeCode == vM_CalReport.EmployeeCode).ToListAsync();
+
+                return data;
+            //}
+
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Cant get Report Driver Outsource");
+        }
+    }
+
+    private async Task CalculateOutsourceReportAsync(string EmployeeCode, string Year, string Month)
     {
         var ts00_00 = new TimeSpan(0, 0, 0);
         var ts22_00 = new TimeSpan(22, 0, 0);
@@ -41,7 +74,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
 
         try
         {
-            DateTime yearMonth = DateTime.ParseExact(Year + Month, "yyyyMM",null);
+            DateTime yearMonth = DateTime.ParseExact(Year + Month, "yyyyMM", null);
             var attendanceData = await _wfContext.Driver_TimeAttendance.AsNoTracking()
                 .Where(x => x.Time_EmployeeCode == EmployeeCode &&
                 x.Time_TodayIN.Value.Year == yearMonth.Year &&
@@ -60,11 +93,11 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                 x.Check_In.Month == yearMonth.Month)
                 .ExecuteDeleteAsync();
 
-            foreach(var date in calendarData)
+            foreach (var date in calendarData)
             {
                 var each = attendanceData.FirstOrDefault(x => x.Time_TodayIN.Value.Date == date.CalendarDay.Date);
-                
-                if(each != null)
+
+                if (each != null)
                 {
                     each.Time_HomeIN = each.Time_HomeIN.Replace(":", ".");
                     each.Time_HomeOUT = each.Time_HomeOUT.Replace(":", ".");
@@ -85,7 +118,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                     var taxi = 0;
                     var lunch = 0;
 
-                    if (each.Time_wfh_IN == "1")
+                    if (each.Time_wfh_IN == "1" || !string.IsNullOrWhiteSpace(each.Time_DriveInstead))
                     {
                         tsCalIn = tsCalIn - new TimeSpan(0, 30, 0);
                         if (tsCalIn >= ts00_00 && tsCalIn <= ts05_30)
@@ -94,7 +127,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                         }
                         strCal_Time_In = tsCalIn.Hours.ToString("D2") + ":" + tsCalIn.Minutes.ToString("D2") + ":00";
                     }
-                    if (each.Time_wfh_OUT == "1")
+                    if (each.Time_wfh_OUT == "1" || !string.IsNullOrWhiteSpace(each.Time_DriveInstead))
                     {
                         tsCalOut = tsCalOut + new TimeSpan(0, 15, 0);
                         strCal_Time_Out = tsCalOut.Hours.ToString("D2") + ":" + tsCalOut.Minutes.ToString("D2") + ":00";
@@ -150,65 +183,143 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                     }
 
                     // OT Night IN before 07:30
-                    if (tsCalIn > ts00_00 && tsCalIn < ts07_30)
+                    if (tsCalIn > ts00_00 && tsCalIn <= ts07_30)
                     {
-                        if (addObj.Job_Type == 1 || addObj.Job_Type == 3)
+                        if (addObj.Job_Type == 1)
                         {
                             addObj.Work_OT1_5_Night = ts07_30 - tsCalIn;
                         }
-                        else if (addObj.Job_Type == 2 || addObj.Job_Type == 4)
+                        else if (addObj.Job_Type == 2)
                         {
                             addObj.Holi_OT3_0 = ts07_30 - tsCalIn;
                         }
+                        else if (addObj.Job_Type == 3)
+                        {
+                            addObj.Work_OT1_5_Night = ts07_30 - tsCalIn;
+                            if (tsCalOut > ts07_30)
+                            {
+                                addObj.Holi_OT3_0 = ts07_30 - ts00_00;
+                            }
+                            else
+                            {
+                                addObj.Holi_OT3_0 = ts07_30 - tsCalOut;
+                            }
+                        }
+                        else if (addObj.Job_Type == 4)
+                        {
+                            addObj.Holi_OT3_0 = ts07_30 - tsCalIn;
+                            if (tsCalOut > ts07_30)
+                            {
+                                addObj.Work_OT1_5_Night = ts07_30 - ts00_00;
+                            }
+                            else
+                            {
+                                addObj.Work_OT1_5_Night = ts07_30 - tsCalOut;
+                            }
+                        }
+
+                        // Normal time IN 07:30 - OUT 16:30
+                        //if (tsCalIn <= ts07_30 && tsCalOut >= ts16_30)
+                        if (tsCalOut >= ts16_30)
+                        {
+
+                            if (addObj.Job_Type == 1)
+                            {
+                                addObj.Work_Reg = ts16_30 - ts07_30;
+                                addObj.Work_Reg = addObj.Work_Reg >= new TimeSpan(5, 0, 0) ? addObj.Work_Reg - new TimeSpan(1, 0, 0) : addObj.Work_Reg;
+                            }
+                            else if (addObj.Job_Type == 2)
+                            {
+                                addObj.Holi_OT2_0 = ts16_30 - ts07_30;
+                                addObj.Holi_OT2_0 = addObj.Holi_OT2_0 >= new TimeSpan(5, 0, 0) ? addObj.Holi_OT2_0 - new TimeSpan(1, 0, 0) : addObj.Holi_OT2_0;
+                            }
+                            else if (addObj.Job_Type == 3 || addObj.Job_Type == 4)
+                            {
+                                addObj.Work_Reg = ts16_30 - ts07_30;
+                                addObj.Work_Reg = addObj.Work_Reg >= new TimeSpan(5, 0, 0) ? addObj.Work_Reg - new TimeSpan(1, 0, 0) : addObj.Work_Reg;
+
+                                addObj.Holi_OT2_0 = ts16_30 - ts07_30;
+                                addObj.Holi_OT2_0 = addObj.Holi_OT2_0 >= new TimeSpan(5, 0, 0) ? addObj.Holi_OT2_0 - new TimeSpan(1, 0, 0) : addObj.Holi_OT2_0;
+                            }
+
+                            // OT Evening OUT after 16:30 - 22:00
+                            if (tsCalOut <= ts22_00)
+                            {
+                                if (addObj.Job_Type == 1)
+                                {
+                                    addObj.Work_OT1_5_Eve = tsCalOut - ts16_30;
+                                }
+                                else if (addObj.Job_Type == 2)
+                                {
+                                    addObj.Holi_OT3_0_Eve = tsCalOut - ts16_30;
+                                }
+                                else if (addObj.Job_Type == 3 || addObj.Job_Type == 4)
+                                {
+                                    addObj.Work_OT1_5_Eve = tsCalOut - ts16_30;
+                                    addObj.Holi_OT3_0_Eve = tsCalOut - ts16_30;
+                                }
+                            }
+                            else if (tsCalOut > ts22_00)
+                            {
+                                if (addObj.Job_Type == 1)
+                                {
+                                    addObj.Work_OT2 = tsCalOut - ts22_00;
+                                }
+                                else if (addObj.Job_Type == 2)
+                                {
+                                    addObj.Holi_OT3_0_Eve = addObj.Holi_OT3_0_Eve + (tsCalOut - ts22_00);
+                                }
+                                else if (addObj.Job_Type == 3 || addObj.Job_Type == 4)
+                                {
+                                    addObj.Work_OT2 = tsCalOut - ts22_00;
+                                    addObj.Holi_OT3_0_Eve = addObj.Holi_OT3_0_Eve + (tsCalOut - ts22_00);
+                                }
+                            }
+
+                        }
+
+                        else if (tsCalOut < ts16_30)
+                        {
+                            if (addObj.Job_Type == 1)
+                            {
+                                addObj.Work_Reg = tsCalOut - ts07_30;
+                                addObj.Work_Reg = addObj.Work_Reg >= new TimeSpan(5, 0, 0) ? addObj.Work_Reg - new TimeSpan(1, 0, 0) : addObj.Work_Reg;
+                            }
+                            else if (addObj.Job_Type == 2)
+                            {
+                                addObj.Holi_OT2_0 = tsCalOut - ts07_30;
+                                addObj.Holi_OT2_0 = addObj.Holi_OT2_0 >= new TimeSpan(5, 0, 0) ? addObj.Holi_OT2_0 - new TimeSpan(1, 0, 0) : addObj.Holi_OT2_0;
+                            }
+                            else if (addObj.Job_Type == 3 || addObj.Job_Type == 4)
+                            {
+                                addObj.Work_Reg = tsCalOut - ts07_30;
+                                addObj.Work_Reg = addObj.Work_Reg >= new TimeSpan(5, 0, 0) ? addObj.Work_Reg - new TimeSpan(1, 0, 0) : addObj.Work_Reg;
+
+                                addObj.Holi_OT2_0 = tsCalOut - ts07_30;
+                                addObj.Holi_OT2_0 = addObj.Holi_OT2_0 >= new TimeSpan(5, 0, 0) ? addObj.Holi_OT2_0 - new TimeSpan(1, 0, 0) : addObj.Holi_OT2_0;
+                            }
+
+                        }
+
                     }
-                    // Normal time IN 07:30 - OUT 16:30
-                    if (tsCalIn <= ts07_30 && tsCalOut >= ts16_30)
-                    {
-                        if (addObj.Job_Type == 1 || addObj.Job_Type == 3)
-                        {
-                            addObj.Work_Reg = ts16_30 - ts07_30;
-                            addObj.Work_Reg = addObj.Work_Reg >= new TimeSpan(4, 0, 0) ? addObj.Work_Reg - new TimeSpan(1, 0, 0) : addObj.Work_Reg;
-                        }
-                        else if (addObj.Job_Type == 2 || addObj.Job_Type == 4)
-                        {
-                            addObj.Holi_OT2_0 = ts16_30 - ts07_30;
-                            addObj.Holi_OT2_0 = addObj.Holi_OT2_0 >= new TimeSpan(4, 0, 0) ? addObj.Holi_OT2_0 - new TimeSpan(1, 0, 0) : addObj.Holi_OT2_0;
-                        }
-                    }
-                    // OT Evening OUT after 16:30 - 22:00
-                    if (tsCalOut > ts16_30 && tsCalOut <= ts22_00)
-                    {
-                        if (addObj.Job_Type == 1 || addObj.Job_Type == 3)
-                        {
-                            addObj.Work_OT1_5_Eve = tsCalOut - ts16_30;
-                        }
-                        else if (addObj.Job_Type == 2 || addObj.Job_Type == 4)
-                        {
-                            addObj.Holi_OT3_0_Eve = tsCalOut - ts16_30;
-                        }
-                    }
-                    if (tsCalOut > ts22_00)
-                    {
-                        if (addObj.Job_Type == 1 || addObj.Job_Type == 3)
-                        {
-                            addObj.Work_OT2 = tsCalOut - ts22_00;
-                        }
-                        else if (addObj.Job_Type == 2 || addObj.Job_Type == 4)
-                        {
-                            addObj.Holi_OT3_0_Eve = addObj.Holi_OT3_0_Eve + (tsCalOut - ts22_00);
-                        }
-                    }
-                    if (tsCalOut > ts00_00 && tsCalOut < ts07_30)
-                    {
-                        if (addObj.Job_Type == 1 || addObj.Job_Type == 4)
-                        {
-                            addObj.Work_OT2 = addObj.Work_OT2 + (tsCalOut - ts00_00);
-                        }
-                        else if (addObj.Job_Type == 2 || addObj.Job_Type == 3)
-                        {
-                            addObj.Holi_OT3_0_Eve = addObj.Holi_OT3_0_Eve + (tsCalOut - ts00_00);
-                        }
-                    }
+
+
+                    // if (tsCalOut > ts00_00 && tsCalOut < ts07_30)
+                    // {
+                    //     if (addObj.Job_Type == 1 || addObj.Job_Type == 4)
+                    //     {
+                    //         addObj.Work_OT2 = addObj.Work_OT2 + (tsCalOut - ts00_00);
+                    //     }
+                    //     else if (addObj.Job_Type == 2 || addObj.Job_Type == 3)
+                    //     {
+                    //         addObj.Holi_OT3_0_Eve = addObj.Holi_OT3_0_Eve + (tsCalOut - ts00_00);
+                    //     }
+                    //     else if( addObj.Job_Type == 3 || addObj.Job_Type == 4)
+                    //     {
+                    //         addObj.Work_OT2 = addObj.Work_OT2 + (tsCalOut - ts00_00);
+                    //         addObj.Holi_OT3_0_Eve = addObj.Holi_OT3_0_Eve + (tsCalOut - ts00_00);
+                    //     }
+                    // }
 
                     addObj.Work_Total_OT = addObj.Work_OT1_5_Night + addObj.Work_OT1_5_Eve + addObj.Work_OT2;
                     addObj.Holi_Total_OT = addObj.Holi_OT2_0 + addObj.Holi_OT3_0 + addObj.Holi_OT3_0_Eve;

@@ -4,8 +4,8 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <RootNamespace>driver_api</RootNamespace>
-		<SpaRoot>..\driverreact.client</SpaRoot>
+        <RootNamespace>driver-api</RootNamespace>
+		<SpaRoot>..\driver-ui</SpaRoot>
 		<SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
 		<SpaProxyServerUrl>https://localhost:3000</SpaProxyServerUrl>
     </PropertyGroup>

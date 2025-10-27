@@ -1,76 +1,85 @@
+'use client'
 import SelectDriver from "@/components/SelectDriver";
 import SelectYear from "@/components/SelectYear";
 import SelectMonth from "@/components/SelectMonth";
 import { Metadata } from "next";
 import { pageTitle } from "@/constants/pageTitle";
 import { useState } from "react";
+import TableReportOutSource, { Driver_OutSource } from "@/components/TableReportOutSource";
+import showSwal from "@/utils/SweetAlert2";
+import CallAxios from "@/utils/CallAxios";
 
-export async function generateMetadata(): Promise<Metadata> {
-    const titlePage = pageTitle.find(
-        (p) => p.urlName.toLowerCase() === 'report_inout_outsource'
-    )
-    return {
-        title: titlePage ? titlePage.title : 'Driver Tracking',
-    };
+
+export interface VM_CallReport {
+    EmployeeCode : string,
+    Year : string,
+    Month : string
+};
+
+export async function GetReportData(_VM : VM_CallReport) : Promise<Driver_OutSource[]>{
+    try{
+        const response = await CallAxios<Driver_OutSource[]>({
+            method: 'GET',
+            url: '/api/ReportOutSource/GetReportDriverOutSource',
+            params:_VM
+        });
+
+        return response
+    }
+    catch (error){
+        console.error(error);
+        return []
+    }
+
 }
 
 
-export default async function ReportInOutOutSource(){
+export default function ReportInOutOutSource(){
+    const [empCode,setEmpCode] = useState<string>("");
+    const [month,setMonth] = useState<string>("");
+    const [year,setYear] = useState<string>("");
+    const [reportData,setReportData] = useState<Driver_OutSource[]>([]);
+    const [loading,setLoading] =useState<boolean>(false);
+
+    const OnBtnClicked = async () => {
+        if (!empCode || !month || !year){
+            return showSwal({
+                icon : "error",
+                title : "Invalid Input",
+                text : "กรุณาเลือก คนขับ เดือน และ ปี ให้ครบก่อน"
+            })
+        }
+        setLoading(true);
+        const data = await GetReportData({EmployeeCode: empCode,Month: month,Year:year})
+        setReportData(data);
+        setLoading(false);
+    }
+
     return (
         <div className="p-2 ">
             <h3 className="font-bold text-2xl">ค้นหาข้อมูลคนขับรถ</h3>
 
             <div className="flex-row-reverse mt-4 mb-4 flex">
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    ค้นหา
-                </button>
-                <SelectDriver />
-                <SelectMonth />
-                <SelectYear />
+                <div className="ps-2">
+                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        อัพเดทและค้นหา
+                    </button>
+                </div>
+                <div>
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        onClick={OnBtnClicked}>
+                        {loading ? 'กำลังค้นหา...' : 'ค้นหา'}
+                    </button>
+                </div>
+                <SelectDriver value={empCode} onChange={setEmpCode} />
+                <SelectMonth  value={month} onChange={setMonth} />
+                <SelectYear  value={year} onChange={setYear} />
             </div>
 
             <div className="block mt-4 mb-4">
                 ตารางแสดงข้อมูลคนขับรถ
-                <div className="overflow-x-auto">
-                    <table className="table-auto border-collapse border border-gray-400 mt-4 w-full">
-                        <thead >
-                            <tr>
-                                <th className="thReport1stRow" rowSpan={3}>Check IN</th>
-                                <th className="thReport1stRow" rowSpan={3}>Check Out</th>
-                                <th className="thReport1stRow" rowSpan={3}>Job Type</th>
-                                <th className="thReport1stRow" rowSpan={3}>Temp Drive</th>
-                                <th className="thReport1stRow" rowSpan={3}>Use/No Use</th>
-                                <th className="thReport1stRow" rowSpan={3}>Cal Time IN</th>
-                                <th className="thReport1stRow" rowSpan={3}>Cal Time OUT</th>
-                                <th className="thReport1stRow" colSpan={5}>Working Day</th>
-                                <th className="thReport1stRow" colSpan={4}>Holiday</th>
-                                <th className="thReport1stRow" rowSpan={3}>Total OT</th>
-                                <th className="thReport1stRow" rowSpan={3}>Taxi</th>
-                                <th className="thReport1stRow" rowSpan={3}>Lunch</th>
-                            </tr>
-                            <tr>
-                                <th className="thReport2ndRow" >OT1.5</th>
-                                <th className="thReport2ndRow" >Regular Time</th>
-                                <th className="thReport2ndRow" >OT1.5</th>
-                                <th className="thReport2ndRow" >OT2.0</th>
-                                <th className="thReport2ndRow" rowSpan={2} >Total OT</th>
-                                <th className="thReport2ndRow" >OT3.0</th>
-                                <th className="thReport2ndRow" >OT2.0</th>
-                                <th className="thReport2ndRow" >OT3.0</th>
-                                <th className="thReport2ndRow" rowSpan={2} >Total OT</th>
-                            </tr>
-                            <tr>
-                                <th className="thReport3rdRow" >00:01-7:29</th>
-                                <th className="thReport3rdRow" >07:30-16:30</th>
-                                <th className="thReport3rdRow" >16:31-22:00</th>
-                                <th className="thReport3rdRow" >22:01-00:00</th>
-                                <th className="thReport3rdRow" >00:01-07:29</th>
-                                <th className="thReport3rdRow" >07:30-16:30</th>
-                                <th className="thReport3rdRow" >16:31-00:00</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
+
+                <TableReportOutSource reportData={reportData}/>
 
             </div>
 

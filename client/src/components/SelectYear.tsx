@@ -8,10 +8,19 @@ for(let i = currentYear - 2;i <= currentYear;i++){
     arrYear.push({ value : i.toString(), label : "ปี : " + i.toString()})
 }
 
-export default async function SelectYear() {
+interface SelectProps {
+  value: string;
+  onChange: (val: string) => void;
+}
+
+
+export default function SelectYear({value,onChange} : SelectProps) {
     return (
         <>
-            <select title="เลือกปี" className="border border-gray-300 rounded-md p-2 mr-2">
+            <select
+                value={value}
+                onChange={(e)=> onChange(e.target.value)}
+                title="เลือกปี" className="border border-gray-300 rounded-md p-2 mr-2">
                 <option> -- เลือกปี -- </option>
                 {arrYear.map((year) => (
                     <option key={year.value} value={year.value}>{year.label}</option>
