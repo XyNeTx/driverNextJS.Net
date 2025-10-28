@@ -5,12 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Edge",
+            "name": "C#: DriverNextJS Debug",
+            "type": "dotnet",
             "request": "launch",
-            "type": "msedge",
-            "url": "http://localhost:3000",
-            "webRoot": "${workspaceFolder}",
-            "preLaunchTask": "npm: devC - client"
+            "projectPath": "${workspaceFolder}/server/driver-api.csproj"
         },
         {
             "command": "npm run dev",
@@ -18,7 +16,13 @@
             "request": "launch",
             "cwd": "${workspaceFolder}/client",
             "type": "node-terminal",
-
+        },
+        {
+            "command": "npm run devC",
+            "name": "Run npm devC",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/client",
+            "type": "node-terminal",
         },
     ]
 }

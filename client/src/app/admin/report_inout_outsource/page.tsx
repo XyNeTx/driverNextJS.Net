@@ -58,7 +58,6 @@ export default function ReportInOutOutSource(){
     return (
         <div className="p-2 ">
             <h3 className="font-bold text-2xl">ค้นหาข้อมูลคนขับรถ</h3>
-
             <div className="flex-row-reverse mt-4 mb-4 flex">
                 <div className="ps-2">
                     <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
@@ -81,6 +80,16 @@ export default function ReportInOutOutSource(){
 
                 <TableReportOutSource reportData={reportData}/>
 
+            </div>
+
+            <div className="block text-red-600 text-sm">
+                <p>Job Type Describe </p>
+                <p>1 : In Working Day Out in Same Day</p>
+                <p>2 : In Holiday Out in Same Day</p>
+                <p>3 : In Working Day Out in Holiday</p>
+                <p>4 : In Holiday Out in Working Day</p>
+                <p>5 : In Working Day Out in Another Working Day</p>
+                <p>6 : In Holiday Out in Another Holiday</p>
             </div>
 
         </div>

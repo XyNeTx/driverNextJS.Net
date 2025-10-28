@@ -56,11 +56,11 @@ export default function TableReportOutSource({reportData}: {reportData : Driver_
                         <tr>
                             <th className="thReport3rdRow">00:01 <p>-</p> 7:30</th>
                             <th className="thReport3rdRow">07:31 <p>-</p> 16:30</th>
-                            <th className="thReport3rdRow">16:31 - 22:00</th>
-                            <th className="thReport3rdRow">22:01 - 00:00</th>
-                            <th className="thReport3rdRow">00:01 - 07:30</th>
-                            <th className="thReport3rdRow">07:31 - 16:30</th>
-                            <th className="thReport3rdRow">16:31 - 00:00</th>
+                            <th className="thReport3rdRow">16:31 <p>-</p> 22:00</th>
+                            <th className="thReport3rdRow">22:01 <p>-</p> 00:00</th>
+                            <th className="thReport3rdRow">00:01 <p>-</p> 07:30</th>
+                            <th className="thReport3rdRow">07:31 <p>-</p> 16:30</th>
+                            <th className="thReport3rdRow">16:31 <p>-</p> 00:00</th>
                         </tr>
                     </thead>
                     <tbody>

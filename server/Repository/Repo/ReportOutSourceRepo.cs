@@ -68,6 +68,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         var ts00_00 = new TimeSpan(0, 0, 0);
         var ts22_00 = new TimeSpan(22, 0, 0);
         var ts22_30 = new TimeSpan(22, 30, 0);
+        var ts23_30 = new TimeSpan(23, 30, 0);
         var ts05_30 = new TimeSpan(5, 30, 0);
         var ts07_30 = new TimeSpan(7, 30, 0);
         var ts16_30 = new TimeSpan(16, 30, 0);
@@ -93,26 +94,28 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                 x.Check_In.Month == yearMonth.Month)
                 .ExecuteDeleteAsync();
 
+            var addList = new List<Driver_Outsource>();
+
             foreach (var date in calendarData)
             {
                 var each = attendanceData.FirstOrDefault(x => x.Time_TodayIN.Value.Date == date.CalendarDay.Date);
 
                 if (each != null)
                 {
-                    each.Time_HomeIN = each.Time_HomeIN.Replace(":", ".");
-                    each.Time_HomeOUT = each.Time_HomeOUT.Replace(":", ".");
+                    each.Time_DDL_IN = each.Time_DDL_IN.Replace(":", ".");
+                    each.Time_DDL_OUT = each.Time_DDL_OUT.Replace(":", ".");
 
-                    var TimeHomeIn = each.Time_HomeIN.Split(".")[0].Length == 1 ? "0" + each.Time_HomeIN : each.Time_HomeIN;
-                    var TimeHomeOut = each.Time_HomeOUT.Split(".")[0].Length == 1 ? "0" + each.Time_HomeOUT : each.Time_HomeOUT;
+                    var TimeDdlIn = each.Time_DDL_IN.Split(".")[0].Length == 1 ? "0" + each.Time_DDL_IN : each.Time_DDL_IN;
+                    var TimeDdlOut = each.Time_DDL_OUT.Split(".")[0].Length == 1 ? "0" + each.Time_DDL_OUT : each.Time_DDL_OUT;
 
-                    var CheckIn = DateTime.ParseExact(each.Time_TodayIN?.ToString("yyyy-MM-dd") + " " + TimeHomeIn + ":00", "yyyy-MM-dd HH.mm:ss", null);
-                    var CheckOut = DateTime.ParseExact(each.Time_TodayOUT?.ToString("yyyy-MM-dd") + " " + TimeHomeOut + ":00", "yyyy-MM-dd HH.mm:ss", null);
+                    var CheckIn = DateTime.ParseExact(each.Time_TodayIN?.ToString("yyyy-MM-dd") + " " + TimeDdlIn + ":00", "yyyy-MM-dd HH.mm:ss", null);
+                    var CheckOut = DateTime.ParseExact(each.Time_TodayOUT?.ToString("yyyy-MM-dd") + " " + TimeDdlOut + ":00", "yyyy-MM-dd HH.mm:ss", null);
 
-                    var tsHomeIN = new TimeSpan(int.Parse(each.Time_HomeIN.Split(".")[0]), int.Parse(each.Time_HomeIN.Split(".")[1]), 0);
-                    var tsHomeOUT = new TimeSpan(int.Parse(each.Time_HomeOUT.Split(".")[0]), int.Parse(each.Time_HomeOUT.Split(".")[1]), 0);
+                    var tsDdlIN = new TimeSpan(int.Parse(each.Time_DDL_IN.Split(".")[0]), int.Parse(each.Time_DDL_IN.Split(".")[1]), 0);
+                    var tsDdlOUT = new TimeSpan(int.Parse(each.Time_DDL_OUT.Split(".")[0]), int.Parse(each.Time_DDL_OUT.Split(".")[1]), 0);
 
-                    var tsCalIn = tsHomeIN;
-                    var tsCalOut = tsHomeOUT;
+                    var tsCalIn = tsDdlIN;
+                    var tsCalOut = tsDdlOUT;
                     var strCal_Time_In = tsCalIn.Hours.ToString("D2") + ":" + tsCalIn.Minutes.ToString("D2") + ":00";
                     var strCal_Time_Out = tsCalOut.Hours.ToString("D2") + ":" + tsCalOut.Minutes.ToString("D2") + ":00";
                     var taxi = 0;
@@ -163,17 +166,17 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                     {
                         switch (isWorkingDay, isNextDayWorkingDay)
                         {
-                            case (true, true):
-                                addObj.Job_Type = 1;
-                                break;
-                            case (false, false):
-                                addObj.Job_Type = 2;
-                                break;
                             case (true, false):
                                 addObj.Job_Type = 3;
                                 break;
                             case (false, true):
                                 addObj.Job_Type = 4;
+                                break;
+                            case (true, true):
+                                addObj.Job_Type = 5;
+                                break;
+                            case (false, false):
+                                addObj.Job_Type = 6;
                                 break;
                         }
                     }
@@ -182,150 +185,193 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                         addObj.Job_Type = isWorkingDay ? 1 : 2;
                     }
 
-                    // OT Night IN before 07:30
-                    if (tsCalIn > ts00_00 && tsCalIn <= ts07_30)
+                    if (addObj.Job_Type == 1)
                     {
-                        if (addObj.Job_Type == 1)
+
+                        if (tsCalIn > ts00_00 && tsCalIn <= ts07_30)
                         {
                             addObj.Work_OT1_5_Night = ts07_30 - tsCalIn;
+                            //change time in to 07:30
+                            tsCalIn = ts07_30;
                         }
-                        else if (addObj.Job_Type == 2)
+                        if (tsCalOut <= ts16_30)
                         {
-                            addObj.Holi_OT3_0 = ts07_30 - tsCalIn;
+                            addObj.Work_Reg = (tsCalOut - tsCalIn) < new TimeSpan(4, 0, 0) ? new TimeSpan(4, 0, 0) : tsCalOut - ts07_30;
+                            addObj.Work_Reg = addObj.Work_Reg >= new TimeSpan(5, 0, 0) ? addObj.Work_Reg - new TimeSpan(1, 0, 0) : addObj.Work_Reg;
                         }
-                        else if (addObj.Job_Type == 3)
+                        else
                         {
-                            addObj.Work_OT1_5_Night = ts07_30 - tsCalIn;
-                            if (tsCalOut > ts07_30)
-                            {
-                                addObj.Holi_OT3_0 = ts07_30 - ts00_00;
-                            }
-                            else
-                            {
-                                addObj.Holi_OT3_0 = ts07_30 - tsCalOut;
-                            }
-                        }
-                        else if (addObj.Job_Type == 4)
-                        {
-                            addObj.Holi_OT3_0 = ts07_30 - tsCalIn;
-                            if (tsCalOut > ts07_30)
-                            {
-                                addObj.Work_OT1_5_Night = ts07_30 - ts00_00;
-                            }
-                            else
-                            {
-                                addObj.Work_OT1_5_Night = ts07_30 - tsCalOut;
-                            }
-                        }
+                            addObj.Work_Reg = ts16_30 - tsCalIn;
+                            addObj.Work_Reg = addObj.Work_Reg >= new TimeSpan(5, 0, 0) ? addObj.Work_Reg - new TimeSpan(1, 0, 0) : addObj.Work_Reg;
 
-                        // Normal time IN 07:30 - OUT 16:30
-                        //if (tsCalIn <= ts07_30 && tsCalOut >= ts16_30)
-                        if (tsCalOut >= ts16_30)
-                        {
-
-                            if (addObj.Job_Type == 1)
-                            {
-                                addObj.Work_Reg = ts16_30 - ts07_30;
-                                addObj.Work_Reg = addObj.Work_Reg >= new TimeSpan(5, 0, 0) ? addObj.Work_Reg - new TimeSpan(1, 0, 0) : addObj.Work_Reg;
-                            }
-                            else if (addObj.Job_Type == 2)
-                            {
-                                addObj.Holi_OT2_0 = ts16_30 - ts07_30;
-                                addObj.Holi_OT2_0 = addObj.Holi_OT2_0 >= new TimeSpan(5, 0, 0) ? addObj.Holi_OT2_0 - new TimeSpan(1, 0, 0) : addObj.Holi_OT2_0;
-                            }
-                            else if (addObj.Job_Type == 3 || addObj.Job_Type == 4)
-                            {
-                                addObj.Work_Reg = ts16_30 - ts07_30;
-                                addObj.Work_Reg = addObj.Work_Reg >= new TimeSpan(5, 0, 0) ? addObj.Work_Reg - new TimeSpan(1, 0, 0) : addObj.Work_Reg;
-
-                                addObj.Holi_OT2_0 = ts16_30 - ts07_30;
-                                addObj.Holi_OT2_0 = addObj.Holi_OT2_0 >= new TimeSpan(5, 0, 0) ? addObj.Holi_OT2_0 - new TimeSpan(1, 0, 0) : addObj.Holi_OT2_0;
-                            }
-
-                            // OT Evening OUT after 16:30 - 22:00
+                            //change time in to 16:30
+                            tsCalIn = ts16_30;
                             if (tsCalOut <= ts22_00)
                             {
-                                if (addObj.Job_Type == 1)
-                                {
-                                    addObj.Work_OT1_5_Eve = tsCalOut - ts16_30;
-                                }
-                                else if (addObj.Job_Type == 2)
-                                {
-                                    addObj.Holi_OT3_0_Eve = tsCalOut - ts16_30;
-                                }
-                                else if (addObj.Job_Type == 3 || addObj.Job_Type == 4)
-                                {
-                                    addObj.Work_OT1_5_Eve = tsCalOut - ts16_30;
-                                    addObj.Holi_OT3_0_Eve = tsCalOut - ts16_30;
-                                }
+                                addObj.Work_OT1_5_Eve = tsCalOut - tsCalIn;
                             }
-                            else if (tsCalOut > ts22_00)
+                            else
                             {
-                                if (addObj.Job_Type == 1)
-                                {
-                                    addObj.Work_OT2 = tsCalOut - ts22_00;
-                                }
-                                else if (addObj.Job_Type == 2)
-                                {
-                                    addObj.Holi_OT3_0_Eve = addObj.Holi_OT3_0_Eve + (tsCalOut - ts22_00);
-                                }
-                                else if (addObj.Job_Type == 3 || addObj.Job_Type == 4)
-                                {
-                                    addObj.Work_OT2 = tsCalOut - ts22_00;
-                                    addObj.Holi_OT3_0_Eve = addObj.Holi_OT3_0_Eve + (tsCalOut - ts22_00);
-                                }
-                            }
+                                addObj.Work_OT1_5_Eve = ts22_00 - tsCalIn;
 
-                        }
-
-                        else if (tsCalOut < ts16_30)
-                        {
-                            if (addObj.Job_Type == 1)
-                            {
-                                addObj.Work_Reg = tsCalOut - ts07_30;
-                                addObj.Work_Reg = addObj.Work_Reg >= new TimeSpan(5, 0, 0) ? addObj.Work_Reg - new TimeSpan(1, 0, 0) : addObj.Work_Reg;
+                                //change time in to 22:00
+                                tsCalIn = ts22_00;
+                                addObj.Work_OT2 = tsCalOut - tsCalIn;
                             }
-                            else if (addObj.Job_Type == 2)
-                            {
-                                addObj.Holi_OT2_0 = tsCalOut - ts07_30;
-                                addObj.Holi_OT2_0 = addObj.Holi_OT2_0 >= new TimeSpan(5, 0, 0) ? addObj.Holi_OT2_0 - new TimeSpan(1, 0, 0) : addObj.Holi_OT2_0;
-                            }
-                            else if (addObj.Job_Type == 3 || addObj.Job_Type == 4)
-                            {
-                                addObj.Work_Reg = tsCalOut - ts07_30;
-                                addObj.Work_Reg = addObj.Work_Reg >= new TimeSpan(5, 0, 0) ? addObj.Work_Reg - new TimeSpan(1, 0, 0) : addObj.Work_Reg;
-
-                                addObj.Holi_OT2_0 = tsCalOut - ts07_30;
-                                addObj.Holi_OT2_0 = addObj.Holi_OT2_0 >= new TimeSpan(5, 0, 0) ? addObj.Holi_OT2_0 - new TimeSpan(1, 0, 0) : addObj.Holi_OT2_0;
-                            }
-
                         }
 
                     }
+                    else if (addObj.Job_Type == 2)
+                    {
 
+                        if (tsCalIn > ts00_00 && tsCalIn <= ts07_30)
+                        {
+                            addObj.Holi_OT3_0 = ts07_30 - tsCalIn;
+                            //change time in to 07:30
+                            tsCalIn = ts07_30;
+                        }
 
-                    // if (tsCalOut > ts00_00 && tsCalOut < ts07_30)
-                    // {
-                    //     if (addObj.Job_Type == 1 || addObj.Job_Type == 4)
-                    //     {
-                    //         addObj.Work_OT2 = addObj.Work_OT2 + (tsCalOut - ts00_00);
-                    //     }
-                    //     else if (addObj.Job_Type == 2 || addObj.Job_Type == 3)
-                    //     {
-                    //         addObj.Holi_OT3_0_Eve = addObj.Holi_OT3_0_Eve + (tsCalOut - ts00_00);
-                    //     }
-                    //     else if( addObj.Job_Type == 3 || addObj.Job_Type == 4)
-                    //     {
-                    //         addObj.Work_OT2 = addObj.Work_OT2 + (tsCalOut - ts00_00);
-                    //         addObj.Holi_OT3_0_Eve = addObj.Holi_OT3_0_Eve + (tsCalOut - ts00_00);
-                    //     }
-                    // }
+                        if (tsCalOut <= ts16_30)
+                        {
+                            addObj.Holi_OT2_0 = (tsCalOut - tsCalIn) < new TimeSpan(4, 0, 0) ? new TimeSpan(4, 0, 0) : tsCalOut - tsCalIn;
+                            addObj.Holi_OT2_0 = addObj.Holi_OT2_0 >= new TimeSpan(5, 0, 0) ? addObj.Holi_OT2_0 - new TimeSpan(1, 0, 0) : addObj.Holi_OT2_0;
+                        }
+                        else
+                        {
+                            addObj.Holi_OT2_0 = ts16_30 - tsCalIn;
+                            addObj.Holi_OT2_0 = addObj.Holi_OT2_0 >= new TimeSpan(5, 0, 0) ? addObj.Holi_OT2_0 - new TimeSpan(1, 0, 0) : addObj.Holi_OT2_0;
+
+                            //change time in to 16:30
+                            tsCalIn = ts16_30;
+                            addObj.Holi_OT3_0_Eve = tsCalOut - tsCalIn;
+                        }
+
+                    }
+                    else if (addObj.Job_Type == 3)
+                    {
+
+                        //Calculate for 1st Day (Working Day)
+                        if (tsCalIn > ts00_00 && tsCalIn <= ts07_30)
+                        {
+                            addObj.Work_OT1_5_Night = ts07_30 - tsCalIn;
+                            addObj.Work_Reg = new TimeSpan(8, 0, 0);
+                            addObj.Work_OT1_5_Eve = ts22_00 - ts16_30;
+                            addObj.Work_OT2 = new TimeSpan(2, 0, 0);
+                            //tsCalIn = ts07_30;
+                        }
+                        else if (tsCalIn > ts07_30)
+                        {
+
+                            addObj.Work_Reg = ts16_30 - tsCalIn;
+                            if (tsCalIn > ts16_30)
+                            {
+                                tsCalIn = ts16_30;
+                            }
+                            addObj.Work_OT1_5_Eve = ts22_00 - tsCalIn;
+                            if (tsCalIn > ts22_00)
+                            {
+                                tsCalIn = ts22_00;
+                            }
+                            addObj.Work_OT2 = new TimeSpan(2, 0, 0);
+                        }
+
+                        addObj.Holi_OT3_0 = tsCalOut;
+
+                        if (addObj.Holi_OT3_0 > new TimeSpan(7, 30, 0))
+                        {
+                            throw new Exception("EmployeeCode " + each.Time_EmployeeCode + " Date Login : " + each.Time_TodayIN + " Check Out Over 07:30 ");
+                        }
+                    }
+                    else if (addObj.Job_Type == 4)
+                    {
+
+                        //Calculate for 1st Day (Working Day)
+                        if (tsCalIn > ts00_00 && tsCalIn <= ts07_30)
+                        {
+                            addObj.Holi_OT3_0 = ts07_30 - tsCalIn;
+                            addObj.Holi_OT2_0 = new TimeSpan(8, 0, 0);
+                            addObj.Holi_OT3_0_Eve = new TimeSpan(24, 0, 0) - ts16_30;
+                            //tsCalIn = ts07_30;
+                        }
+                        else if (tsCalIn > ts07_30)
+                        {
+                            addObj.Holi_OT2_0 = ts16_30 - tsCalIn;
+                            if (tsCalIn > ts16_30)
+                            {
+                                tsCalIn = ts16_30;
+                            }
+                            addObj.Holi_OT3_0_Eve = new TimeSpan(24, 0, 0) - tsCalIn;
+                        }
+
+                        addObj.Work_OT1_5_Night = tsCalOut;
+
+                        if (addObj.Work_OT1_5_Night > new TimeSpan(7, 30, 0))
+                        {
+                            throw new Exception("EmployeeCode " + each.Time_EmployeeCode + " Date Login : " + each.Time_TodayIN + " Check Out Over 07:30 ");
+                        }
+                    }
+                    else if (addObj.Job_Type == 5)
+                    {
+
+                        //Calculate for 1st Day (Working Day)
+                        if (tsCalIn > ts00_00 && tsCalIn <= ts07_30)
+                        {
+                            addObj.Work_OT1_5_Night = ts07_30 - tsCalIn;
+                            addObj.Work_Reg = new TimeSpan(8, 0, 0);
+                            addObj.Work_OT1_5_Eve = ts22_00 - ts16_30;
+                            addObj.Work_OT2 = new TimeSpan(2, 0, 0);
+                            //tsCalIn = ts07_30;
+                        }
+                        else if (tsCalIn > ts07_30)
+                        {
+
+                            addObj.Work_Reg = ts16_30 - tsCalIn;
+                            if (tsCalIn > ts16_30)
+                            {
+                                tsCalIn = ts16_30;
+                            }
+                            addObj.Work_OT1_5_Eve = ts22_00 - tsCalIn;
+                            if (tsCalIn > ts22_00)
+                            {
+                                tsCalIn = ts22_00;
+                            }
+                            addObj.Work_OT2 = new TimeSpan(2, 0, 0);
+                        }
+
+                        addObj.Work_OT1_5_Night += tsCalOut;
+
+                    }
+                    else if (addObj.Job_Type == 6)
+                    {
+
+                        //Calculate for 1st Day (Working Day)
+                        if (tsCalIn > ts00_00 && tsCalIn <= ts07_30)
+                        {
+                            addObj.Holi_OT3_0 = ts07_30 - tsCalIn;
+                            addObj.Holi_OT2_0 = new TimeSpan(8, 0, 0);
+                            addObj.Holi_OT3_0_Eve = new TimeSpan(24, 0, 0) - ts16_30;
+                            //tsCalIn = ts07_30;
+                        }
+                        else if (tsCalIn > ts07_30)
+                        {
+                            addObj.Holi_OT2_0 = ts16_30 - tsCalIn;
+                            if (tsCalIn > ts16_30)
+                            {
+                                tsCalIn = ts16_30;
+                            }
+                            addObj.Holi_OT3_0_Eve = new TimeSpan(24, 0, 0) - tsCalIn;
+                        }
+
+                        addObj.Holi_OT3_0 += tsCalOut;
+
+                    }
 
                     addObj.Work_Total_OT = addObj.Work_OT1_5_Night + addObj.Work_OT1_5_Eve + addObj.Work_OT2;
                     addObj.Holi_Total_OT = addObj.Holi_OT2_0 + addObj.Holi_OT3_0 + addObj.Holi_OT3_0_Eve;
                     addObj.All_Total_OT = addObj.Work_Total_OT + addObj.Holi_Total_OT;
 
-                    await _wfContext.Driver_Outsource.AddAsync(addObj);
+                    //await _wfContext.Driver_Outsource.AddAsync(addObj);
+                    addList.Add(addObj);
                 }
                 else
                 {
@@ -342,10 +388,12 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                         Lunch = 0,
                         Taxi = 0
                     };
-                    await _wfContext.Driver_Outsource.AddAsync(addObj);
+                    //await _wfContext.Driver_Outsource.AddAsync(addObj);
+                    addList.Add(addObj);
                 }
 
             }
+            await _wfContext.Driver_Outsource.AddRangeAsync(addList);
             await _wfContext.SaveChangesAsync();
 
         }
