@@ -4,8 +4,8 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <RootNamespace>driver-api</RootNamespace>
-		<SpaRoot>..\driver-ui</SpaRoot>
+        <RootNamespace>driver_api</RootNamespace>
+		<SpaRoot>..\driver_ui</SpaRoot>
 		<SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
 		<SpaProxyServerUrl>https://localhost:3000</SpaProxyServerUrl>
     </PropertyGroup>

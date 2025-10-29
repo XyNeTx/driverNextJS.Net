@@ -4,6 +4,7 @@ import swAlert from "@/utils/SweetAlert2";
 import axios from "axios";
 import { usePathname } from "next/navigation";
 import { pageTitle } from "@/constants/pageTitle";
+import { useMemo } from "react";
 
 const Logout = async () => {
 
@@ -16,16 +17,9 @@ const Logout = async () => {
     {
         //console.log(isConfirm);
         if (isConfirm == true) {
-            axios.post("https://hmmtweb01.hinothailand.com/Drivers/Service.aspx", { Controller: "Logout" },
-                { headers:
-                    {
-                        "Content-Type": "application/json",
-                        "Access-Control-Allow-Origin": "*",
-                    },
-                    withCredentials: true
-                }
-            )
+            axios.post("https://hmmtweb01.hinothailand.com/Drivers/Service.aspx", { Controller: "Logout" })
             .then(function (response) {
+                console.log(response);
                 if (response) {
                     document.cookie = "BROWSERID= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
                     document.cookie = "BROWSERCURRENT= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
@@ -48,17 +42,20 @@ const toggleSidebar = () => {
     }
 };
 
-
-
 export default function Sidebar() {
-    const pathname = usePathname(); // e.g. "/RequestApprove"
-    //console.log(pathname);
-    const lastSegment = pathname.split("/").pop() ?? "not found";
-    //console.log(lastSegment);
+    const pathname = usePathname();
 
-    const currentPage = pageTitle.find(
-        (p) => p.urlName.toLowerCase() === lastSegment.toLowerCase()
-    );
+        // Find the last segment
+        const lastSegment = useMemo(() => pathname.split("/").pop() ?? "", [pathname]);
+
+        // Find the matching title
+        const currentPage = useMemo(
+            () =>
+            pageTitle.find(
+                (p) => p.urlName.toLowerCase() === lastSegment.toLowerCase()
+            ),
+            [lastSegment]
+        );
 
     return (
         <>

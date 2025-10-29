@@ -1,3 +1,8 @@
+export interface VM_Driver_Outsource_Report{
+    ReportList : Driver_OutSource[],
+    ReferReport : VM_Total_Report_Outsource,
+}
+
 export interface Driver_OutSource {
     ID : number,
     EmployeeCode : string,
@@ -22,7 +27,23 @@ export interface Driver_OutSource {
     Lunch : number
 }
 
-export default function TableReportOutSource({reportData}: {reportData : Driver_OutSource[]}){
+export interface VM_Total_Report_Outsource {
+    TotalWork_OT1_5_Night :string
+    TotalWork_Reg :string
+    TotalWork_OT1_5_Eve: string
+    TotalWork_OT2 :string
+    TotalWork_Total_OT :string
+    TotalHoli_OT3_0 :string
+    TotalHoli_OT2_0 :string
+    TotalHoli_OT3_0_Eve :string
+    TotalHoli_Total_OT :string
+    TotalAll_Total_OT :string
+    TotalTaxi :number
+    TotalLunch :number
+}
+
+
+export default function TableReportOutSource({reportData}: {reportData : VM_Driver_Outsource_Report}){
     return (
         <>
             <div className="">
@@ -64,7 +85,7 @@ export default function TableReportOutSource({reportData}: {reportData : Driver_
                         </tr>
                     </thead>
                     <tbody>
-                        {reportData.map((rep) => (
+                        {reportData.ReportList?.map((rep) => (
                             <tr key={rep.ID}>
                                 <td className='tdReport'>{rep.Check_In}</td>
                                 <td className='tdReport'>{rep.Check_Out}</td>
@@ -73,21 +94,73 @@ export default function TableReportOutSource({reportData}: {reportData : Driver_
                                 <td className='tdReport'>{rep.Use_NoUse}</td>
                                 <td className='tdReport'>{rep.Cal_Time_In}</td>
                                 <td className='tdReport'>{rep.Cal_Time_Out}</td>
-                                <td className='tdReport'>{rep.Work_OT1_5_Night}</td>
-                                <td className='tdReport'>{rep.Work_Reg}</td>
-                                <td className='tdReport'>{rep.Work_OT1_5_Eve}</td>
-                                <td className='tdReport'>{rep.Work_OT2}</td>
-                                <td className='tdReport'>{rep.Work_Total_OT}</td>
-                                <td className='tdReport'>{rep.Holi_OT3_0}</td>
-                                <td className='tdReport'>{rep.Holi_OT2_0}</td>
-                                <td className='tdReport'>{rep.Holi_OT3_0_Eve}</td>
-                                <td className='tdReport'>{rep.Holi_Total_OT}</td>
-                                <td className='tdReport'>{rep.All_Total_OT}</td>
-                                <td className='tdReport'>{(rep.Taxi * 125)}</td>
-                                <td className='tdReport'>{(rep.Lunch * 50)}</td>
+                                <td className='tdReport Work_OT1_5_Night'>{rep.Work_OT1_5_Night}</td>
+                                <td className='tdReport Work_Reg'>{rep.Work_Reg}</td>
+                                <td className='tdReport Work_OT1_5_Eve'>{rep.Work_OT1_5_Eve}</td>
+                                <td className='tdReport Work_OT2'>{rep.Work_OT2}</td>
+                                <td className='tdReport Work_Total_OT'>{rep.Work_Total_OT}</td>
+                                <td className='tdReport Holi_OT3_0'>{rep.Holi_OT3_0}</td>
+                                <td className='tdReport Holi_OT2_0'>{rep.Holi_OT2_0}</td>
+                                <td className='tdReport Holi_OT3_0_Eve'>{rep.Holi_OT3_0_Eve}</td>
+                                <td className='tdReport Holi_Total_OT'>{rep.Holi_Total_OT}</td>
+                                <td className='tdReport All_Total_OT'>{rep.All_Total_OT}</td>
+                                <td className='tdReport Taxi'>{(rep.Taxi * 125)}</td>
+                                <td className='tdReport Lunch'>{(rep.Lunch * 50)}</td>
                             </tr>
                         ))}
                     </tbody>
+                    <tfoot>
+                        {reportData.ReferReport ?
+                            (
+                            <>
+                                <tr>
+                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={5}>Total</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400"colSpan={2}></td>
+                                    <td id="totalWork_OT1_5_Night" className="text-center font-bold text-red-500 border-r border-b border-gray-400" >{reportData.ReferReport.TotalWork_OT1_5_Night}</td>
+                                    <td id="totalWork_Reg" className="text-center font-bold border-r text-red-500 border-b border-gray-400">{reportData.ReferReport.TotalWork_Reg}</td>
+                                    <td id="totalWork_OT1_5_Eve" className="text-center font-bold border-r text-red-500 border-b border-gray-400">{reportData.ReferReport.TotalWork_OT1_5_Eve}</td>
+                                    <td id="totalWork_OT2" className="text-center font-bold border-r text-red-500 border-b border-gray-400">{reportData.ReferReport.TotalWork_OT2}</td>
+                                    <td id="totalWork_Total_OT" className="text-center font-bold border-r text-red-500 border-b border-gray-400">{reportData.ReferReport.TotalWork_Total_OT}</td>
+                                    <td id="totalHoli_OT3_0" className="text-center font-bold border-r text-red-500 border-b border-gray-400">{reportData.ReferReport.TotalHoli_OT3_0}</td>
+                                    <td id="totalHoli_OT2_0" className="text-center font-bold border-r text-red-500 border-b border-gray-400">{reportData.ReferReport.TotalHoli_OT2_0}</td>
+                                    <td id="totalHoli_OT3_0_Eve" className="text-center font-bold border-r text-red-500 border-b border-gray-400">{reportData.ReferReport.TotalHoli_OT3_0_Eve}</td>
+                                    <td id="totalHoli_Total_OT" className="text-center font-bold border-r text-red-500 border-b border-gray-400">{reportData.ReferReport.TotalHoli_Total_OT}</td>
+                                    <td id="totalAll_Total_OT" className="text-center font-bold border-r text-red-500 border-b border-gray-400">{reportData.ReferReport.TotalAll_Total_OT}</td>
+                                    <td id="totalTaxi" className="text-center font-bold border-r border-b text-red-500 border-gray-400">{reportData.ReferReport.TotalTaxi}</td>
+                                    <td id="totalLunch" className="text-center font-bold border-r border-b text-red-500 border-gray-400">{reportData.ReferReport.TotalLunch}</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={5}>Total Invoice</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={6}></td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400">{reportData.ReferReport.TotalWork_Total_OT.replace(":15",":25").replace(":30",":50").replace(":45",":75")}</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={3}></td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400">{reportData.ReferReport.TotalHoli_Total_OT.replace(":15",":25").replace(":30",":50").replace(":45",":75")}</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400">{reportData.ReferReport.TotalAll_Total_OT.replace(":15",":25").replace(":30",":50").replace(":45",":75")}</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400">{reportData.ReferReport.TotalTaxi*125}</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400">{reportData.ReferReport.TotalLunch*50}</td>
+                                </tr>
+                                <tr>
+                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={5}>Accumulate OT Driver</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={11}></td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400">{reportData.ReferReport.TotalAll_Total_OT.replace(":15",":25").replace(":30",":50").replace(":45",":75")}</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={2}></td>
+                                </tr>
+                                <tr>
+                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={5}>Limit Time / Month</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={11}></td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400">100:00</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={2}></td>
+                                </tr>
+                                <tr>
+                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={5}>Remaining OT Driver (Over)</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={11}></td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400">{100-parseInt(reportData.ReferReport.TotalAll_Total_OT.split(':')[0])}:{reportData.ReferReport.TotalAll_Total_OT.split(':')[1]}</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={2}></td>
+                                </tr>
+                        </>
+                        ) : null
+                    }
+                    </tfoot>
                 </table>
             </div>
         </>

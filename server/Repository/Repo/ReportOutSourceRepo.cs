@@ -1,4 +1,5 @@
 using driver_api.Models;
+using driver_api.Models.ViewModels;
 using driver_api.Repository.IRepo;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -139,10 +140,11 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                             taxi++;
                         }
                     }
-                    if (tsCalOut - tsCalIn >= new TimeSpan(4, 0, 0))
+                    if ((CheckOut - CheckIn).TotalHours >= 4)
                     {
                         lunch++;
                     }
+
 
                     var isWorkingDay = calendarData.Any(x => x.CalendarDay.Date == each.Time_TodayIN!.Value.Date && x.CalendarWorking == "Working Day");
                     var isNextDayWorkingDay = calendarData.Any(x => x.CalendarDay.Date == each.Time_TodayIN!.Value.Date.AddDays(1) && x.CalendarWorking == "Working Day");
@@ -403,4 +405,78 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
     }
 
+    public async Task<VM_Total_Report_Outsource> SumCalculatedData(VM_CalReport vM_CalReport)
+    {
+        try
+        {
+            var yearMonth = DateTime.ParseExact(vM_CalReport.Year + vM_CalReport.Month, "yyyyMM", null);
+
+            var raw = await _wfContext.Driver_Outsource
+                .Where(x => x.EmployeeCode == vM_CalReport.EmployeeCode &&
+                            x.Check_In.Year == yearMonth.Year &&
+                            x.Check_In.Month == yearMonth.Month)
+                // No need to GroupBy since we filter to a single month
+                .Select(x => new
+                {
+                    Work_OT1_5_Night_Ticks = (x.Work_OT1_5_Night ).Ticks,
+                    Work_Reg_Ticks = (x.Work_Reg ).Ticks,
+                    Work_OT1_5_Eve_Ticks = (x.Work_OT1_5_Eve ).Ticks,
+                    Work_OT2_Ticks = (x.Work_OT2 ).Ticks,
+                    Work_Total_OT_Ticks = (x.Work_Total_OT ).Ticks,
+                    Holi_OT3_0_Ticks = (x.Holi_OT3_0 ).Ticks,
+                    Holi_OT2_0_Ticks = (x.Holi_OT2_0 ).Ticks,
+                    Holi_OT3_0_Eve_Ticks = (x.Holi_OT3_0_Eve ).Ticks,
+                    Holi_Total_OT_Ticks = (x.Holi_Total_OT ).Ticks,
+                    All_Total_OT_Ticks = (x.All_Total_OT ).Ticks,
+                    Taxi = x.Taxi,
+                    Lunch = x.Lunch,
+                }).ToListAsync();
+
+            if(raw.Count < 0)
+            {
+                throw new Exception("Please Calculate Report Outsource Before !");
+            }
+
+            // Aggregate in memory and convert ticks -> minutes
+            var result = new
+            {
+                TotalWork_OT1_5_Night = new TimeSpan(raw.Sum(r => r.Work_OT1_5_Night_Ticks)),
+                TotalWork_Reg = new TimeSpan(raw.Sum(r => r.Work_Reg_Ticks)),
+                TotalWork_OT1_5_Eve = new TimeSpan(raw.Sum(r => r.Work_OT1_5_Eve_Ticks)),
+                TotalWork_OT2 = new TimeSpan(raw.Sum(r => r.Work_OT2_Ticks)),
+                TotalWork_Total_OT = new TimeSpan(raw.Sum(r => r.Work_Total_OT_Ticks)),
+                TotalHoli_OT3_0 = new TimeSpan(raw.Sum(r => r.Holi_OT3_0_Ticks)),
+                TotalHoli_OT2_0 =   new TimeSpan(raw.Sum(r => r.Holi_OT2_0_Ticks)),
+                TotalHoli_OT3_0_Eve = new TimeSpan(raw.Sum(r => r.Holi_OT3_0_Eve_Ticks)),
+                TotalHoli_Total_OT = new TimeSpan(raw.Sum(r => r.Holi_Total_OT_Ticks)),
+                TotalAll_Total_OT = new TimeSpan(raw.Sum(r => r.All_Total_OT_Ticks)),
+                TotalTaxi = raw.Sum(r => r.Taxi),
+                TotalLunch = raw.Sum(r => r.Lunch),
+            };
+
+            var resultFormatted = new VM_Total_Report_Outsource
+            {
+                TotalWork_OT1_5_Night = $"{(int)result.TotalWork_OT1_5_Night.TotalHours:D2}:{(int)result.TotalWork_OT1_5_Night.Minutes:D2}",
+                TotalWork_Reg = $"{(int)result.TotalWork_Reg.TotalHours:D2}:{(int)result.TotalWork_Reg.Minutes:D2}",
+                TotalWork_OT1_5_Eve = $"{(int)result.TotalWork_OT1_5_Eve.TotalHours:D2}:{(int)result.TotalWork_OT1_5_Eve.Minutes:D2}",
+                TotalWork_OT2 = $"{(int)result.TotalWork_OT2.TotalHours:D2}:{(int)result.TotalWork_OT2.Minutes:D2}",
+                TotalWork_Total_OT = $"{(int)result.TotalWork_Total_OT.TotalHours:D2}:{(int)result.TotalWork_Total_OT.Minutes:D2}",
+                TotalHoli_OT3_0 = $"{(int)result.TotalHoli_OT3_0.TotalHours:D2}:{(int)result.TotalHoli_OT3_0.Minutes:D2}",
+                TotalHoli_OT2_0 = $"{(int)result.TotalHoli_OT2_0.TotalHours:D2}:{(int)result.TotalHoli_OT2_0.Minutes:D2}",
+                TotalHoli_OT3_0_Eve = $"{(int)result.TotalHoli_OT3_0_Eve.TotalHours:D2}:{(int)result.TotalHoli_OT3_0_Eve.Minutes:D2}",
+                TotalHoli_Total_OT = $"{(int)result.TotalHoli_Total_OT.TotalHours:D2}:{(int)result.TotalHoli_Total_OT.Minutes:D2}",
+                TotalAll_Total_OT = $"{(int)result.TotalAll_Total_OT.TotalHours:D2}:{(int)result.TotalAll_Total_OT.Minutes:D2}",
+                TotalTaxi = raw.Sum(r => r.Taxi),
+                TotalLunch = raw.Sum(r => r.Lunch),
+            };
+
+            //Console.WriteLine("success");
+
+            return resultFormatted;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Sum Calculated Data Error !" + ex.Message);
+        }
+    }
 }

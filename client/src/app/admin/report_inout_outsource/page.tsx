@@ -2,10 +2,8 @@
 import SelectDriver from "@/components/SelectDriver";
 import SelectYear from "@/components/SelectYear";
 import SelectMonth from "@/components/SelectMonth";
-import { Metadata } from "next";
-import { pageTitle } from "@/constants/pageTitle";
 import { useState } from "react";
-import TableReportOutSource, { Driver_OutSource } from "@/components/TableReportOutSource";
+import TableReportOutSource, { VM_Driver_Outsource_Report } from "@/components/TableReportOutSource";
 import showSwal from "@/utils/SweetAlert2";
 import CallAxios from "@/utils/CallAxios";
 
@@ -16,21 +14,21 @@ export interface VM_CallReport {
     Month : string
 };
 
-export async function GetReportData(_VM : VM_CallReport) : Promise<Driver_OutSource[]>{
+
+async function GetReportData<VM_Driver_Outsource_Report>(_VM : VM_CallReport) : Promise<VM_Driver_Outsource_Report>{
     try{
-        const response = await CallAxios<Driver_OutSource[]>({
+        const response:VM_Driver_Outsource_Report = await CallAxios<VM_Driver_Outsource_Report>({
             method: 'GET',
             url: '/api/ReportOutSource/GetReportDriverOutSource',
             params:_VM
         });
 
-        return response
+        return response;
     }
     catch (error){
         console.error(error);
-        return []
+        return {} as VM_Driver_Outsource_Report;
     }
-
 }
 
 
@@ -38,7 +36,7 @@ export default function ReportInOutOutSource(){
     const [empCode,setEmpCode] = useState<string>("");
     const [month,setMonth] = useState<string>("");
     const [year,setYear] = useState<string>("");
-    const [reportData,setReportData] = useState<Driver_OutSource[]>([]);
+    const [reportData,setReportData] = useState<VM_Driver_Outsource_Report>({} as VM_Driver_Outsource_Report);
     const [loading,setLoading] =useState<boolean>(false);
 
     const OnBtnClicked = async () => {
@@ -50,8 +48,14 @@ export default function ReportInOutOutSource(){
             })
         }
         setLoading(true);
-        const data = await GetReportData({EmployeeCode: empCode,Month: month,Year:year})
+        const _VM : VM_CallReport = {
+            EmployeeCode : empCode,
+            Year : year,
+            Month : month
+        }
+        const data = await GetReportData<VM_Driver_Outsource_Report>(_VM)
         setReportData(data);
+
         setLoading(false);
     }
 
