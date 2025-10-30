@@ -46,8 +46,8 @@ export interface VM_Total_Report_Outsource {
 export default function TableReportOutSource({reportData}: {reportData : VM_Driver_Outsource_Report}){
     return (
         <>
-            <div className="">
-                <table className="table-auto border-collapse border border-gray-400 mt-4 w-full overflow-y-auto overflow-x-auto">
+            <div className="block overflow-x-auto">
+                <table className="border rounded-l-4xl border-gray-400 mt-4 w-full ">
                     <thead >
                         <tr>
                             <th className="thReport1stRow" rowSpan={3}>Check IN</th>
@@ -114,48 +114,48 @@ export default function TableReportOutSource({reportData}: {reportData : VM_Driv
                             (
                             <>
                                 <tr>
-                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={5}>Total</td>
-                                    <td className="text-center font-bold border-r border-b border-gray-400"colSpan={2}></td>
-                                    <td id="totalWork_OT1_5_Night" className="text-center font-bold text-red-500 border-r border-b border-gray-400" >{reportData.ReferReport.TotalWork_OT1_5_Night}</td>
-                                    <td id="totalWork_Reg" className="text-center font-bold border-r text-red-500 border-b border-gray-400">{reportData.ReferReport.TotalWork_Reg}</td>
-                                    <td id="totalWork_OT1_5_Eve" className="text-center font-bold border-r text-red-500 border-b border-gray-400">{reportData.ReferReport.TotalWork_OT1_5_Eve}</td>
-                                    <td id="totalWork_OT2" className="text-center font-bold border-r text-red-500 border-b border-gray-400">{reportData.ReferReport.TotalWork_OT2}</td>
-                                    <td id="totalWork_Total_OT" className="text-center font-bold border-r text-red-500 border-b border-gray-400">{reportData.ReferReport.TotalWork_Total_OT}</td>
-                                    <td id="totalHoli_OT3_0" className="text-center font-bold border-r text-red-500 border-b border-gray-400">{reportData.ReferReport.TotalHoli_OT3_0}</td>
-                                    <td id="totalHoli_OT2_0" className="text-center font-bold border-r text-red-500 border-b border-gray-400">{reportData.ReferReport.TotalHoli_OT2_0}</td>
-                                    <td id="totalHoli_OT3_0_Eve" className="text-center font-bold border-r text-red-500 border-b border-gray-400">{reportData.ReferReport.TotalHoli_OT3_0_Eve}</td>
-                                    <td id="totalHoli_Total_OT" className="text-center font-bold border-r text-red-500 border-b border-gray-400">{reportData.ReferReport.TotalHoli_Total_OT}</td>
-                                    <td id="totalAll_Total_OT" className="text-center font-bold border-r text-red-500 border-b border-gray-400">{reportData.ReferReport.TotalAll_Total_OT}</td>
-                                    <td id="totalTaxi" className="text-center font-bold border-r border-b text-red-500 border-gray-400">{reportData.ReferReport.TotalTaxi}</td>
-                                    <td id="totalLunch" className="text-center font-bold border-r border-b text-red-500 border-gray-400">{reportData.ReferReport.TotalLunch}</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1" colSpan={5}>Total</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1"colSpan={2}></td>
+                                    <td id="totalWork_OT1_5_Night" className="text-center font-bold text-red-500 border-r border-b border-gray-400 p-1" >{reportData.ReferReport.TotalWork_OT1_5_Night}</td>
+                                    <td id="totalWork_Reg" className="text-center font-bold border-r text-red-500 border-b border-gray-400 p-1">{reportData.ReferReport.TotalWork_Reg}</td>
+                                    <td id="totalWork_OT1_5_Eve" className="text-center font-bold border-r text-red-500 border-b border-gray-400 p-1">{reportData.ReferReport.TotalWork_OT1_5_Eve}</td>
+                                    <td id="totalWork_OT2" className="text-center font-bold border-r text-red-500 border-b border-gray-400 p-1">{reportData.ReferReport.TotalWork_OT2}</td>
+                                    <td id="totalWork_Total_OT" className="text-center font-bold border-r text-red-500 border-b border-gray-400 p-1">{reportData.ReferReport.TotalWork_Total_OT}</td>
+                                    <td id="totalHoli_OT3_0" className="text-center font-bold border-r text-red-500 border-b border-gray-400 p-1">{reportData.ReferReport.TotalHoli_OT3_0}</td>
+                                    <td id="totalHoli_OT2_0" className="text-center font-bold border-r text-red-500 border-b border-gray-400 p-1">{reportData.ReferReport.TotalHoli_OT2_0}</td>
+                                    <td id="totalHoli_OT3_0_Eve" className="text-center font-bold border-r text-red-500 border-b border-gray-400 p-1">{reportData.ReferReport.TotalHoli_OT3_0_Eve}</td>
+                                    <td id="totalHoli_Total_OT" className="text-center font-bold border-r text-red-500 border-b border-gray-400 p-1">{reportData.ReferReport.TotalHoli_Total_OT}</td>
+                                    <td id="totalAll_Total_OT" className="text-center font-bold border-r text-red-500 border-b border-gray-400 p-1">{reportData.ReferReport.TotalAll_Total_OT}</td>
+                                    <td id="totalTaxi" className="text-center font-bold border-r border-b text-red-500 border-gray-400 p-1">{reportData.ReferReport.TotalTaxi}</td>
+                                    <td id="totalLunch" className="text-center font-bold border-r border-b text-red-500 border-gray-400 p-1">{reportData.ReferReport.TotalLunch}</td>
                                 </tr>
                                 <tr>
-                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={5}>Total Invoice</td>
-                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={6}></td>
-                                    <td className="text-center font-bold border-r border-b border-gray-400">{reportData.ReferReport.TotalWork_Total_OT.replace(":15",":25").replace(":30",":50").replace(":45",":75")}</td>
-                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={3}></td>
-                                    <td className="text-center font-bold border-r border-b border-gray-400">{reportData.ReferReport.TotalHoli_Total_OT.replace(":15",":25").replace(":30",":50").replace(":45",":75")}</td>
-                                    <td className="text-center font-bold border-r border-b border-gray-400">{reportData.ReferReport.TotalAll_Total_OT.replace(":15",":25").replace(":30",":50").replace(":45",":75")}</td>
-                                    <td className="text-center font-bold border-r border-b border-gray-400">{reportData.ReferReport.TotalTaxi*125}</td>
-                                    <td className="text-center font-bold border-r border-b border-gray-400">{reportData.ReferReport.TotalLunch*50}</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1" colSpan={5}>Total Invoice</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1" colSpan={6}></td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1">{reportData.ReferReport.TotalWork_Total_OT.replace(":15",":25").replace(":30",":50").replace(":45",":75")}</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1" colSpan={3}></td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1">{reportData.ReferReport.TotalHoli_Total_OT.replace(":15",":25").replace(":30",":50").replace(":45",":75")}</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1">{reportData.ReferReport.TotalAll_Total_OT.replace(":15",":25").replace(":30",":50").replace(":45",":75")}</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1">{reportData.ReferReport.TotalTaxi*125}</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1">{reportData.ReferReport.TotalLunch*50}</td>
                                 </tr>
                                 <tr>
-                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={5}>Accumulate OT Driver</td>
-                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={11}></td>
-                                    <td className="text-center font-bold border-r border-b border-gray-400">{reportData.ReferReport.TotalAll_Total_OT.replace(":15",":25").replace(":30",":50").replace(":45",":75")}</td>
-                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={2}></td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1" colSpan={5}>Accumulate OT Driver</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1" colSpan={11}></td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1">{reportData.ReferReport.TotalAll_Total_OT}</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1" colSpan={2}></td>
                                 </tr>
                                 <tr>
-                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={5}>Limit Time / Month</td>
-                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={11}></td>
-                                    <td className="text-center font-bold border-r border-b border-gray-400">100:00</td>
-                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={2}></td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1" colSpan={5}>Limit Time / Month</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1" colSpan={11}></td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1">100:00</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1" colSpan={2}></td>
                                 </tr>
                                 <tr>
-                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={5}>Remaining OT Driver (Over)</td>
-                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={11}></td>
-                                    <td className="text-center font-bold border-r border-b border-gray-400">{100-parseInt(reportData.ReferReport.TotalAll_Total_OT.split(':')[0])}:{reportData.ReferReport.TotalAll_Total_OT.split(':')[1]}</td>
-                                    <td className="text-center font-bold border-r border-b border-gray-400" colSpan={2}></td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1" colSpan={5}>Remaining OT Driver (Over)</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1" colSpan={11}></td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1">{100-parseInt(reportData.ReferReport.TotalAll_Total_OT.split(':')[0])}:{reportData.ReferReport.TotalAll_Total_OT.split(':')[1]}</td>
+                                    <td className="text-center font-bold border-r border-b border-gray-400 p-1" colSpan={2}></td>
                                 </tr>
                         </>
                         ) : null

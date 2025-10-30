@@ -196,9 +196,13 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                             //change time in to 07:30
                             tsCalIn = ts07_30;
                         }
-                        if (tsCalOut <= ts16_30)
+                        if (tsCalOut >= ts07_30 && tsCalOut <= ts16_30)
                         {
                             addObj.Work_Reg = (tsCalOut - tsCalIn) < new TimeSpan(4, 0, 0) ? new TimeSpan(4, 0, 0) : tsCalOut - ts07_30;
+                            if((tsCalOut - tsCalIn) < new TimeSpan(4, 0, 0))
+                            {
+                                addObj.Cal_Time_Out = addObj.Cal_Time_In.AddHours(4);
+                            }
                             addObj.Work_Reg = addObj.Work_Reg >= new TimeSpan(5, 0, 0) ? addObj.Work_Reg - new TimeSpan(1, 0, 0) : addObj.Work_Reg;
                         }
                         else
@@ -233,9 +237,13 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                             tsCalIn = ts07_30;
                         }
 
-                        if (tsCalOut <= ts16_30)
+                        if (tsCalOut >= ts07_30 && tsCalOut <= ts16_30)
                         {
                             addObj.Holi_OT2_0 = (tsCalOut - tsCalIn) < new TimeSpan(4, 0, 0) ? new TimeSpan(4, 0, 0) : tsCalOut - tsCalIn;
+                            if((tsCalOut - tsCalIn) < new TimeSpan(4, 0, 0))
+                            {
+                                addObj.Cal_Time_Out = addObj.Cal_Time_In.AddHours(4);
+                            }
                             addObj.Holi_OT2_0 = addObj.Holi_OT2_0 >= new TimeSpan(5, 0, 0) ? addObj.Holi_OT2_0 - new TimeSpan(1, 0, 0) : addObj.Holi_OT2_0;
                         }
                         else

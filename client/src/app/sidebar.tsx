@@ -5,6 +5,7 @@ import axios from "axios";
 import { usePathname } from "next/navigation";
 import { pageTitle } from "@/constants/pageTitle";
 import { useMemo } from "react";
+import ThemeToggle from "@/components/ToggleTheme";
 
 const Logout = async () => {
 
@@ -40,6 +41,8 @@ const toggleSidebar = () => {
         sidebar.classList.toggle("hidden");
         main?.classList.toggle("sidebar-hidden");
     }
+
+
 };
 
 export default function Sidebar() {
@@ -63,7 +66,7 @@ export default function Sidebar() {
             <div className="nav-header">
                 <div>
                     <a href="https://hmmtweb01.hinothailand.com/Drivers/Home.aspx" className="logo">
-                        <AppImage src="/bus-driver.png" alt="Logo" width={75} height={75} />
+                        <AppImage src="/bus-driver.png" alt="Logo" width={50} height={50} />
                         <span className="sr-only">Driver NextJS</span>
                     </a>
                 </div>
@@ -84,21 +87,37 @@ export default function Sidebar() {
                         )
                     }
                 </div>
-                <div className="mr-8">
+                <ThemeToggle/>
+                <div className="ms-2 mr-8">
                     <a href="#" onClick={Logout} className="btn-logout font-bold">Sitthiporn Polmart</a>
                 </div>
             </div>
 
             <aside>
-                <nav className="flex flex-col gap-4">
+                <nav className="flex flex-col gap-4 ">
                     <ul className="border-b">
                         <li>
-                            <a className="nav-link" href="https://hmmtweb01.hinothailand.com/Drivers/Home.aspx">หน้าแรก</a>
+                            <a className="nav-link" href="https://hmmtweb01.hinothailand.com/Drivers/Home.aspx">Home</a>
                         </li>
                     </ul>
                     <ul className="border-b">
                         <li>
-                            <a className="nav-link" href="https://hmmtweb01.hinothailand.com/Drivers/Driver_InOutMain.aspx">คนขับรถ</a>
+                            <a className="nav-link" href="https://hmmtweb01.hinothailand.com/Drivers/Driver_ListDriver.aspx">Driver</a>
+                        </li>
+                    </ul>
+                    <ul className="border-b">
+                        <li>
+                            <a className="nav-link" href="https://hmmtweb01.hinothailand.com/Drivers/Boss_listboss.aspx">Boss</a>
+                        </li>
+                    </ul>
+                    <ul className="border-b">
+                        <li>
+                            <a className="nav-link" href="https://hmmtweb01.hinothailand.com/Drivers/Admin_MenuDriver.aspx">Report Driver</a>
+                        </li>
+                    </ul>
+                    <ul className="border-b">
+                        <li>
+                            <a className="nav-link" href="https://hmmtweb01.hinothailand.com/Drivers/Admin_MenuBoss.aspx">Report Boss</a>
                         </li>
                     </ul>
                 </nav>

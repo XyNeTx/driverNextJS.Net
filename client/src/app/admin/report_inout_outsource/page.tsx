@@ -60,7 +60,7 @@ export default function ReportInOutOutSource(){
     }
 
     return (
-        <div className="p-2 ">
+        <div className="p-2">
             <h3 className="font-bold text-2xl">ค้นหาข้อมูลคนขับรถ</h3>
             <div className="flex-row-reverse mt-4 mb-4 flex">
                 <div className="ps-2">

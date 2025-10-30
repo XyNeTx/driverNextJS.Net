@@ -12,11 +12,27 @@
     --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: dark) {
     :root {
     --background: #0a0a0a;
     --foreground: #ededed;
     }
+} */
+
+[data-theme="dark"] {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+}
+
+[data-theme="dark"] select option{
+    background: var(--color-background);
+    color: var(--color-foreground);
+}
+[data-theme="dark"] aside {
+    @apply w-48 h-[calc(100vh)] fixed top-16.5 left-0 p-4 border-r bg-black text-white;
+}
+[data-theme="dark"] .nav{
+    @apply fixed w-full bg-black text-white;
 }
 
 body {
@@ -26,17 +42,17 @@ body {
 }
 
 main {
-    @apply pl-52 pt-28 p-4 h-[calc(100vh-96px)];
+    @apply pl-52 pt-24 p-4
 }
 
 main.sidebar-hidden {
     @apply pl-4;
 }
 
-
 aside {
-    @apply w-48 h-[calc(100vh-96px)] fixed top-24 left-0 p-4 border-r bg-white;
+    @apply w-48 h-[calc(100vh)] fixed top-16.5 left-0 p-4 border-r bg-indigo-900 text-white;
 }
+
 
 .scrollbar-hidden::-webkit-scrollbar {
     display: none;
@@ -47,11 +63,11 @@ aside {
 }
 
 .nav{
-    @apply fixed w-full bg-white;
+    @apply fixed w-full bg-indigo-900 text-white;
 }
 
 .nav-header{
-    @apply ml-4 flex flex-row items-center justify-between w-full;
+    @apply ml-4 flex flex-row items-center justify-between w-full ;
 }
 
 .nav-link {
@@ -59,17 +75,17 @@ aside {
 }
 
 .thReport1stRow {
-    @apply border border-gray-400 text-center p-2;
+    @apply border border-gray-400 text-center p-2 rounded-s-lg;
 }
 
 .thReport2ndRow {
-    @apply border-r border-gray-400 text-center p-2;
+    @apply border-r border-gray-400 text-center p-2 rounded-s-lg;
 }
 
 .thReport3rdRow{
-    @apply border-b border-r border-gray-400 text-center p-2;
+    @apply border-b border-r border-gray-400 text-center p-2 rounded-s-lg;
 }
 
 .tdReport {
-    @apply border border-gray-400 text-center p-2;
+    @apply border border-gray-400 text-center p-2 rounded-s-lg;
 }
