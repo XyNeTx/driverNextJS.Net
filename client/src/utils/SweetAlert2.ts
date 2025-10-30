@@ -1,6 +1,4 @@
-'use client';
 import swal from 'sweetalert2';
-
 
 class option {
     title?: string;
@@ -11,15 +9,15 @@ class option {
     cancelButtonText?: string;
 }
 
-export default function showSwal(option: option) {
-    return swal.fire({
+export default async function showSwal(option: option) : Promise<boolean> {
+    return await swal.fire({
         title: option.title,
         text: option.text,
-        icon: option.icon,
+        icon: option.icon ?? "info",
         showCancelButton: option.showCancelButton ?? false,
         confirmButtonText: option.confirmButtonText ?? "ตกลง",
         cancelButtonText: option.cancelButtonText ?? "ยกเลิก",
-    }).then((result) => {
-        return result;
+    }).then((result) : boolean => {
+        return result.isConfirmed;
     });
 }

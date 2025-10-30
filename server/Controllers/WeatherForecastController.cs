@@ -1,3 +1,4 @@
+using driver_api.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace driver_api.Controllers;

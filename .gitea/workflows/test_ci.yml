@@ -1,0 +1,30 @@
+name: Local Gitea CI (No Checkout Folder)
+
+on:
+  push:
+    branches:
+      - Feature
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Show workspace path and files
+      - name: Show workspace
+        run: |
+          echo "Workspace path: $GITHUB_WORKSPACE"
+          ls -la $GITHUB_WORKSPACE
+
+      # 2. Install .NET SDK (check version)
+      - name: Install .NET SDK
+        run: dotnet --version
+
+      # 3. Restore NuGet dependencies
+      - name: Restore dependencies
+        run: dotnet restore $GITHUB_WORKSPACE/DriverNextJS.sln
+
+      # 4. Build ASP.NET project
+      - name: Build project
+        run: dotnet build $GITHUB_WORKSPACE/DriverNextJS.sln --configuration Release

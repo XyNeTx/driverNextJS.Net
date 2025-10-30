@@ -10,6 +10,7 @@
 /client/node_modules
 /client/.pnp
 /client/obj
+/client/out
 /client.pnp.*
 /client.yarn/*
 !.yarn/patches

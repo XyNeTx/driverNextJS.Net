@@ -1,67 +1,99 @@
+'use client'
+import SelectDriver from "@/components/SelectDriver";
+import SelectYear from "@/components/SelectYear";
+import SelectMonth from "@/components/SelectMonth";
+import { useState } from "react";
+import TableReportOutSource, { VM_Driver_Outsource_Report } from "@/components/TableReportOutSource";
+import showSwal from "@/utils/SweetAlert2";
+import CallAxios from "@/utils/CallAxios";
 
-export default function ReportInOutOutSource() {
+
+export interface VM_CallReport {
+    EmployeeCode : string,
+    Year : string,
+    Month : string
+};
+
+
+async function GetReportData<VM_Driver_Outsource_Report>(_VM : VM_CallReport) : Promise<VM_Driver_Outsource_Report>{
+    try{
+        const response:VM_Driver_Outsource_Report = await CallAxios<VM_Driver_Outsource_Report>({
+            method: 'GET',
+            url: '/api/ReportOutSource/GetReportDriverOutSource',
+            params:_VM
+        });
+
+        return response;
+    }
+    catch (error){
+        console.error(error);
+        return {} as VM_Driver_Outsource_Report;
+    }
+}
+
+
+export default function ReportInOutOutSource(){
+    const [empCode,setEmpCode] = useState<string>("");
+    const [month,setMonth] = useState<string>("");
+    const [year,setYear] = useState<string>("");
+    const [reportData,setReportData] = useState<VM_Driver_Outsource_Report>({} as VM_Driver_Outsource_Report);
+    const [loading,setLoading] =useState<boolean>(false);
+
+    const OnBtnClicked = async () => {
+        if (!empCode || !month || !year){
+            return showSwal({
+                icon : "error",
+                title : "Invalid Input",
+                text : "กรุณาเลือก คนขับ เดือน และ ปี ให้ครบก่อน"
+            })
+        }
+        setLoading(true);
+        const _VM : VM_CallReport = {
+            EmployeeCode : empCode,
+            Year : year,
+            Month : month
+        }
+        const data = await GetReportData<VM_Driver_Outsource_Report>(_VM)
+        setReportData(data);
+
+        setLoading(false);
+    }
+
     return (
-        <div className="p-2 ">
+        <div className="p-2">
             <h3 className="font-bold text-2xl">ค้นหาข้อมูลคนขับรถ</h3>
-
             <div className="flex-row-reverse mt-4 mb-4 flex">
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    ค้นหา
-                </button>
-                <select title="เลือกคนขับรถ" className="border border-gray-300 rounded-md p-2 mr-2">
-                    <option> -- เลือกคนขับรถ -- </option>
-                </select>
-                <select title="เลือกเดือน" className="border border-gray-300 rounded-md p-2 mr-2">
-                    <option> -- เลือกเดือน -- </option>
-                </select>
-                <select title="เลือกปี" className="border border-gray-300 rounded-md p-2 mr-2">
-                    <option> -- เลือกปี -- </option>
-                </select>
+                <div className="ps-2">
+                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        อัพเดทและค้นหา
+                    </button>
+                </div>
+                <div>
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        onClick={OnBtnClicked}>
+                        {loading ? 'กำลังค้นหา...' : 'ค้นหา'}
+                    </button>
+                </div>
+                <SelectDriver value={empCode} onChange={setEmpCode} />
+                <SelectMonth  value={month} onChange={setMonth} />
+                <SelectYear  value={year} onChange={setYear} />
             </div>
 
             <div className="block mt-4 mb-4">
                 ตารางแสดงข้อมูลคนขับรถ
-                <div className="overflow-x-hidden">
-                    <table className="table-auto border-collapse border border-gray-400 mt-4 w-full">
-                        <thead >
-                            <tr className="border border-gray-400">
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>CheckIN</th>
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>CheckOut</th>
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>Job Type</th>
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>Temp Drive</th>
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>Use/No Use</th>
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>Cal Time IN</th>
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>Cal Time OUT</th>
-                                <th className="border border-gray-400 text-center p-2" colSpan={5}>Working Day</th>
-                                <th className="border border-gray-400 text-center p-2" colSpan={4}>Holiday</th>
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>Total OT</th>
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>Taxi</th>
-                                <th className="border border-gray-400 text-center p-2" rowSpan={3}>Lunch</th>
-                            </tr>
-                            <tr>
-                                <th className="border-r text-center p-2 " >OT1.5</th>
-                                <th className="border-r text-center p-2 " >Regular Time</th>
-                                <th className="border-r text-center p-2 " >OT1.5</th>
-                                <th className="border-r text-center p-2 " >OT2.0</th>
-                                <th className="border-r text-center p-2 border border-gray-400" rowSpan={2} >Total OT</th>
-                                <th className="border-r text-center p-2 " >OT3.0</th>
-                                <th className="border-r text-center p-2 " >OT2.0</th>
-                                <th className="border-r text-center p-2 " >OT3.0</th>
-                                <th className="border-r text-center p-2 border border-gray-400" rowSpan={2} >Total OT</th>
-                            </tr>
-                            <tr>
-                                <th className="border-b border-r border-gray-400 text-center p-2" >00:01 - 7:29</th>
-                                <th className="border-b border-r border-gray-400 text-center p-2" >07:30 - 16:30</th>
-                                <th className="border-b border-r border-gray-400 text-center p-2" >16:31 - 22:00</th>
-                                <th className="border-b border-r border-gray-400 text-center p-2" >22:01 - 00:00</th>
-                                <th className="border-b border-r border-gray-400 text-center p-2" >00:01 - 07:29</th>
-                                <th className="border-b border-r border-gray-400 text-center p-2" >07:30 - 16:30</th>
-                                <th className="border-b border-r border-gray-400 text-center p-2" >16:31 - 00:00</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
 
+                <TableReportOutSource reportData={reportData}/>
+
+            </div>
+
+            <div className="block text-red-600 text-sm">
+                <p>Job Type Describe </p>
+                <p>1 : In Working Day Out in Same Day</p>
+                <p>2 : In Holiday Out in Same Day</p>
+                <p>3 : In Working Day Out in Holiday</p>
+                <p>4 : In Holiday Out in Working Day</p>
+                <p>5 : In Working Day Out in Another Working Day</p>
+                <p>6 : In Holiday Out in Another Holiday</p>
             </div>
 
         </div>

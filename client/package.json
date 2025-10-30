@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "dev": "next dev",
     "devC": "concurrently \"npm run next\" \"npm run dotnet\"",
     "nextturbo": "next dev --turbopack",
-    "dev": "next dev",
+    "next": "next dev",
     "dotnet": "cd ../server && dotnet watch run",
     "build": "next build",
     "buildturbo": "next build --turbopack",

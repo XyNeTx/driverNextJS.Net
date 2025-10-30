@@ -5,23 +5,27 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>driver_api</RootNamespace>
-		<SpaRoot>..\driverreact.client</SpaRoot>
+		<SpaRoot>..\driver_ui</SpaRoot>
 		<SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
 		<SpaProxyServerUrl>https://localhost:3000</SpaProxyServerUrl>
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.20" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.20" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.20" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.20" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 		<PackageReference Include="Microsoft.AspNetCore.SpaProxy">
 			<Version>7.*-*</Version>
 		</PackageReference>
     </ItemGroup>
 
-    <ItemGroup>
+    <!-- <ItemGroup>
 	    <ProjectReference Include="..\driverreact.client\driverreact.client.esproj">
 		    <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
 	    </ProjectReference>
-    </ItemGroup>
+    </ItemGroup> -->
 
 </Project>
