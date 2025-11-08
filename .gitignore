@@ -2,17 +2,17 @@
 
 #server
 /packages
-/server/obj
-/server/bin
+/backend/obj
+/backend/bin
 /.vs
 
 # dependencies
-/client/node_modules
-/client/.pnp
-/client/obj
-/client/out
-/client.pnp.*
-/client.yarn/*
+/frontend/node_modules
+/frontend/.pnp
+/frontend/obj
+/frontend/out
+/frontend.pnp.*
+/frontend.yarn/*
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
@@ -22,11 +22,11 @@
 /coverage
 
 # next.js
-/client/.next/
-/client/out/
+/frontend/.next/
+/frontend/out/
 
 # production
-/client/build
+/frontend/build
 
 # misc
 .DS_Store

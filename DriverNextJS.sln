@@ -2,9 +2,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "driver_api", "server\driver_api.csproj", "{23786336-E5FE-C19D-141E-081C2FC35E58}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "driver_api", "backend\driver_api.csproj", "{23786336-E5FE-C19D-141E-081C2FC35E58}"
 EndProject
-Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "driver_ui", "client\driver_ui.esproj", "{BDE2BA0F-E721-FE8A-E520-E5AE83D3AE89}"
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "driver_ui", "frontend\driver_ui.esproj", "{BDE2BA0F-E721-FE8A-E520-E5AE83D3AE89}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

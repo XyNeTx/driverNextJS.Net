@@ -2,7 +2,7 @@
 import SelectDriver from "@/components/SelectDriver";
 import SelectYear from "@/components/SelectYear";
 import SelectMonth from "@/components/SelectMonth";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import TableReportOutSource, { VM_Driver_Outsource_Report } from "@/components/TableReportOutSource";
 import Swal from "@/utils/SweetAlert2";
 import Axios from "@/utils/CallAxios";
@@ -22,6 +22,27 @@ async function GetReportData<VM_Driver_Outsource_Report>(_VM : VM_CallReport) : 
             url: '/api/ReportOutSource/GetReportDriverOutSource',
             params:_VM,
 
+        });
+
+        return response;
+    }
+    catch (error){
+        console.error(error);
+            Swal({
+            icon:'error',
+            title: "Error",
+            text: "Can't Get Report Driver Outsource"
+        })
+        return {} as VM_Driver_Outsource_Report;
+    }
+}
+
+async function RefreshReportData<VM_Driver_Outsource_Report>(_VM : VM_CallReport) : Promise<VM_Driver_Outsource_Report>{
+    try{
+        const response:VM_Driver_Outsource_Report = await Axios<VM_Driver_Outsource_Report>({
+            method: 'GET',
+            url: '/api/ReportOutSource/RefreshReportDriverOutSource',
+            params:_VM,
         });
 
         return response;
@@ -66,13 +87,34 @@ export default function ReportInOutOutSource(){
         setLoading(false);
     }
 
+    const RefreshClicked = async () => {
+        if (!empCode || !month || !year){
+            return Swal({
+                icon : "error",
+                title : "Invalid Input",
+                text : "กรุณาเลือก คนขับ เดือน และ ปี ให้ครบก่อน"
+            })
+        }
+        setLoading(true);
+        setReportData({} as VM_Driver_Outsource_Report);
+        const _VM : VM_CallReport = {
+            EmployeeCode : empCode,
+            Year : year,
+            Month : month
+        }
+        const data = await RefreshReportData<VM_Driver_Outsource_Report>(_VM)
+        setReportData(data);
+
+        setLoading(false);
+    }
+
     return (
-        <div className="p-2 min-w-full">
+        <div className="p-2">
             <h3 className="font-bold text-2xl">ค้นหาข้อมูลคนขับรถ</h3>
             <div className="flex-row-reverse mt-4 mb-4 flex">
                 <div className="ps-2">
-                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                        อัพเดทและค้นหา
+                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={RefreshClicked}>
+                        {loading ? 'คำนวณข้อมูล . . .' : 'อัพเดทและค้นหา'}
                     </button>
                 </div>
                 <div>
@@ -81,9 +123,13 @@ export default function ReportInOutOutSource(){
                         {loading ? 'กำลังค้นหา...' : 'ค้นหา'}
                     </button>
                 </div>
-                <SelectDriver value={empCode} onChange={setEmpCode} />
-                <SelectMonth  value={month} onChange={setMonth} />
-                <SelectYear  value={year} onChange={setYear} />
+                <Suspense fallback={<p>กำลังโหลดข้อมูลรายชื่อคนขับรถ</p>}>
+
+                    <SelectDriver value={empCode} onChange={setEmpCode} />
+                    <SelectMonth  value={month} onChange={setMonth} />
+                    <SelectYear  value={year} onChange={setYear} />
+
+                </Suspense>
             </div>
 
             <div className="block mt-4 mb-4">

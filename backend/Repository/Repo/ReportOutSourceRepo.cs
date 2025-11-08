@@ -41,19 +41,14 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                 && x.Check_In.Year == yearMonth.Year
                 && x.EmployeeCode == vM_CalReport.EmployeeCode).ToListAsync();
 
-            // if (data.Count > 0)
-            // {
-            //     return data;
-            // }
-            // else
-            // {
-            await CalculateOutsourceReportAsync(vM_CalReport.EmployeeCode, vM_CalReport.Year, vM_CalReport.Month);
-
-            data = await _wfContext.Driver_Outsource.AsNoTracking()
-            .Where(x => x.Check_In.Month == yearMonth.Month
-            && x.Check_In.Year == yearMonth.Year
-            && x.EmployeeCode == vM_CalReport.EmployeeCode).ToListAsync();
-
+            if (data.Count > 0)
+            {
+                return data;
+            }
+            else
+            {
+                data = await CalculateOutsourceReportAsync(vM_CalReport.EmployeeCode, vM_CalReport.Year, vM_CalReport.Month);
+            }
             return data;
             //}
 
@@ -64,7 +59,21 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
     }
 
-    private async Task CalculateOutsourceReportAsync(string EmployeeCode, string Year, string Month)
+    public async Task<List<Driver_Outsource>> RefreshReportDriverOutSourceAsync(VM_CalReport vM_CalReport)
+    {
+        try
+        {
+            var yearMonth = DateTime.ParseExact(vM_CalReport.Year + vM_CalReport.Month, "yyyyMM", null);
+            var data = await CalculateOutsourceReportAsync(vM_CalReport.EmployeeCode, vM_CalReport.Year, vM_CalReport.Month);
+            return data;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Cant get Report Driver Outsource");
+        }
+    }
+
+    private async Task<List<Driver_Outsource>> CalculateOutsourceReportAsync(string EmployeeCode, string Year, string Month)
     {
         var ts00_00 = new TimeSpan(0, 0, 0);
         var ts22_00 = new TimeSpan(22, 0, 0);
@@ -435,6 +444,8 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
             }
             await _wfContext.Driver_Outsource.AddRangeAsync(addList);
             await _wfContext.SaveChangesAsync();
+
+            return addList;
 
         }
         catch (Exception ex)

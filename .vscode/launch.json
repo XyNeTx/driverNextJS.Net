@@ -8,29 +8,23 @@
             "name": "C#: DriverNextJS Debug",
             "type": "dotnet",
             "request": "launch",
-            "projectPath": "${workspaceFolder}/server/driver_api.csproj",
-        },
-        {
-            "name": "C#: DriverNextJS Watch",
-            "type": "node-terminal",
-            "request": "launch",
-            "command": "dotnet watch run",
-            "cwd": "${workspaceFolder}/server"
+            "projectPath": "${workspaceFolder}/backend/driver_api.csproj",
         },
         {
             "name": "NextJS: npm run dev",
             "command": "npm run dev",
             "request": "launch",
-            "cwd": "${workspaceFolder}/client",
+            "cwd": "${workspaceFolder}/frontend",
             "type": "node-terminal",
         },
         {
             "name": "NextJS: npm run build",
             "command": "npm run build",
             "request": "launch",
-            "cwd": "${workspaceFolder}/client",
+            "cwd": "${workspaceFolder}/frontend",
             "type": "node-terminal",
         },
+
     ],
     "compounds": [
         {

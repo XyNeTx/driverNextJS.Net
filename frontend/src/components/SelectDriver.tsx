@@ -1,5 +1,5 @@
 'use client'
-import Axios from "@/utils/CallAxios";
+import CallAxios from "@/utils/CallAxios";
 import { useEffect,useState } from "react";
 
 interface Driver {
@@ -11,10 +11,10 @@ interface Driver {
 async function GetDriverName() : Promise<Driver[]>{
     try
     {
-        const response = await Axios<Driver[]>({
+        const response : Driver[] = await CallAxios({
             method : 'GET',
-            url : '/api/ReportOutSource/GetDriverName',
-        });
+            url : '/api/ReportOutSource/GetDriverName'
+        })
         //console.log(response);
         return response;
     }
@@ -44,7 +44,6 @@ export default function SelectDriver({value,onChange}: SelectProps) {
     },[]);
 
     return (
-        <>
         <select
             value={value}
             onChange={(e)=> onChange(e.target.value)}
@@ -55,6 +54,5 @@ export default function SelectDriver({value,onChange}: SelectProps) {
                     <option key={driver.ID} value={driver.EmployeeCode}>{driver.DriverName}</option>
                 ))}
         </select>
-        </>
     )
 }

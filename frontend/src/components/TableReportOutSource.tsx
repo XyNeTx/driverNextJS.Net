@@ -45,8 +45,8 @@ export interface VM_Total_Report_Outsource {
 export default function TableReportOutSource({reportData}: {reportData : VM_Driver_Outsource_Report}){
     return (
         <>
-            <div className="max-h-140 overflow-y-scroll overflow-x-hidden border border-gray-400 border-l-4 rounded-l-xl border-l-red-400 dark:border-white" >
-            <table className="mt-4 min-w-full border-collapse table-auto">
+            <div className="flex max-h-200 overflow-y-scroll border border-gray-400 border-l-4 rounded-l-xl border-l-red-400 dark:border-white" >
+            <table className="mt-4">
                 <thead className="sticky top-0 z-10">
                     <tr>
                         <th className="thReport1stRow" rowSpan={3}>Check IN</th>
@@ -83,7 +83,7 @@ export default function TableReportOutSource({reportData}: {reportData : VM_Driv
                         <th className="thReport3rdRow">16:31 <p>-</p> 00:00</th>
                     </tr>
                 </thead>
-                <tbody className="overflow-y-auto">
+                <tbody>
                     {reportData.ReportList?.map((rep) => (
                         <tr key={rep.ID}>
                             <td className='tdReport'>{rep.Check_In}</td>

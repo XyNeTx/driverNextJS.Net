@@ -7,6 +7,8 @@
     "devC": "concurrently \"npm run next\" \"npm run dotnet\"",
     "dotnet": "cd ../server && dotnet watch run",
     "build": "next build",
+    "netpub" : "cd ../server && dotnet publish",
+    "publish" : "concurrently \"npm run build\" \"npm run netpub\"",
     "start": "next start",
     "lint": "eslint"
   },

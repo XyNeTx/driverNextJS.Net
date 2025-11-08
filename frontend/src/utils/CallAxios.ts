@@ -10,8 +10,10 @@ export default async function CallAxios<T>(option : AxiosRequestConfig) : Promis
     option.url = isProd ? prodLink! + option.url : 'http://localhost:5272' + option.url;
     try
     {
-        const response : AxiosResponse<T> = await axios(option);
-        return response.data;
+        const data : T = await axios(option).then((result:AxiosResponse<T>)=>{
+            return result.data
+        })
+        return data;
     }
     catch (error: unknown)
     {
