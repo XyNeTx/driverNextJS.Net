@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "cd frontend && next dev",
     "devC": "concurrently \"npm run next\" \"npm run dotnet\"",
-    "dotnet": "cd ../server && dotnet watch run",
-    "build": "next build",
-    "netpub" : "cd ../server && dotnet publish",
+    "dotnet": "cd backend && dotnet watch run",
+    "build": "cd frontend && next build",
+    "netpub" : "cd backend && dotnet publish",
     "publish" : "concurrently \"npm run build\" \"npm run netpub\"",
     "start": "next start",
     "lint": "eslint"

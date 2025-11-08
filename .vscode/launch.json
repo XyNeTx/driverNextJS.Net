@@ -14,14 +14,14 @@
             "name": "NextJS: npm run dev",
             "command": "npm run dev",
             "request": "launch",
-            "cwd": "${workspaceFolder}/frontend",
+            "cwd": "${workspaceFolder}",
             "type": "node-terminal",
         },
         {
             "name": "NextJS: npm run build",
             "command": "npm run build",
             "request": "launch",
-            "cwd": "${workspaceFolder}/frontend",
+            "cwd": "${workspaceFolder}",
             "type": "node-terminal",
         },
 

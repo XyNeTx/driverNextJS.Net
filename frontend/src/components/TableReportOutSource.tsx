@@ -47,7 +47,7 @@ export default function TableReportOutSource({reportData}: {reportData : VM_Driv
         <>
             <div className="flex max-h-200 overflow-y-scroll border border-gray-400 border-l-4 rounded-l-xl border-l-red-400 dark:border-white" >
             <table className="mt-4">
-                <thead className="sticky top-0 z-10">
+                <thead className="sticky top-0 z-10 bg-white dark:bg-black">
                     <tr>
                         <th className="thReport1stRow" rowSpan={3}>Check IN</th>
                         <th className="thReport1stRow" rowSpan={3}>Check Out</th>
@@ -56,7 +56,7 @@ export default function TableReportOutSource({reportData}: {reportData : VM_Driv
                         <th className="thReport1stRow" rowSpan={3}>Use/No Use</th>
                         <th className="thReport1stRow" rowSpan={3}>Cal Time IN</th>
                         <th className="thReport1stRow" rowSpan={3}>Cal Time OUT</th>
-                        <th className="thReport1stRow" colSpan={5}>Working Day</th>
+                        <th className="thReport1stRow" colSpan={5}> Working Day</th>
                         <th className="thReport1stRow" colSpan={4}>Holiday</th>
                         <th className="thReport1stRow" rowSpan={3}>Total OT</th>
                         <th className="thReport1stRow" rowSpan={3}>Taxi</th>
