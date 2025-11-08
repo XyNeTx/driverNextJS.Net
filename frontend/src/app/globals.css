@@ -1,0 +1,73 @@
+@import "tailwindcss";
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+:root {
+    --background: #ffffff;
+    --foreground: #003cff;
+}
+
+@theme inline {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
+}
+
+
+[data-theme='dark'] {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+}
+
+[data-theme='dark'] select option{
+    background: var(--color-background);
+    color: var(--color-foreground);
+}
+
+body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+main
+{
+    @apply pl-52 pt-24 p-4
+}
+
+main.sidebar-hidden
+{
+    @apply pl-4;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* .nav-link {
+    @apply flex justify-center items-center p-4 rounded font-semibold hover:text-sky-900 hover:bg-gray-100;
+} */
+
+aside nav ul li a {
+    @apply flex items-center pt-2 pb-2 ps-2 pe-2 rounded font-semibold hover:text-sky-900 hover:bg-gray-100;
+}
+
+.thReport1stRow {
+    @apply text-center p-2 bg-white dark:bg-black;
+}
+
+.thReport2ndRow {
+    @apply text-center p-2 bg-white dark:bg-black;
+}
+
+.thReport3rdRow{
+    @apply text-center p-2 bg-white dark:bg-black;
+}
+
+.tdReport {
+    @apply text-center border-2 p-2;
+}

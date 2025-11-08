@@ -41,20 +41,15 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                 && x.Check_In.Year == yearMonth.Year
                 && x.EmployeeCode == vM_CalReport.EmployeeCode).ToListAsync();
 
-            // if (data.Count > 0)
-            // {
-            //     return data;
-            // }
-            // else
-            // {
-                await CalculateOutsourceReportAsync(vM_CalReport.EmployeeCode, vM_CalReport.Year, vM_CalReport.Month);
-
-                data = await _wfContext.Driver_Outsource.AsNoTracking()
-                .Where(x => x.Check_In.Month == yearMonth.Month
-                && x.Check_In.Year == yearMonth.Year
-                && x.EmployeeCode == vM_CalReport.EmployeeCode).ToListAsync();
-
+            if (data.Count > 0)
+            {
                 return data;
+            }
+            else
+            {
+                data = await CalculateOutsourceReportAsync(vM_CalReport.EmployeeCode, vM_CalReport.Year, vM_CalReport.Month);
+            }
+            return data;
             //}
 
         }
@@ -64,7 +59,21 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
     }
 
-    private async Task CalculateOutsourceReportAsync(string EmployeeCode, string Year, string Month)
+    public async Task<List<Driver_Outsource>> RefreshReportDriverOutSourceAsync(VM_CalReport vM_CalReport)
+    {
+        try
+        {
+            var yearMonth = DateTime.ParseExact(vM_CalReport.Year + vM_CalReport.Month, "yyyyMM", null);
+            var data = await CalculateOutsourceReportAsync(vM_CalReport.EmployeeCode, vM_CalReport.Year, vM_CalReport.Month);
+            return data;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Cant get Report Driver Outsource");
+        }
+    }
+
+    private async Task<List<Driver_Outsource>> CalculateOutsourceReportAsync(string EmployeeCode, string Year, string Month)
     {
         var ts00_00 = new TimeSpan(0, 0, 0);
         var ts22_00 = new TimeSpan(22, 0, 0);
@@ -99,10 +108,19 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
 
             foreach (var date in calendarData)
             {
-                var each = attendanceData.FirstOrDefault(x => x.Time_TodayIN.Value.Date == date.CalendarDay.Date);
+                var workList = attendanceData.Where(x => x.Time_TodayIN.Value.Date == date.CalendarDay.Date).ToList();
 
-                if (each != null)
+                if (workList.Count > 0)
                 {
+                    Driver_TimeAttendance each = new Driver_TimeAttendance();
+                    if (workList.Count >= 2)
+                    {
+                        each = workList.Where(x => !string.IsNullOrWhiteSpace(x.Time_Driver_UpdateTime)).FirstOrDefault();
+                    }
+                    else
+                    {
+                        each = workList.FirstOrDefault();
+                    }
                     each.Time_DDL_IN = each.Time_DDL_IN.Replace(":", ".");
                     each.Time_DDL_OUT = each.Time_DDL_OUT.Replace(":", ".");
 
@@ -122,29 +140,38 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                     var taxi = 0;
                     var lunch = 0;
 
-                    if (each.Time_wfh_IN == "1" || !string.IsNullOrWhiteSpace(each.Time_DriveInstead))
+                    // if (each.Time_wfh_IN == "1" || !string.IsNullOrWhiteSpace(each.Time_DriveInstead))
+                    // {
+                    //     tsCalIn = tsCalIn - new TimeSpan(0, 30, 0);
+                    //     strCal_Time_In = tsCalIn.Hours.ToString("D2") + ":" + tsCalIn.Minutes.ToString("D2") + ":00";
+                    //     if (tsCalIn >= ts00_00 && tsCalIn <= ts05_30)
+                    //     {
+                    //         taxi++;
+                    //     }
+                    // }
+                    // if (each.Time_wfh_OUT == "1" || !string.IsNullOrWhiteSpace(each.Time_DriveInstead))
+                    // {
+                    //     tsCalOut = tsCalOut + new TimeSpan(0, 15, 0);
+                    //     strCal_Time_Out = tsCalOut.Hours.ToString("D2") + ":" + tsCalOut.Minutes.ToString("D2") + ":00";
+                    //     if (tsCalOut >= ts22_30 || tsCalOut <= ts05_30)
+                    //     {
+                    //         taxi++;
+                    //     }
+                    // }
+
+                    tsCalIn = tsCalIn - new TimeSpan(0, 30, 0);
+                    strCal_Time_In = tsCalIn.Hours.ToString("D2") + ":" + tsCalIn.Minutes.ToString("D2") + ":00";
+                    if (tsCalIn >= ts00_00 && tsCalIn <= ts05_30)
                     {
-                        tsCalIn = tsCalIn - new TimeSpan(0, 30, 0);
-                        if (tsCalIn >= ts00_00 && tsCalIn <= ts05_30)
-                        {
-                            taxi++;
-                        }
-                        strCal_Time_In = tsCalIn.Hours.ToString("D2") + ":" + tsCalIn.Minutes.ToString("D2") + ":00";
-                    }
-                    if (each.Time_wfh_OUT == "1" || !string.IsNullOrWhiteSpace(each.Time_DriveInstead))
-                    {
-                        tsCalOut = tsCalOut + new TimeSpan(0, 15, 0);
-                        strCal_Time_Out = tsCalOut.Hours.ToString("D2") + ":" + tsCalOut.Minutes.ToString("D2") + ":00";
-                        if (tsCalOut >= ts22_30 || tsCalOut <= ts05_30)
-                        {
-                            taxi++;
-                        }
-                    }
-                    if ((CheckOut - CheckIn).TotalHours >= 4)
-                    {
-                        lunch++;
+                        taxi++;
                     }
 
+                    tsCalOut = tsCalOut + new TimeSpan(0, 15, 0);
+                    strCal_Time_Out = tsCalOut.Hours.ToString("D2") + ":" + tsCalOut.Minutes.ToString("D2") + ":00";
+                    if (tsCalOut >= ts22_30 || tsCalOut <= ts05_30)
+                    {
+                        taxi++;
+                    }
 
                     var isWorkingDay = calendarData.Any(x => x.CalendarDay.Date == each.Time_TodayIN!.Value.Date && x.CalendarWorking == "Working Day");
                     var isNextDayWorkingDay = calendarData.Any(x => x.CalendarDay.Date == each.Time_TodayIN!.Value.Date.AddDays(1) && x.CalendarWorking == "Working Day");
@@ -187,9 +214,21 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                         addObj.Job_Type = isWorkingDay ? 1 : 2;
                     }
 
+                    if (addObj.Cal_Time_Out - addObj.Cal_Time_In < new TimeSpan(4, 0, 0))
+                    {
+                        addObj.Cal_Time_Out = addObj.Cal_Time_In + new TimeSpan(4, 0, 0);
+                        tsCalOut = tsCalIn + new TimeSpan(4, 0, 0);
+                    }
+
+
+                    if ((addObj.Cal_Time_Out - addObj.Cal_Time_In).TotalHours >= 4)
+                    {
+                        lunch++;
+                    }
+                    addObj.Lunch = (short)lunch;
+
                     if (addObj.Job_Type == 1)
                     {
-
                         if (tsCalIn > ts00_00 && tsCalIn <= ts07_30)
                         {
                             addObj.Work_OT1_5_Night = ts07_30 - tsCalIn;
@@ -198,11 +237,12 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                         }
                         if (tsCalOut >= ts07_30 && tsCalOut <= ts16_30)
                         {
-                            addObj.Work_Reg = (tsCalOut - tsCalIn) < new TimeSpan(4, 0, 0) ? new TimeSpan(4, 0, 0) : tsCalOut - ts07_30;
-                            if((tsCalOut - tsCalIn) < new TimeSpan(4, 0, 0))
-                            {
-                                addObj.Cal_Time_Out = addObj.Cal_Time_In.AddHours(4);
-                            }
+                            addObj.Work_Reg = tsCalOut - tsCalIn;
+                            // addObj.Work_Reg = (tsCalOut - tsCalIn) < new TimeSpan(4, 0, 0) ? new TimeSpan(4, 0, 0) : tsCalOut - ts07_30;
+                            // if ((tsCalOut - tsCalIn) < new TimeSpan(4, 0, 0))
+                            // {
+                            //     addObj.Cal_Time_Out = addObj.Cal_Time_In.AddHours(4);
+                            // }
                             addObj.Work_Reg = addObj.Work_Reg >= new TimeSpan(5, 0, 0) ? addObj.Work_Reg - new TimeSpan(1, 0, 0) : addObj.Work_Reg;
                         }
                         else
@@ -229,7 +269,6 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                     }
                     else if (addObj.Job_Type == 2)
                     {
-
                         if (tsCalIn > ts00_00 && tsCalIn <= ts07_30)
                         {
                             addObj.Holi_OT3_0 = ts07_30 - tsCalIn;
@@ -239,11 +278,12 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
 
                         if (tsCalOut >= ts07_30 && tsCalOut <= ts16_30)
                         {
-                            addObj.Holi_OT2_0 = (tsCalOut - tsCalIn) < new TimeSpan(4, 0, 0) ? new TimeSpan(4, 0, 0) : tsCalOut - tsCalIn;
-                            if((tsCalOut - tsCalIn) < new TimeSpan(4, 0, 0))
-                            {
-                                addObj.Cal_Time_Out = addObj.Cal_Time_In.AddHours(4);
-                            }
+                            addObj.Holi_OT2_0 = tsCalOut - tsCalIn;
+                            // addObj.Holi_OT2_0 = (tsCalOut - tsCalIn) < new TimeSpan(4, 0, 0) ? new TimeSpan(4, 0, 0) : tsCalOut - tsCalIn;
+                            // if ((tsCalOut - tsCalIn) < new TimeSpan(4, 0, 0))
+                            // {
+                            //     addObj.Cal_Time_Out = addObj.Cal_Time_In.AddHours(4);
+                            // }
                             addObj.Holi_OT2_0 = addObj.Holi_OT2_0 >= new TimeSpan(5, 0, 0) ? addObj.Holi_OT2_0 - new TimeSpan(1, 0, 0) : addObj.Holi_OT2_0;
                         }
                         else
@@ -259,7 +299,6 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                     }
                     else if (addObj.Job_Type == 3)
                     {
-
                         //Calculate for 1st Day (Working Day)
                         if (tsCalIn > ts00_00 && tsCalIn <= ts07_30)
                         {
@@ -406,6 +445,8 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
             await _wfContext.Driver_Outsource.AddRangeAsync(addList);
             await _wfContext.SaveChangesAsync();
 
+            return addList;
+
         }
         catch (Exception ex)
         {
@@ -426,21 +467,21 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                 // No need to GroupBy since we filter to a single month
                 .Select(x => new
                 {
-                    Work_OT1_5_Night_Ticks = (x.Work_OT1_5_Night ).Ticks,
-                    Work_Reg_Ticks = (x.Work_Reg ).Ticks,
-                    Work_OT1_5_Eve_Ticks = (x.Work_OT1_5_Eve ).Ticks,
-                    Work_OT2_Ticks = (x.Work_OT2 ).Ticks,
-                    Work_Total_OT_Ticks = (x.Work_Total_OT ).Ticks,
-                    Holi_OT3_0_Ticks = (x.Holi_OT3_0 ).Ticks,
-                    Holi_OT2_0_Ticks = (x.Holi_OT2_0 ).Ticks,
-                    Holi_OT3_0_Eve_Ticks = (x.Holi_OT3_0_Eve ).Ticks,
-                    Holi_Total_OT_Ticks = (x.Holi_Total_OT ).Ticks,
-                    All_Total_OT_Ticks = (x.All_Total_OT ).Ticks,
+                    Work_OT1_5_Night_Ticks = (x.Work_OT1_5_Night).Ticks,
+                    Work_Reg_Ticks = (x.Work_Reg).Ticks,
+                    Work_OT1_5_Eve_Ticks = (x.Work_OT1_5_Eve).Ticks,
+                    Work_OT2_Ticks = (x.Work_OT2).Ticks,
+                    Work_Total_OT_Ticks = (x.Work_Total_OT).Ticks,
+                    Holi_OT3_0_Ticks = (x.Holi_OT3_0).Ticks,
+                    Holi_OT2_0_Ticks = (x.Holi_OT2_0).Ticks,
+                    Holi_OT3_0_Eve_Ticks = (x.Holi_OT3_0_Eve).Ticks,
+                    Holi_Total_OT_Ticks = (x.Holi_Total_OT).Ticks,
+                    All_Total_OT_Ticks = (x.All_Total_OT).Ticks,
                     Taxi = x.Taxi,
                     Lunch = x.Lunch,
                 }).ToListAsync();
 
-            if(raw.Count < 0)
+            if (raw.Count < 0)
             {
                 throw new Exception("Please Calculate Report Outsource Before !");
             }
@@ -454,7 +495,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                 TotalWork_OT2 = new TimeSpan(raw.Sum(r => r.Work_OT2_Ticks)),
                 TotalWork_Total_OT = new TimeSpan(raw.Sum(r => r.Work_Total_OT_Ticks)),
                 TotalHoli_OT3_0 = new TimeSpan(raw.Sum(r => r.Holi_OT3_0_Ticks)),
-                TotalHoli_OT2_0 =   new TimeSpan(raw.Sum(r => r.Holi_OT2_0_Ticks)),
+                TotalHoli_OT2_0 = new TimeSpan(raw.Sum(r => r.Holi_OT2_0_Ticks)),
                 TotalHoli_OT3_0_Eve = new TimeSpan(raw.Sum(r => r.Holi_OT3_0_Eve_Ticks)),
                 TotalHoli_Total_OT = new TimeSpan(raw.Sum(r => r.Holi_Total_OT_Ticks)),
                 TotalAll_Total_OT = new TimeSpan(raw.Sum(r => r.All_Total_OT_Ticks)),
@@ -487,4 +528,48 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
             throw new Exception("Sum Calculated Data Error !" + ex.Message);
         }
     }
+
+    public async Task<string> Authen(string brownserID,string brownserCurrent,string brownserDevices)
+    {
+        try
+        {
+            string sql = @$"SELECT TOP 1 LoginId,substring(convert(varchar,[ExpireDate],121),0,5)+''+substring(convert(varchar,[ExpireDate],121),6,2)+''+substring(convert(varchar,[ExpireDate],121),9,2)  as [ExpireDate],EmployeeCode AS VALUE,Permission
+                        FROM [WorkFlow].[Driver_services].[TransectionLogin]
+                        where ([Hash] = '{brownserID}'
+                        and [Browser] = '{brownserCurrent}'
+                        and [Device] = '{brownserDevices}'
+                        and Event = 'Login'
+                        and Permission = 'Admin'
+                        and Status = '1' )";
+
+            var EmployeeCode = await _wfContext.Database.SqlQueryRaw<string>(sql).FirstOrDefaultAsync();
+
+            if (!string.IsNullOrEmpty(EmployeeCode))
+            {
+                sql = @$"SELECT TOP (1) Driver_name + ' ' + Driver_surname AS VALUE
+                            FROM   Driver_services.Driver_Employee
+                            WHERE (Driver_EmployeeCode = '{EmployeeCode}')";
+
+                var UserName = await _wfContext.Database.SqlQueryRaw<string>(sql).FirstOrDefaultAsync();
+                if (!string.IsNullOrEmpty(UserName))
+                {
+                    return UserName;
+                }
+                else
+                {
+                    throw new Exception("User Name Not Found");
+                }
+            }
+            else
+            {
+                throw new Exception("Login Transaction Not Found");
+            }
+
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Please Login then Try Again ",ex.InnerException ?? ex);
+        }
+    }
+
 }

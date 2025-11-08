@@ -10,7 +10,8 @@ const nextConfig: NextConfig = {
   assetPrefix: isProd ? '/NewDriver' : '', // ✅ Ensures assets use the virtual path
   images: {
     unoptimized: true,
-  }
+  },
+  cacheComponents: true,
 };
 
 export default nextConfig;
