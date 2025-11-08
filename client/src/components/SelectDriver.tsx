@@ -1,5 +1,5 @@
 'use client'
-import CallAxios from "@/utils/CallAxios";
+import Axios from "@/utils/CallAxios";
 import { useEffect,useState } from "react";
 
 interface Driver {
@@ -11,11 +11,11 @@ interface Driver {
 async function GetDriverName() : Promise<Driver[]>{
     try
     {
-        const response = await CallAxios<Driver[]>({
+        const response = await Axios<Driver[]>({
             method : 'GET',
             url : '/api/ReportOutSource/GetDriverName',
         });
-        console.log(response);
+        //console.log(response);
         return response;
     }
     catch(error){

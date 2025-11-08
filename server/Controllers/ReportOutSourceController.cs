@@ -39,10 +39,16 @@ public class ReportOutSourceController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetReportDriverOutSource([FromQuery] VM_CalReport vM)
+    public async Task<IActionResult> GetReportDriverOutSource([FromQuery] string EmployeeCode,string Month,string Year)
     {
         try
         {
+            VM_CalReport vM = new VM_CalReport
+            {
+                EmployeeCode = EmployeeCode,
+                Month = Month,
+                Year = Year
+            };
             var result = await _IReportOutSourceRepo.GetReportDriverOutSourceAsync(vM);
             var referResult = await _IReportOutSourceRepo.SumCalculatedData(vM);
             var formattedResult = result.Select(x => new Formated_Driver_Outsource
@@ -83,18 +89,20 @@ public class ReportOutSourceController : ControllerBase
         }
     }
 
-    // [HttpGet]
-    // public async Task<IActionResult> SumCalculatedData(string EmployeeCode, string Year, string Month)
-    // {
-    //     try
-    //     {
-    //         var data = await _IReportOutSourceRepo.SumCalculatedData(EmployeeCode, Year, Month);
-
-    //         return Ok(data);
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         return BadRequest(ex.Message);
-    //     }
-    // }
+    [HttpGet]
+    public async Task<IActionResult> Authen()
+    {
+        try
+        {
+            var BROWSERCURRENT = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERCURRENT").Value;
+            var BROWSERDEVICES = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERDEVICES").Value;
+            var BROWSERID = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERID").Value;
+            var UserName = await _IReportOutSourceRepo.Authen(BROWSERID,BROWSERCURRENT,BROWSERDEVICES);
+            return Ok(UserName);
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized(ex.Message);
+        }
+    }
 }

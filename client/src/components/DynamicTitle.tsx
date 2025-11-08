@@ -5,7 +5,6 @@ import { useEffect, useMemo } from "react";
 
 export default function DynamicTitle() {
     const pathname = usePathname();
-
     // Find the last segment
     const lastSegment = useMemo(() => pathname.split("/").pop() ?? "", [pathname]);
 
@@ -13,7 +12,7 @@ export default function DynamicTitle() {
     const currentPage = useMemo(
         () =>
         pageTitle.find(
-            (p) => p.urlName.toLowerCase() === lastSegment.toLowerCase()
+            (p) => p.urlName.toLowerCase().includes(lastSegment.toLowerCase())
         ),
         [lastSegment]
     );

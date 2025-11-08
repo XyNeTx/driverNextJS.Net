@@ -4,8 +4,8 @@ import SelectYear from "@/components/SelectYear";
 import SelectMonth from "@/components/SelectMonth";
 import { useState } from "react";
 import TableReportOutSource, { VM_Driver_Outsource_Report } from "@/components/TableReportOutSource";
-import showSwal from "@/utils/SweetAlert2";
-import CallAxios from "@/utils/CallAxios";
+import Swal from "@/utils/SweetAlert2";
+import Axios from "@/utils/CallAxios";
 
 
 export interface VM_CallReport {
@@ -17,16 +17,22 @@ export interface VM_CallReport {
 
 async function GetReportData<VM_Driver_Outsource_Report>(_VM : VM_CallReport) : Promise<VM_Driver_Outsource_Report>{
     try{
-        const response:VM_Driver_Outsource_Report = await CallAxios<VM_Driver_Outsource_Report>({
+        const response:VM_Driver_Outsource_Report = await Axios<VM_Driver_Outsource_Report>({
             method: 'GET',
             url: '/api/ReportOutSource/GetReportDriverOutSource',
-            params:_VM
+            params:_VM,
+
         });
 
         return response;
     }
     catch (error){
         console.error(error);
+            Swal({
+            icon:'error',
+            title: "Error",
+            text: "Can't Get Report Driver Outsource"
+        })
         return {} as VM_Driver_Outsource_Report;
     }
 }
@@ -41,13 +47,14 @@ export default function ReportInOutOutSource(){
 
     const OnBtnClicked = async () => {
         if (!empCode || !month || !year){
-            return showSwal({
+            return Swal({
                 icon : "error",
                 title : "Invalid Input",
                 text : "กรุณาเลือก คนขับ เดือน และ ปี ให้ครบก่อน"
             })
         }
         setLoading(true);
+        setReportData({} as VM_Driver_Outsource_Report);
         const _VM : VM_CallReport = {
             EmployeeCode : empCode,
             Year : year,
@@ -60,7 +67,7 @@ export default function ReportInOutOutSource(){
     }
 
     return (
-        <div className="p-2">
+        <div className="p-2 min-w-full">
             <h3 className="font-bold text-2xl">ค้นหาข้อมูลคนขับรถ</h3>
             <div className="flex-row-reverse mt-4 mb-4 flex">
                 <div className="ps-2">
@@ -81,19 +88,18 @@ export default function ReportInOutOutSource(){
 
             <div className="block mt-4 mb-4">
                 ตารางแสดงข้อมูลคนขับรถ
-
-                <TableReportOutSource reportData={reportData}/>
-
             </div>
 
-            <div className="block text-red-600 text-sm">
+            <TableReportOutSource reportData={reportData}/>
+
+            <div className="block text-red-600 text-sm mt-4">
                 <p>Job Type Describe </p>
-                <p>1 : In Working Day Out in Same Day</p>
-                <p>2 : In Holiday Out in Same Day</p>
-                <p>3 : In Working Day Out in Holiday</p>
-                <p>4 : In Holiday Out in Working Day</p>
-                <p>5 : In Working Day Out in Another Working Day</p>
-                <p>6 : In Holiday Out in Another Holiday</p>
+                <p>1 : In Working Day Out Same Day</p>
+                <p>2 : In Holiday Out Same Day</p>
+                <p>3 : In Working Day Out Holiday</p>
+                <p>4 : In Holiday Out Working Day</p>
+                <p>5 : In Working Day Out Another Working Day</p>
+                <p>6 : In Holiday Out Another Holiday</p>
             </div>
 
         </div>

@@ -9,7 +9,7 @@ class option {
     cancelButtonText?: string;
 }
 
-export default async function showSwal(option: option) : Promise<boolean> {
+export default async function Swal(option: option) : Promise<boolean> {
     return await swal.fire({
         title: option.title,
         text: option.text,

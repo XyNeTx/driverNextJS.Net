@@ -1,39 +1,32 @@
-"use client";
+import { Home2Outlined, IconData, MoonHalfRight5Bulk, Sun1Bulk } from "@lineiconshq/free-icons";
+import { Lineicons } from "@lineiconshq/react-lineicons";
 import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
-    const [theme, setTheme] = useState("light");
+    const [theme, setTheme] = useState<string>("");
 
     useEffect(() => {
-        // Runs only on client
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
         const savedTheme = localStorage.getItem("theme");
-
-        // Load from localStorage or system
-        if (savedTheme) {
-            setTheme(savedTheme);
-        } else {
-            setTheme(prefersDark ? "dark" : "light");
-        }
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const initialTheme = savedTheme || (prefersDark ? "dark" : "light");
+        setTheme(initialTheme);
+        //document.documentElement.dataset.theme = theme;
+        //document.documentElement.style.colorScheme = theme;
     }, []);
 
     useEffect(() => {
-        // Apply theme to document when state changes
         document.documentElement.dataset.theme = theme;
         document.documentElement.style.colorScheme = theme;
         localStorage.setItem("theme", theme);
     }, [theme]);
 
-    function ThemeSetFunc(){
-        setTheme((prev) => (prev === "light" ? "dark" : "light"));
-    }
-
     return (
-        <button
-            onClick={ThemeSetFunc}
-            className="p-2 rounded border"
-            >
-            Toggle {theme === "light" ? "Dark" : "Light"} Mode
-        </button>
-    );
-};
+        <div className="flex-1 ps-4 ">
+            {/* <a href="#"
+            className="ms-4 mr-8 h-1"> */}
+            {/* Toggle {theme === "light" ? "Dark" : "Light"} Mode */}
+            <Lineicons icon={theme === "dark" ? Sun1Bulk : MoonHalfRight5Bulk} size={20} onClick={() => setTheme((t) => (t === "light" ? "dark" : "light"))} />
+            {/* </a> */}
+        </div>
+  );
+}
