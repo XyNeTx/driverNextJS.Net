@@ -3,11 +3,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebuggerFlavor>LaunchJsonDebugger</DebuggerFlavor>
     <LaunchJsonTarget>{
-  "name": "localhost (Edge)",
-  "type": "edge",
+  "name": "localhost (firefox)",
+  "type": "firefox",
   "request": "launch",
   "url": "http://localhost:3000",
-  "webRoot": "D:\\Project\\Project\\DriverNextJS\\frontend"
+  "webRoot": "D:\\Project\\Project\\DriverNextJS"
 }</LaunchJsonTarget>
   </PropertyGroup>
 </Project>

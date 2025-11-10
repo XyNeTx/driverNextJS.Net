@@ -8,9 +8,9 @@
         "DebugTarget": "http"
       },
       {
-        "Path": "frontend\\driver_ui.esproj",
+        "Path": "",
         "Action": "Start",
-        "DebugTarget": "localhost (Edge)"
+        "DebugTarget": "localhost (firefox)"
       }
     ]
   }

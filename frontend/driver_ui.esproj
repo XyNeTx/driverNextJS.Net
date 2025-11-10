@@ -3,6 +3,5 @@
     <StartupCommand>npm run dev</StartupCommand>
     <JavaScriptTestRoot>src\</JavaScriptTestRoot>
 	<ShouldRunBuildScript>false</ShouldRunBuildScript>
-	<BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
 </Project>
