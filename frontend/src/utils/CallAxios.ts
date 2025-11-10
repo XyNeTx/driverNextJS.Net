@@ -1,4 +1,3 @@
-'use cache'
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 const isProd = process.env.NODE_ENV === 'production';

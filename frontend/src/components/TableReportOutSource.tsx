@@ -41,7 +41,6 @@ export interface VM_Total_Report_Outsource {
     TotalTaxi :number
     TotalLunch :number
 }
-
 export default function TableReportOutSource({reportData}: {reportData : VM_Driver_Outsource_Report}){
     return (
         <>
