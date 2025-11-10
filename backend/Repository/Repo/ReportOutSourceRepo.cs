@@ -159,14 +159,20 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                     //     }
                     // }
 
-                    tsCalIn = tsCalIn - new TimeSpan(0, 30, 0);
+                    if (each.Time_wfh_IN == "1" || !string.IsNullOrWhiteSpace(each.Time_DriveInstead))
+                    {
+                        tsCalIn = tsCalIn - new TimeSpan(0, 30, 0);
+                    }
                     strCal_Time_In = tsCalIn.Hours.ToString("D2") + ":" + tsCalIn.Minutes.ToString("D2") + ":00";
                     if (tsCalIn >= ts00_00 && tsCalIn <= ts05_30)
                     {
                         taxi++;
                     }
 
-                    tsCalOut = tsCalOut + new TimeSpan(0, 15, 0);
+                    if (each.Time_wfh_OUT == "1" || !string.IsNullOrWhiteSpace(each.Time_DriveInstead))
+                    {
+                        tsCalOut = tsCalOut + new TimeSpan(0, 15, 0);
+                    }
                     strCal_Time_Out = tsCalOut.Hours.ToString("D2") + ":" + tsCalOut.Minutes.ToString("D2") + ":00";
                     if (tsCalOut >= ts22_30 || tsCalOut <= ts05_30)
                     {

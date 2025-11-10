@@ -2,7 +2,7 @@
 import SelectDriver from "@/components/SelectDriver";
 import SelectYear from "@/components/SelectYear";
 import SelectMonth from "@/components/SelectMonth";
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import TableReportOutSource, { VM_Driver_Outsource_Report } from "@/components/TableReportOutSource";
 import Swal from "@/utils/SweetAlert2";
 import Axios from "@/utils/CallAxios";
@@ -65,6 +65,7 @@ export default function ReportInOutOutSource(){
     const [year,setYear] = useState<string>("");
     const [reportData,setReportData] = useState<VM_Driver_Outsource_Report>({} as VM_Driver_Outsource_Report);
     const [loading,setLoading] =useState<boolean>(false);
+    const [loading2,setLoading2] =useState<boolean>(false);
 
     const OnBtnClicked = async () => {
         if (!empCode || !month || !year){
@@ -95,7 +96,7 @@ export default function ReportInOutOutSource(){
                 text : "กรุณาเลือก คนขับ เดือน และ ปี ให้ครบก่อน"
             })
         }
-        setLoading(true);
+        setLoading2(true);
         setReportData({} as VM_Driver_Outsource_Report);
         const _VM : VM_CallReport = {
             EmployeeCode : empCode,
@@ -105,7 +106,7 @@ export default function ReportInOutOutSource(){
         const data = await RefreshReportData<VM_Driver_Outsource_Report>(_VM)
         setReportData(data);
 
-        setLoading(false);
+        setLoading2(false);
     }
 
     return (
@@ -114,7 +115,7 @@ export default function ReportInOutOutSource(){
             <div className="flex-row-reverse mt-4 mb-4 flex">
                 <div className="ps-2">
                     <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={RefreshClicked}>
-                        {loading ? 'คำนวณข้อมูล . . .' : 'อัพเดทและค้นหา'}
+                        {loading2 ? 'คำนวณข้อมูล...' : 'อัพเดทและค้นหา'}
                     </button>
                 </div>
                 <div>
@@ -123,13 +124,9 @@ export default function ReportInOutOutSource(){
                         {loading ? 'กำลังค้นหา...' : 'ค้นหา'}
                     </button>
                 </div>
-                <Suspense fallback={<p>กำลังโหลดข้อมูลรายชื่อคนขับรถ</p>}>
-
-                    <SelectDriver value={empCode} onChange={setEmpCode} />
-                    <SelectMonth  value={month} onChange={setMonth} />
-                    <SelectYear  value={year} onChange={setYear} />
-
-                </Suspense>
+                <SelectDriver value={empCode} onChange={setEmpCode} />
+                <SelectMonth  value={month} onChange={setMonth} />
+                <SelectYear  value={year} onChange={setYear} />
             </div>
 
             <div className="block mt-4 mb-4">

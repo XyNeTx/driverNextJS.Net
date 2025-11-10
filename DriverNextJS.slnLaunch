@@ -3,14 +3,14 @@
     "Name": "run api-ui",
     "Projects": [
       {
-        "Path": "server\\driver_api.csproj",
+        "Path": "backend\\driver_api.csproj",
         "Action": "Start",
         "DebugTarget": "http"
       },
       {
-        "Path": "client\\driver_ui.esproj",
+        "Path": "",
         "Action": "Start",
-        "DebugTarget": "localhost (Edge)"
+        "DebugTarget": "localhost (firefox)"
       }
     ]
   }

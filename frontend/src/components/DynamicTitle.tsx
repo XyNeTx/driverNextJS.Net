@@ -4,7 +4,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo } from "react";
 
 export default function DynamicTitle() {
-    const pathname = usePathname();
+    const isProd = process.env.NODE_ENV === 'production';
+    const pathname = isProd ? usePathname().slice(0,usePathname.length - 1) : usePathname();
     // Find the last segment
     const lastSegment = useMemo(() => pathname.split("/").pop() ?? "", [pathname]);
 
