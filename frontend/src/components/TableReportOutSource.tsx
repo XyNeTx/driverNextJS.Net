@@ -45,7 +45,7 @@ export default function TableReportOutSource({reportData}: {reportData : VM_Driv
     return (
         <>
             <div className="flex max-h-200 overflow-y-scroll border border-gray-400 border-l-4 rounded-l-xl border-l-red-400 dark:border-white" >
-            <table className="mt-4">
+            <table className="table-auto">
                 <thead className="sticky top-0 z-10 bg-white dark:bg-black">
                     <tr>
                         <th className="thReport1stRow" rowSpan={3}>Check IN</th>

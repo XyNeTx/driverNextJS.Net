@@ -6,11 +6,6 @@
         "Path": "backend\\driver_api.csproj",
         "Action": "Start",
         "DebugTarget": "http"
-      },
-      {
-        "Path": "",
-        "Action": "Start",
-        "DebugTarget": "localhost (firefox)"
       }
     ]
   }

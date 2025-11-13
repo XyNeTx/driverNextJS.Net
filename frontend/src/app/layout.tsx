@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Sidebar from "./sidebar";
 import "./globals.css";
 import DynamicTitle from "@/components/DynamicTitle";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,6 +27,7 @@ export default async function RootLayout({
         <Sidebar />
         <main className="pl-52 pt-24 p-4 lg:pl-4" >{children}</main>
         <DynamicTitle/>
+        <Toaster richColors position='top-center' closeButton/>
       </body>
     </html>
   );
