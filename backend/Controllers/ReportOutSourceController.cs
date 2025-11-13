@@ -1,6 +1,7 @@
 using driver_api.Models.ViewModels;
 using driver_api.Repository.IRepo;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace driver_api.Controllers;
 
@@ -10,10 +11,12 @@ public class ReportOutSourceController : ControllerBase
 {
 
     private readonly IReportOutSourceRepo _IReportOutSourceRepo;
+    private readonly ILogger<ReportOutSourceController> _logger;
 
-    public ReportOutSourceController(IReportOutSourceRepo IReportOutSourceRepo)
+    public ReportOutSourceController(IReportOutSourceRepo IReportOutSourceRepo, ILogger<ReportOutSourceController> logger)
     {
         _IReportOutSourceRepo = IReportOutSourceRepo;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -39,7 +42,7 @@ public class ReportOutSourceController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetReportDriverOutSource([FromQuery] string EmployeeCode,string Month,string Year)
+    public async Task<IActionResult> GetReportDriverOutSource([FromQuery] string EmployeeCode, string Month, string Year)
     {
         try
         {
@@ -148,7 +151,9 @@ public class ReportOutSourceController : ControllerBase
             var BROWSERCURRENT = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERCURRENT").Value;
             var BROWSERDEVICES = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERDEVICES").Value;
             var BROWSERID = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERID").Value;
-            var UserName = await _IReportOutSourceRepo.Authen(BROWSERID,BROWSERCURRENT,BROWSERDEVICES);
+            var UserName = await _IReportOutSourceRepo.Authen(BROWSERID, BROWSERCURRENT, BROWSERDEVICES);
+
+            _logger.LogInformation("Login Authen Complete {UserName}", UserName);
             return Ok(UserName);
         }
         catch (Exception ex)
@@ -156,4 +161,42 @@ public class ReportOutSourceController : ControllerBase
             return Unauthorized(ex.Message);
         }
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllAttendanceWaitingData()
+    {
+        try
+        {
+            var data = await _IReportOutSourceRepo.GetAllAttendanceWaitingData();
+            //_logger.LogInformation("Test Log {data}", JsonConvert.SerializeObject(data));
+            return Ok(data);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ApproveAllWaitingData(List<int> unApproveList)
+    {
+        try
+        {
+            var BROWSERCURRENT = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERCURRENT").Value;
+            var BROWSERDEVICES = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERDEVICES").Value;
+            var BROWSERID = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERID").Value;
+            var UserName = await _IReportOutSourceRepo.Authen(BROWSERID, BROWSERCURRENT, BROWSERDEVICES);
+
+            await _IReportOutSourceRepo.ApproveAllData(unApproveList, UserName);
+
+            _logger.LogInformation("{UserName} was Approve all Waiting data", UserName);
+            
+            return Ok("Approved All Data Complete !");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
 }

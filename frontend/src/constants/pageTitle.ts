@@ -8,5 +8,11 @@ export const pageTitle = [
         name: "Home",
         title: "Driver Tracking - Home",
         urlName: ""
+    },
+    {
+        name: "อนุมัติเวลาการทำงานของ Driver",
+        title: "Driver Tracking - อนุมัติเวลาการทำงานของ Driver",
+        urlName: "approveall"
     }
+    
 ]

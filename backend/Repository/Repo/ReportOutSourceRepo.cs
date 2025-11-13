@@ -1,4 +1,5 @@
 using driver_api.Models;
+using driver_api.Models.DTOs;
 using driver_api.Models.ViewModels;
 using driver_api.Repository.IRepo;
 using Microsoft.EntityFrameworkCore;
@@ -535,7 +536,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
     }
 
-    public async Task<string> Authen(string brownserID,string brownserCurrent,string brownserDevices)
+    public async Task<string> Authen(string brownserID, string brownserCurrent, string brownserDevices)
     {
         try
         {
@@ -574,7 +575,83 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
-            throw new Exception("Please Login then Try Again ",ex.InnerException ?? ex);
+            throw new Exception("Please Login then Try Again ", ex.InnerException ?? ex);
+        }
+    }
+
+    public async Task<List<Driver_TimeAttendanceDTO>> GetAllAttendanceWaitingData()
+    {
+        try
+        {
+            string sqlQuery = $@"SELECT DT.Time_Id,
+                        Time_EmployeeCode AS EmployeeCode,
+                        DE.Driver_name + ' ' + DE.Driver_surname AS EmployeeFullName,
+                        DT.Time_TodayIN + ' ' + DT.Time_DDL_IN AS CheckIn,
+                        DT.Time_TodayOUT + ' ' + DT.Time_DDL_OUT AS CheckOut,
+                        DMJ.Title_Thai AS WorkTypeIn,
+                        WTO.WorkTypeOut,
+                        DT.Time_BossId AS BossID,
+                        B.Boss_Name + ' ' + B.Boss_Sername AS BossFullName
+                    FROM   Driver_services.Driver_TimeAttendance DT
+                    JOIN Driver_services.Driver_Master_Job DMJ ON
+                    DT.Time_wfh_IN = DMJ.id
+                    JOIN Driver_services.Driver_Employee DE ON
+                    DT.Time_EmployeeCode = DE.Driver_EmployeeCode
+                    JOIN Driver_services.Boss B ON
+                    DT.Time_BossId = B.Boss_EmployeeCode
+                    JOIN
+                        (
+                            SELECT Time_Id, DMJ.Title_Thai AS WorkTypeOut
+                            FROM   Driver_services.Driver_TimeAttendance DT
+                            JOIN Driver_services.Driver_Master_Job DMJ ON
+                                DT.Time_wfh_OUT = DMJ.id
+                            WHERE Time_StatusDriver = 'waiting'
+                                and Time_WaitOut = 'N'
+                        ) WTO
+                    ON WTO.Time_Id = DT.Time_Id
+                    WHERE Time_StatusDriver = 'waiting'
+                    and Time_WaitOut = 'N'
+                    AND YEAR(DT.Time_TodayIN + ' ' + DT.Time_DDL_IN) = YEAR(GETDATE())
+                    AND MONTH(DT.Time_TodayIN + ' ' + DT.Time_DDL_IN) = MONTH(DATEADD(MONTH,0,GETDATE()))
+                    AND Time_DDL_OUT IS NOT NULL
+                    AND Time_DDL_IN IS NOT NULL
+                    ";
+
+                    //
+
+            var data = await _wfContext.Driver_TimeAttendanceDTO.FromSqlRaw(sqlQuery).AsNoTracking().ToListAsync();
+
+            return data;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Can't Get not Approved Data ", ex.InnerException ?? ex);
+        }
+    }
+
+    public async Task ApproveAllData(List<int> ApproveIdList,string UserName)
+    {
+        try
+        {
+            foreach (var id in ApproveIdList)
+            {
+                var unApproveData = await _wfContext.Driver_TimeAttendance.Where(x => x.Time_Id == id).SingleOrDefaultAsync();
+                if (unApproveData != null)
+                {
+                    unApproveData.Time_ApprovedIN = unApproveData.Time_ApprovedIN ?? UserName;
+                    unApproveData.Time_ApprovedOUT = unApproveData.Time_ApprovedOUT ?? UserName;
+                    unApproveData.Time_TimeApprovedIN = unApproveData.Time_TimeApprovedIN ?? DateTime.Now;
+                    unApproveData.Time_TimeApprovedOUT = unApproveData.Time_TimeApprovedOUT ?? DateTime.Now;
+                    unApproveData.Time_StatusDriver = "End";
+                    unApproveData.Time_Working_D = "Auto";
+                    _wfContext.Update(unApproveData);
+                }
+            }
+            await _wfContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Can't Approve Data ", ex.InnerException ?? ex);
         }
     }
 

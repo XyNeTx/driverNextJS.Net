@@ -1,17 +1,24 @@
 using driver_api.Repository.IRepo;
 using driver_api.Repository.Repo;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
 
+builder.Host.UseSerilog();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocal",
         policy => policy
-            .WithOrigins("http://localhost:3000")
+            .WithOrigins("http://localhost:3000","http://localhost:5272","http://localhost:7009","null")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials());
