@@ -612,7 +612,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                     WHERE Time_StatusDriver = 'waiting'
                     and Time_WaitOut = 'N'
                     AND YEAR(DT.Time_TodayIN + ' ' + DT.Time_DDL_IN) = YEAR(GETDATE())
-                    AND MONTH(DT.Time_TodayIN + ' ' + DT.Time_DDL_IN) = MONTH(DATEADD(MONTH,0,GETDATE()))
+                    AND MONTH(DT.Time_TodayIN + ' ' + DT.Time_DDL_IN) = MONTH(DATEADD(MONTH,-1,GETDATE()))
                     AND Time_DDL_OUT IS NOT NULL
                     AND Time_DDL_IN IS NOT NULL
                     ";

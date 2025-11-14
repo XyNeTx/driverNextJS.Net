@@ -2,9 +2,8 @@
 import CallAxios from "@/utils/CallAxios";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
-import { unApproveList } from "./TableShowWaitingData";
 
-const toastPromise = () => 
+const toastPromise = () =>
     toast.promise(ApproveAll(), {
         loading: 'Approving Data . . .',
         success: () => 'All Data was Approved', //if didn't have any exception will show success toast
@@ -14,13 +13,18 @@ const toastPromise = () =>
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const ApproveAll = async ():Promise<void> => {
-    return console.log(unApproveList);
+    const selectAllId = document.querySelectorAll('.cls_Time_Id');
+    let postData:number[] = [];
+    selectAllId.forEach((each) => {
+        const key = (each as HTMLElement).dataset.key;
+        postData.push(parseInt(key ?? '0'));
+    });
     try{
         await delay(3000);
         await CallAxios<void>({
             method :'POST',
             url:'/api/ReportOutSource/ApproveAllWaitingData',
-            //data: unApproveList,
+            data: postData,
         });
     }
     catch (err){
