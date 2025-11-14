@@ -1,5 +1,6 @@
 using driver_api.Models.ViewModels;
 using driver_api.Repository.IRepo;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -182,11 +183,20 @@ public class ReportOutSourceController : ControllerBase
     {
         try
         {
-            var BROWSERCURRENT = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERCURRENT").Value;
-            var BROWSERDEVICES = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERDEVICES").Value;
-            var BROWSERID = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERID").Value;
-            var UserName = await _IReportOutSourceRepo.Authen(BROWSERID, BROWSERCURRENT, BROWSERDEVICES);
-
+            string env = HttpContext.Request.Host.Value.Contains("localhost") ? "Development" : "Production";
+            bool isProd = false;
+            string UserName = "Developer";
+            if (!string.IsNullOrWhiteSpace(env))
+            {
+                isProd = env.ToLower() != "development" ? true : false;
+            }
+            if (isProd)
+            {
+                var BROWSERCURRENT = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERCURRENT").Value;
+                var BROWSERDEVICES = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERDEVICES").Value;
+                var BROWSERID = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERID").Value;
+                UserName = await _IReportOutSourceRepo.Authen(BROWSERID, BROWSERCURRENT, BROWSERDEVICES);
+            }
             await _IReportOutSourceRepo.ApproveAllData(unApproveList, UserName);
 
             _logger.LogInformation("{UserName} was Approve all Waiting data", UserName);

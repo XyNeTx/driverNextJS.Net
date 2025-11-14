@@ -4,6 +4,7 @@
 /packages
 /backend/obj
 /backend/bin
+/backend/Logs
 /.vs
 
 # dependencies
@@ -48,3 +49,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+backend/Logs/log_202511.json
