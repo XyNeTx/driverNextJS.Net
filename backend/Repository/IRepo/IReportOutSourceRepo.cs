@@ -6,7 +6,7 @@ namespace driver_api.Repository.IRepo;
 
 public interface IReportOutSourceRepo
 {
-    Task<List<Driver_Employee>> GetListDriverAsync();
+    Task<List<DriverDTO>> GetListDriverAsync();
     //public Task CalculateOutsourceReportAsync(string EmployeeCode, string Year, string Month);
     Task<List<Driver_Outsource>> GetReportDriverOutSourceAsync(VM_CalReport vM_CalReport);
     Task<List<Driver_Outsource>> RefreshReportDriverOutSourceAsync(VM_CalReport vM_CalReport);

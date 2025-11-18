@@ -6,7 +6,7 @@
     "next": "concurrently \"npm run next\" \"npm run dotnet\"",
     "publish": "concurrently \"npm run build\" \"npm run netpub\"",
     "dev": "next dev",
-    "dotnet": "cd ../backend && dotnet watch run",
+    "dotnet": "cd .. && dotnet test",
     "build": "next build",
     "netpub": "cd ../backend && dotnet publish",
     "start": "next start",
