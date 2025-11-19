@@ -1,3 +1,4 @@
+using driver_api.Models.DTOs;
 using driver_api.Models.ViewModels;
 using driver_api.Repository.IRepo;
 using Microsoft.AspNetCore.Identity;
@@ -27,14 +28,7 @@ public class ReportOutSourceController : ControllerBase
         {
             var driverList = await _IReportOutSourceRepo.GetListDriverAsync();
 
-            var data = driverList.Select(x => new
-            {
-                DriverName = x.Driver_name + " " + x.Driver_surname,
-                ID = x.Driver_id,
-                EmployeeCode = x.Driver_EmployeeCode
-            }).ToList();
-
-            return Ok(data);
+            return Ok(driverList);
         }
         catch (Exception ex)
         {
@@ -200,7 +194,7 @@ public class ReportOutSourceController : ControllerBase
             await _IReportOutSourceRepo.ApproveAllData(unApproveList, UserName);
 
             _logger.LogInformation("{UserName} was Approve all Waiting data", UserName);
-            
+
             return Ok("Approved All Data Complete !");
         }
         catch (Exception ex)

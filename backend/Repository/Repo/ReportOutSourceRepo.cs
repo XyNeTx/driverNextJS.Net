@@ -10,13 +10,15 @@ namespace driver_api.Repository.Repo;
 public class ReportOutSourceRepo : IReportOutSourceRepo
 {
     private readonly WorkflowContext _wfContext;
+    private readonly ILogger<ReportOutSourceRepo> _logger;
 
-    public ReportOutSourceRepo(WorkflowContext wfContext)
+    public ReportOutSourceRepo(WorkflowContext wfContext,ILogger<ReportOutSourceRepo> logger)
     {
         _wfContext = wfContext;
+        _logger = logger;
     }
 
-    public async Task<List<Driver_Employee>> GetListDriverAsync()
+    public async Task<List<DriverDTO>> GetListDriverAsync()
     {
         try
         {
@@ -24,10 +26,18 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                 .Where(x => x.Driver_Position!.ToLower() == "driver")
                 .ToListAsync();
 
-            return driverList;
+            var data = driverList.Select(x => new DriverDTO
+            {
+                DriverName = x.Driver_name + " " + x.Driver_surname,
+                ID = x.Driver_id,
+                EmployeeCode = x.Driver_EmployeeCode
+            }).ToList();
+
+            return data;
         }
         catch (Exception ex)
         {
+            _logger.LogError("Error retrieving driver list {ex.Message}",ex.Message);
             throw new Exception("Error retrieving driver list", ex);
         }
     }
@@ -56,6 +66,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
+            _logger.LogError("Cant get Report Driver Outsource {ex.Message}",ex.Message);
             throw new Exception("Cant get Report Driver Outsource");
         }
     }
@@ -70,6 +81,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
+            _logger.LogError("Cant get Report Driver Outsource {ex.Message}",ex.Message);
             throw new Exception("Cant get Report Driver Outsource");
         }
     }
@@ -457,6 +469,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
+            _logger.LogError("Error calculating outsource report {ex.Message}",ex.Message);
             throw new Exception("Error calculating outsource report", ex);
         }
     }
@@ -549,7 +562,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                         and Permission = 'Admin'
                         and Status = '1' )";
 
-            var EmployeeCode = await _wfContext.Database.SqlQueryRaw<string>(sql).FirstOrDefaultAsync();
+            var EmployeeCode = await _wfContext.Database.SqlQueryRaw<string>(sql).SingleOrDefaultAsync();
 
             if (!string.IsNullOrEmpty(EmployeeCode))
             {
@@ -557,7 +570,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                             FROM   Driver_services.Driver_Employee
                             WHERE (Driver_EmployeeCode = '{EmployeeCode}')";
 
-                var UserName = await _wfContext.Database.SqlQueryRaw<string>(sql).FirstOrDefaultAsync();
+                var UserName = await _wfContext.Database.SqlQueryRaw<string>(sql).SingleOrDefaultAsync();
                 if (!string.IsNullOrEmpty(UserName))
                 {
                     return UserName;
@@ -617,8 +630,6 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                     AND Time_DDL_IN IS NOT NULL
                     ";
 
-                    //
-
             var data = await _wfContext.Driver_TimeAttendanceDTO.FromSqlRaw(sqlQuery).AsNoTracking().ToListAsync();
 
             return data;
@@ -654,5 +665,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
             throw new Exception("Can't Approve Data ", ex.InnerException ?? ex);
         }
     }
+
+
 
 }

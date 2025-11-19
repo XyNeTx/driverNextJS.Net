@@ -5,21 +5,8 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "C#: DriverNextJS Debug2",
-            "type": "dotnet",
-            "request": "launch",
-            "projectPath": "${workspaceFolder}/backend/driver_api.csproj",
-        },
-        {
             "name": "NextJS: npm run dev",
             "command": "npm run dev",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/frontend",
-            "type": "node-terminal",
-        },
-        {
-            "name": "NextJS: npm run build",
-            "command": "npm run build",
             "request": "launch",
             "cwd": "${workspaceFolder}/frontend",
             "type": "node-terminal",
@@ -28,13 +15,15 @@
             "name": "C#: DriverNextJS Debug",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "dotnet: build d:\\Project\\Project\\DriverNextJS\\backend\\driver_api.csproj", // Optional: Build before launching
+            "preLaunchTask": "npm: dotnet - frontend", // Optional: Build before launching
             "program": "${workspaceFolder}/backend/bin/Debug/net7.0/driver_api.dll", // Adjust path and framework
-            "args": [],
+            "args": [
+            ],
             "launchSettingsProfile": "http",
             "cwd": "${workspaceFolder}/backend",
             "console": "integratedTerminal",
-            "stopAtEntry": false
+            "stopAtEntry": false,
+            "postDebugTask": "dotnet: clean"
         },
     ],
     "compounds": [
