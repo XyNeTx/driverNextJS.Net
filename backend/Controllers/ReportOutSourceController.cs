@@ -1,9 +1,6 @@
-using driver_api.Models.DTOs;
 using driver_api.Models.ViewModels;
 using driver_api.Repository.IRepo;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace driver_api.Controllers;
 
@@ -146,7 +143,7 @@ public class ReportOutSourceController : ControllerBase
             var BROWSERCURRENT = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERCURRENT").Value;
             var BROWSERDEVICES = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERDEVICES").Value;
             var BROWSERID = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERID").Value;
-            var UserName = await _IReportOutSourceRepo.Authen(BROWSERID, BROWSERCURRENT, BROWSERDEVICES);
+            string UserName = await _IReportOutSourceRepo.Authen(BROWSERID, BROWSERCURRENT, BROWSERDEVICES);
 
             _logger.LogInformation("Login Authen Complete {UserName}", UserName);
             return Ok(UserName);
@@ -200,6 +197,56 @@ public class ReportOutSourceController : ControllerBase
         catch (Exception ex)
         {
             return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetDriverOTTime()
+    {
+        try
+        {
+            string env = HttpContext.Request.Host.Value.Contains("localhost") ? "Development" : "Production";
+            bool isProd = false;
+            string UserName = "Sitthiporn Polmart";
+            if (!string.IsNullOrWhiteSpace(env))
+            {
+                isProd = env.ToLower() != "development" ? true : false;
+            }
+            if (isProd)
+            {
+                var BROWSERCURRENT = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERCURRENT").Value;
+                var BROWSERDEVICES = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERDEVICES").Value;
+                var BROWSERID = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERID").Value;
+                UserName = await _IReportOutSourceRepo.AuthenDriver(BROWSERID, BROWSERCURRENT, BROWSERDEVICES);
+            }
+
+            var data = await _IReportOutSourceRepo.GetDriverOTTime(UserName);
+
+            return Ok(data);
+
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> AuthenDriver()
+    {
+        try
+        {
+            var BROWSERCURRENT = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERCURRENT").Value;
+            var BROWSERDEVICES = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERDEVICES").Value;
+            var BROWSERID = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERID").Value;
+            string UserName = await _IReportOutSourceRepo.AuthenDriver(BROWSERID, BROWSERCURRENT, BROWSERDEVICES);
+
+            _logger.LogInformation("Login Authen Complete {UserName}", UserName);
+            return Ok(UserName);
+        }
+        catch (Exception ex)
+        {
+            return Unauthorized(ex.Message);
         }
     }
 

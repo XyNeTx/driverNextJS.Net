@@ -666,6 +666,107 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
     }
 
+    public async Task<string> AuthenDriver(string brownserID, string brownserCurrent, string brownserDevices)
+    {
+        try
+        {
+            string sql = @$"SELECT TOP 1 LoginId,substring(convert(varchar,[ExpireDate],121),0,5)+''+substring(convert(varchar,[ExpireDate],121),6,2)+''+substring(convert(varchar,[ExpireDate],121),9,2)  as [ExpireDate],EmployeeCode AS VALUE,Permission
+                        FROM [WorkFlow].[Driver_services].[TransectionLogin]
+                        where ([Hash] = '{brownserID}'
+                        and [Browser] = '{brownserCurrent}'
+                        and [Device] = '{brownserDevices}'
+                        and Event = 'Login'
+                        and Permission = 'Driver'
+                        and Status = '1' )";
 
+            var EmployeeCode = await _wfContext.Database.SqlQueryRaw<string>(sql).SingleOrDefaultAsync();
+
+            if (!string.IsNullOrEmpty(EmployeeCode))
+            {
+                sql = @$"SELECT TOP (1) Driver_name + ' ' + Driver_surname AS VALUE
+                            FROM   Driver_services.Driver_Employee
+                            WHERE (Driver_EmployeeCode = '{EmployeeCode}')";
+
+                var UserName = await _wfContext.Database.SqlQueryRaw<string>(sql).SingleOrDefaultAsync();
+                if (!string.IsNullOrEmpty(UserName))
+                {
+                    return UserName;
+                }
+                else
+                {
+                    throw new Exception("User Name Not Found");
+                }
+            }
+            else
+            {
+                throw new Exception("Login Transaction Not Found");
+            }
+
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Please Login then Try Again ", ex.InnerException ?? ex);
+        }
+    }
+
+    public async Task<List<DriverOT_DTOs>> GetDriverOTTime(string UserName)
+    {
+        try
+        {
+            string sql = @$"SELECT TOP (1) Driver_EmployeeCode AS VALUE
+                            FROM   Driver_services.Driver_Employee
+                            WHERE (Driver_name + ' ' + Driver_surname = '{UserName}')
+                            AND Driver_Position = 'DRIVER' ";
+
+            var EmployeeCode = await _wfContext.Database.SqlQueryRaw<string>(sql).SingleOrDefaultAsync();
+
+            var data = await _wfContext.Driver_Outsource.AsNoTracking().Where(x=>x.EmployeeCode == EmployeeCode
+                && x.Check_In.Month == DateTime.Now.Month
+                && x.Check_In.Year == DateTime.Now.Year
+                ).ToListAsync();
+
+            if(data.Count == 0)
+            {
+                var obj = new VM_CalReport
+                {
+                    EmployeeCode = EmployeeCode,
+                    Year = DateTime.Now.ToString("yyyy"),
+                    Month = DateTime.Now.ToString("MM")
+                };
+
+                data = await RefreshReportDriverOutSourceAsync(obj);
+            }
+
+            var DriverOTList = new List<DriverOT_DTOs>();
+
+            foreach(var each in data)
+            {
+                var DriverOT = new DriverOT_DTOs
+                {
+                    CheckInReal = each.Check_In,
+                    CheckOutReal = each.Check_Out,
+                    CheckInCal = each.Cal_Time_In,
+                    CheckOutCal = each.Cal_Time_Out,
+                    WorkingHours = each.Work_Reg,
+                    SumOT_1_5 = each.Work_OT1_5_Eve + each.Work_OT1_5_Night,
+                    SumOT_2_0 = each.Holi_OT2_0 + each.Work_OT2,
+                    SumOT_3_0 = each.Holi_OT3_0 + each.Holi_OT3_0_Eve,
+                    SumOT = TimeSpan.Zero,
+                    Lunch = each.Lunch,
+                    Taxi = each.Taxi
+                };
+                DriverOT.SumOT = DriverOT.SumOT_1_5 + DriverOT.SumOT_2_0 + DriverOT.SumOT_3_0;
+
+                DriverOTList.Add(DriverOT);
+            }
+
+            return DriverOTList;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Can not Get Driver OT Time {ex}", ex);
+            throw new Exception("Can not Get Driver OT Time");
+        }
+    }
 
 }

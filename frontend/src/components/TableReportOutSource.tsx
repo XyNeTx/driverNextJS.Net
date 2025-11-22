@@ -41,6 +41,7 @@ export interface VM_Total_Report_Outsource {
     TotalTaxi :number
     TotalLunch :number
 }
+
 export default function TableReportOutSource({reportData}: {reportData : VM_Driver_Outsource_Report}){
     return (
         <>
@@ -55,7 +56,7 @@ export default function TableReportOutSource({reportData}: {reportData : VM_Driv
                         <th className="thReport1stRow" rowSpan={3}>Use/No Use</th>
                         <th className="thReport1stRow" rowSpan={3}>Cal Time IN</th>
                         <th className="thReport1stRow" rowSpan={3}>Cal Time OUT</th>
-                        <th className="thReport1stRow" colSpan={5}> Working Day</th>
+                        <th className="thReport1stRow" colSpan={5}>Working Day</th>
                         <th className="thReport1stRow" colSpan={4}>Holiday</th>
                         <th className="thReport1stRow" rowSpan={3}>Total OT</th>
                         <th className="thReport1stRow" rowSpan={3}>Taxi</th>

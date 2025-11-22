@@ -8,9 +8,8 @@ const nextConfig: NextConfig = {
   trailingSlash: false,
   basePath: isProd ? '/NewDriver' : '', // ✅ Matches your IIS virtual path
   assetPrefix: isProd ? '/NewDriver' : '', // ✅ Ensures assets use the virtual path
-  images: {
-    unoptimized: true,
-  },
+  //basePath: '/NewDriver',
+  //assetPrefix: '/NewDriver'
 };
 
 export default nextConfig;

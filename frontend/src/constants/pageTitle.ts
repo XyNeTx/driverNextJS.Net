@@ -13,6 +13,11 @@ export const pageTitle = [
         name: "อนุมัติเวลาการทำงานของ Driver",
         title: "Driver Tracking - อนุมัติเวลาการทำงานของ Driver",
         urlName: "ApproveAll"
+    },
+    {
+        name: "ตรวจสอบเวลาเข้าออกงานและชั่วโมง OT",
+        title: "Driver Tracking - ตรวจสอบเวลาเข้าออกงานและชั่วโมง OT",
+        urlName: "CheckOT"
     }
     
 ]

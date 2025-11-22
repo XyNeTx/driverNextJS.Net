@@ -14,4 +14,6 @@ public interface IReportOutSourceRepo
     Task<string> Authen(string brownserID, string brownserCurrent, string brownserDevices);
     Task<List<Driver_TimeAttendanceDTO>> GetAllAttendanceWaitingData();
     Task ApproveAllData(List<int> ApproveIdList, string UserName);
+    Task<string> AuthenDriver(string brownserID, string brownserCurrent, string brownserDevices);
+    Task<List<DriverOT_DTOs>> GetDriverOTTime(string UserName);
 }

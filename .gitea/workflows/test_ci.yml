@@ -2,9 +2,6 @@ name: Local Gitea CI (No Checkout Folder)
 
 on:
   push:
-    branches:
-      - Feature
-  workflow_dispatch:
 
 jobs:
   build:
@@ -12,10 +9,13 @@ jobs:
 
     steps:
       # 1. Show workspace path and files
-      - name: Show workspace
-        run: |
-          echo "Workspace path: $GITHUB_WORKSPACE"
-          ls -la $GITHUB_WORKSPACE
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '7.0'
 
       # 2. Install .NET SDK (check version)
       - name: Install .NET SDK

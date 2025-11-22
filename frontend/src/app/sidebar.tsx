@@ -72,7 +72,7 @@ export default function Sidebar() {
 
     return (
         <>
-        <div className="p-2 fixed w-full bg-indigo-900 text-white dark:bg-black dark:text-white">
+        <div className="p-2 fixed w-full md:hidden bg-indigo-900 text-white dark:bg-black dark:text-white">
             <div className="ml-4 flex flex-row items-center justify-between w-full">
                 <div>
                     <a href="https://hmmtweb01.hinothailand.com/Drivers/Home.aspx" className="logo">
