@@ -4,13 +4,14 @@
   "private": true,
   "scripts": {
     "next": "concurrently \"npm run next\" \"npm run dotnet\"",
-    "publish": "concurrently \"npm run build\" \"npm run netpub\"",
+    "publish": "concurrently \"npm run build\"  \"npm run netpub\"",
     "dev": "next dev",
     "dotnet": "cd .. && dotnet test",
     "build": "next build",
     "netpub": "cd ../backend && dotnet publish",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prepublishOnly": "cd .. && dotnet test"
   },
   "dependencies": {
     "@lineiconshq/free-icons": "^1.0.3",

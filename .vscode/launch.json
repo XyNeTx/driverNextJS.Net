@@ -19,7 +19,7 @@
             "program": "${workspaceFolder}/backend/bin/Debug/net7.0/driver_api.dll", // Adjust path and framework
             "args": [
             ],
-            "launchSettingsProfile": "http",
+            "launchSettingsProfile": "https",
             "cwd": "${workspaceFolder}/backend",
             "console": "integratedTerminal",
             "stopAtEntry": false,

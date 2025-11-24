@@ -205,19 +205,23 @@ public class ReportOutSourceController : ControllerBase
     {
         try
         {
-            string env = HttpContext.Request.Host.Value.Contains("localhost") ? "Development" : "Production";
+            string env = "";
+            if(HttpContext != null){
+                env = HttpContext.Request.Host.Value.Contains("localhost") ? "Development" : "Production";
+            }
             bool isProd = false;
-            string UserName = "Sitthiporn Polmart";
+            string? UserName = "Sitthiporn Polmart";
             if (!string.IsNullOrWhiteSpace(env))
             {
                 isProd = env.ToLower() != "development" ? true : false;
             }
             if (isProd)
             {
-                var BROWSERCURRENT = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERCURRENT").Value;
+                var BROWSERCURRENT = HttpContext!.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERCURRENT").Value;
                 var BROWSERDEVICES = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERDEVICES").Value;
                 var BROWSERID = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERID").Value;
-                UserName = await _IReportOutSourceRepo.AuthenDriver(BROWSERID, BROWSERCURRENT, BROWSERDEVICES);
+                UserName = HttpContext.Request.Cookies.FirstOrDefault(x=>x.Key.ToLower() == "fullname").Value;
+                _logger.LogInformation("Check Cookies GetDriverOTTime {BROWSERCURRENT} {BROWSERDEVICES} {BROWSERID} {Username} ",BROWSERCURRENT,BROWSERDEVICES,BROWSERID,UserName);
             }
 
             var data = await _IReportOutSourceRepo.GetDriverOTTime(UserName);

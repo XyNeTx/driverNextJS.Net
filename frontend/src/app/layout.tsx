@@ -25,7 +25,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
         <Sidebar />
-        <main className="pl-52 pt-24 p-4 lg:pl-4" >{children}</main>
+        <main >{children}</main>
         <DynamicTitle/>
         <Toaster richColors position='top-center' closeButton/>
       </body>

@@ -16,6 +16,43 @@ namespace driver_test
         [Fact]
         public async Task GetReportDriverOutSourceTests()
         {
+            var mockData = new List<DriverOT_DTOs> {
+                new DriverOT_DTOs
+                {
+                    CheckInReal = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-01T00:00:00")),
+                    CheckOutReal= DateTime.Parse(DateTime.Now.ToString("yyyy-MM-01T00:00:00")),
+                    CheckInCal = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-01T00:00:00")),
+                    CheckOutCal = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-01T00:00:00")),
+                    WorkingHours = new TimeSpan(0,0,0),
+                    SumOT_1_5 = new TimeSpan(0,0,0),
+                    SumOT_2_0 = new TimeSpan(0,0,0),
+                    SumOT_3_0 = new TimeSpan(0,0,0),
+                    SumOT = new TimeSpan(0,0,0),
+                    Lunch= 0,
+                    Taxi= 0
+                },
+            };
+
+            var mockService = new Mock<IReportOutSourceRepo>();
+            mockService.Setup(s => s.GetDriverOTTime("Sitthiporn Polmart")).ReturnsAsync(mockData);
+
+            var controller = new ReportOutSourceController(mockService.Object,logger);
+
+            var result = await controller.GetDriverOTTime();
+
+            result.Should().BeOfType<OkObjectResult>();
+            var ok = result as OkObjectResult;
+
+            var list = ok!.Value as List<DriverOT_DTOs>;
+
+            list.Should().NotBeNull();
+            list!.Should().BeEquivalentTo(mockData);
+
+        }
+
+        [Fact]
+        public async Task DriverCheckOTTests()
+        {
             var mockData = new List<DriverDTO> {
                 new DriverDTO
                 {
@@ -48,5 +85,6 @@ namespace driver_test
             list![1].ID.Should().Be(12);
 
         }
+
     }
 }

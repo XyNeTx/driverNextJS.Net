@@ -720,6 +720,11 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
 
             var EmployeeCode = await _wfContext.Database.SqlQueryRaw<string>(sql).SingleOrDefaultAsync();
 
+            if (string.IsNullOrWhiteSpace(EmployeeCode))
+            {
+                throw new Exception("Employee Code Not Found");
+            }
+
             var data = await _wfContext.Driver_Outsource.AsNoTracking().Where(x=>x.EmployeeCode == EmployeeCode
                 && x.Check_In.Month == DateTime.Now.Month
                 && x.Check_In.Year == DateTime.Now.Year

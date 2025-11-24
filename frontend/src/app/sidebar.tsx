@@ -72,7 +72,7 @@ export default function Sidebar() {
 
     return (
         <>
-        <div className="p-2 fixed w-full md:hidden bg-indigo-900 text-white dark:bg-black dark:text-white">
+        <div className="p-2 fixed w-full bg-indigo-900 text-white dark:bg-black dark:text-white">
             <div className="ml-4 flex flex-row items-center justify-between w-full">
                 <div>
                     <a href="https://hmmtweb01.hinothailand.com/Drivers/Home.aspx" className="logo">
@@ -103,7 +103,7 @@ export default function Sidebar() {
                 </div>
             </div>
 
-            <aside className="w-48 h-[calc(100vh-40px)] lg:fixed top-16.5 left-0 p-2 pt-4 border-r bg-indigo-900 text-white dark:bg-black dark:text-white">
+            <aside className="w-48 h-[calc(100vh-40px)] fixed not-lg:hidden top-16.5 left-0 p-2 pt-4 border-r bg-indigo-900 text-white dark:bg-black dark:text-white">
                 <nav className="flex flex-col gap-4 ">
                     <ul className="">
                         <li className="flex flex-row">
