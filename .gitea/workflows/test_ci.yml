@@ -35,4 +35,4 @@ jobs:
 
       # 5. Publish Project NextJS + ASP.NET
       - name: NPM Publish
-        run: npm run publish
+        run: cd frontend && npm run publish
