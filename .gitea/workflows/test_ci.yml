@@ -37,11 +37,7 @@ jobs:
 
       - name: Deploy Backend to Windows Share
         run: |
-          # Navigate to publish folder
           cd backend/publish
-          
-          # Connect to Windows and upload files recursively
-          # Syntax: smbclient //IP/Share -U "User%Password" -c "commands"
           smbclient '//${{ secrets.WIN_IP }}/${{ secrets.WIN_SHARE_NAME }}' \
             -U '${{ secrets.WIN_USER }}%${{ secrets.LAN_PASS }}' \
             -c 'prompt OFF; recurse ON; mput *'
