@@ -30,18 +30,21 @@ jobs:
           cd backend
           dotnet publish -c Release -o publish
 
-      - name: Mount LAN folder
-        run: |
-          sudo mkdir -p /mnt/driverapi
-          sudo mount -t cifs //192.168.30.21/wwwroot/DriverApi /mnt/driverapi \
-            -o username=${{ secrets.LAN_USER }},password=${{ secrets.LAN_PASS }},rw,uid=$(id -u),gid=$(id -g)
+      # ... previous steps ...
 
-      - name: Copy files to LAN
-        run: |
-          sudo cp -r backend/publish/* /mnt/driverapi
+      - name: Install SMB Client
+        run: sudo apt-get update && sudo apt-get install -y smbclient
 
-      - name: Unmount
-        run: sudo umount /mnt/driverapi
+      - name: Deploy Backend to Windows Share
+        run: |
+          # Navigate to publish folder
+          cd backend/publish
+          
+          # Connect to Windows and upload files recursively
+          # Syntax: smbclient //IP/Share -U "User%Password" -c "commands"
+          smbclient '//${{ secrets.WIN_IP }}/${{ secrets.WIN_SHARE_NAME }}' \
+            -U '${{ secrets.WIN_USER }}%${{ secrets.LAN_PASS }}' \
+            -c 'prompt OFF; recurse ON; mput *'
 
       - name: Create .env file for Next.js
         run: |
