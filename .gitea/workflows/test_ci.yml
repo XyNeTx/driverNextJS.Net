@@ -8,7 +8,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Show workspace path and files
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -17,33 +16,42 @@ jobs:
         with:
           dotnet-version: '7.0'
 
-      # 2. Install .NET SDK (check version)
-      - name: Install .NET SDK
+      - name: Check .NET Version
         run: dotnet --version
 
-      # 3. Restore NuGet dependencies
       - name: Restore dependencies
         run: dotnet restore $GITHUB_WORKSPACE/DriverNextJS.sln
 
-      # 4. Build ASP.NET project
-      - name: Build project
+      - name: Test project
         run: dotnet test $GITHUB_WORKSPACE/DriverNextJS.sln --configuration Release
 
-      # 5. Build ASP.NET project
-      - name: Build project
-        run: cd backend && dotnet publish -c Release -o \\\\172.20.5.34\\wwwroot\\DriverApi
-
-      - name: Create .env file
+      - name: Publish Backend
         run: |
-          echo "NEXT_PUBLIC_PROD_API_LINK=${{ secrets.NEXT_PUBLIC_PROD_API_LINK }}" > .env
-          echo "NEXT_PUBLIC_PROD_LOGIN_LINK=${{ secrets.NEXT_PUBLIC_PROD_LOGIN_LINK }}" > .env
-          echo "NEXT_PUBLIC_PROD_SERVICE_LINK=${{ secrets.NEXT_PUBLIC_PROD_SERVICE_LINK }}" > .env
+          cd backend
+          dotnet publish -c Release -o publish
 
+      - name: Mount LAN folder
+        run: |
+          sudo mkdir -p /mnt/driverapi
+          sudo mount -t cifs //172.20.5.34/wwwroot/DriverApi /mnt/driverapi \
+            -o username=${{ secrets.LAN_USER }},password=${{ secrets.LAN_PASS }},rw,uid=$(id -u),gid=$(id -g)
 
-      # 6. Publish Project NextJS + ASP.NET
-      - name: npm install
+      - name: Copy files to LAN
+        run: |
+          sudo cp -r backend/publish/* /mnt/driverapi
+
+      - name: Unmount
+        run: sudo umount /mnt/driverapi
+
+      - name: Create .env file for Next.js
+        run: |
+          cd frontend
+          echo "NEXT_PUBLIC_PROD_API_LINK=${{ secrets.NEXT_PUBLIC_PROD_API_LINK }}" >> .env
+          echo "NEXT_PUBLIC_PROD_LOGIN_LINK=${{ secrets.NEXT_PUBLIC_PROD_LOGIN_LINK }}" >> .env
+          echo "NEXT_PUBLIC_PROD_SERVICE_LINK=${{ secrets.NEXT_PUBLIC_PROD_SERVICE_LINK }}" >> .env
+
+      - name: Install frontend dependencies
         run: cd frontend && npm install
 
-      # 7. Publish Project NextJS + ASP.NET
-      - name: npm publish
+      - name: Build Next.js
         run: cd frontend && npm run build
