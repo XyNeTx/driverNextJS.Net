@@ -30,11 +30,6 @@ jobs:
           cd backend
           dotnet publish -c Release -o publish
 
-      # ... previous steps ...
-
-      - name: Install SMB Client
-        run: sudo apt-get update && sudo apt-get install -y smbclient
-
       - name: Deploy Backend to Windows Share
         run: |
           cd backend/publish
