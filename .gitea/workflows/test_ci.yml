@@ -30,5 +30,9 @@ jobs:
         run: dotnet test $GITHUB_WORKSPACE/DriverNextJS.sln --configuration Release
 
       # 5. Publish Project NextJS + ASP.NET
+      - name: NPM Install
+        run: cd frontend && npm install
+
+      # 5. Publish Project NextJS + ASP.NET
       - name: NPM Publish
-        run: cd frontend && npm run publish
+        run: npm run publish
