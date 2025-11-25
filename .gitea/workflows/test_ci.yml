@@ -33,6 +33,9 @@ jobs:
       - name: Deploy Backend to Windows Share
         run: |
           cd backend/publish
+          echo "smbclient '//${{ secrets.WIN_IP }}/${{ secrets.WIN_SHARE_NAME }}' \
+            -U '${{ secrets.WIN_USER }}%${{ secrets.LAN_PASS }}' \
+            -c 'prompt OFF; recurse ON; mput *'"
           smbclient '//${{ secrets.WIN_IP }}/${{ secrets.WIN_SHARE_NAME }}' \
             -U '${{ secrets.WIN_USER }}%${{ secrets.LAN_PASS }}' \
             -c 'prompt OFF; recurse ON; mput *'
