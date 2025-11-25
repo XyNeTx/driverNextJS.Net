@@ -19,15 +19,15 @@ namespace driver_test
             var mockData = new List<DriverOT_DTOs> {
                 new DriverOT_DTOs
                 {
-                    CheckInReal = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-01T00:00:00")),
-                    CheckOutReal= DateTime.Parse(DateTime.Now.ToString("yyyy-MM-01T00:00:00")),
-                    CheckInCal = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-01T00:00:00")),
-                    CheckOutCal = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-01T00:00:00")),
-                    WorkingHours = new TimeSpan(0,0,0),
-                    SumOT_1_5 = new TimeSpan(0,0,0),
-                    SumOT_2_0 = new TimeSpan(0,0,0),
-                    SumOT_3_0 = new TimeSpan(0,0,0),
-                    SumOT = new TimeSpan(0,0,0),
+                    CheckInReal = DateTime.Now.ToString("01/MM/yyyy 00:00"),
+                    CheckOutReal= DateTime.Now.ToString("01/MM/yyyy 00:00"),
+                    CheckInCal = DateTime.Now.ToString("01/MM/yyyy 00:00"),
+                    CheckOutCal = DateTime.Now.ToString("01/MM/yyyy 00:00"),
+                    WorkingHours = "00:00",
+                    SumOT_1_5 = "00:00",
+                    SumOT_2_0 = "00:00",
+                    SumOT_3_0 = "00:00",
+                    SumOT = "00:00",
                     Lunch= 0,
                     Taxi= 0
                 },

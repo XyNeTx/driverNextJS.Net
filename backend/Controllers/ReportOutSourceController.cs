@@ -1,6 +1,7 @@
 using driver_api.Models.ViewModels;
 using driver_api.Repository.IRepo;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace driver_api.Controllers;
 
@@ -220,8 +221,8 @@ public class ReportOutSourceController : ControllerBase
                 var BROWSERCURRENT = HttpContext!.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERCURRENT").Value;
                 var BROWSERDEVICES = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERDEVICES").Value;
                 var BROWSERID = HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "BROWSERID").Value;
-                UserName = HttpContext.Request.Cookies.FirstOrDefault(x=>x.Key.ToLower() == "fullname").Value;
-                _logger.LogInformation("Check Cookies GetDriverOTTime {BROWSERCURRENT} {BROWSERDEVICES} {BROWSERID} {Username} ",BROWSERCURRENT,BROWSERDEVICES,BROWSERID,UserName);
+                UserName = await _IReportOutSourceRepo.AuthenDriver(BROWSERID, BROWSERCURRENT, BROWSERDEVICES);
+                _logger.LogInformation("Check Cookies GetDriverOTTime {BROWSERCURRENT} {BROWSERDEVICES} {BROWSERID} {UserName} ",BROWSERCURRENT,BROWSERDEVICES,BROWSERID,UserName);
             }
 
             var data = await _IReportOutSourceRepo.GetDriverOTTime(UserName);

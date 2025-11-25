@@ -74,23 +74,23 @@ export default function Sidebar() {
         <>
         <div className="p-2 fixed w-full bg-indigo-900 text-white dark:bg-black dark:text-white">
             <div className="ml-4 flex flex-row items-center justify-between w-full">
-                <div>
+                <div className="not-lg:hidden">
                     <a href="https://hmmtweb01.hinothailand.com/Drivers/Home.aspx" className="logo">
                         <AppImage src="/bus-driver.png" alt="Logo" width={50} height={50} />
                         <span className="sr-only">Driver NextJS</span>
                     </a>
                 </div>
-                <div className="pl-6 pr-6">
+                <div className="not-lg:pl-1 not-lg:pr-1 lg:pl-6 lg:pr-6">
                     <h3 className="col font-bold text-lg">Driver Tracking</h3>
                 </div>
-                <div>
+                <div className="not-lg:hidden">
                     <a title="toggleSidebar" href="#" onClick={toggleSidebar} >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                         </svg>
                     </a>
                 </div>
-                <div className="ps-6">
+                <div className="ps-6 not-lg:hidden">
                     {currentPage &&
                         (
                             <h3 className="font-bold text-lg">{currentPage.name}</h3>

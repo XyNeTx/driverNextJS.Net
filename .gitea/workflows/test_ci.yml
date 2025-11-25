@@ -27,4 +27,8 @@ jobs:
 
       # 4. Build ASP.NET project
       - name: Build project
-        run: dotnet build $GITHUB_WORKSPACE/DriverNextJS.sln --configuration Release
+        run: dotnet test $GITHUB_WORKSPACE/DriverNextJS.sln --configuration Release
+
+      # 5. Publish Project NextJS + ASP.NET
+      - name: NPM Publish
+        run: cd frontend && npm run publish

@@ -50,8 +50,8 @@ export default function TableDriverCheckOT() {
         },[]
     )
     return (
-        <div className="flex justify-center h-[400px] p-10 border border-gray-100 shadow-lg shadow-indigo-400 dark:border-gray-800 dark:shadow-gray-400">
-                <Table>
+        <div className="flex justify-center lg:h-[400px] xs:h-[450px] lg:p-10 not-lg:p-2 border border-gray-100 shadow-lg shadow-indigo-400 dark:border-gray-800 dark:shadow-gray-400">
+                <Table className="p-0">
                     <TableCaption className="mb-4">List of Check-In Check-Out and Overtime</TableCaption>
                     <TableHeader className="sticky top-0 bg-white dark:bg-black">
                         <TableRow>
@@ -68,7 +68,7 @@ export default function TableDriverCheckOT() {
                             <TableHead>ค่า Taxi</TableHead>
                         </TableRow>
                     </TableHeader>
-                    <TableBody id="tableBody">
+                    <TableBody className="bg-white dark:bg-black" id="tableBody">
                         {data && data.map((each) => (
                             <TableRow key={each.CheckInReal}>
                                 <TableCell>{each.CheckInReal}</TableCell>

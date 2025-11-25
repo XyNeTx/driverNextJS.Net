@@ -717,7 +717,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                             FROM   Driver_services.Driver_Employee
                             WHERE (Driver_name + ' ' + Driver_surname = '{UserName}')
                             AND Driver_Position = 'DRIVER' ";
-
+            _logger.LogInformation("GetDriverOTTime SQL : {sql}",sql);
             var EmployeeCode = await _wfContext.Database.SqlQueryRaw<string>(sql).SingleOrDefaultAsync();
 
             if (string.IsNullOrWhiteSpace(EmployeeCode))
@@ -748,19 +748,19 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
             {
                 var DriverOT = new DriverOT_DTOs
                 {
-                    CheckInReal = each.Check_In,
-                    CheckOutReal = each.Check_Out,
-                    CheckInCal = each.Cal_Time_In,
-                    CheckOutCal = each.Cal_Time_Out,
-                    WorkingHours = each.Work_Reg,
-                    SumOT_1_5 = each.Work_OT1_5_Eve + each.Work_OT1_5_Night,
-                    SumOT_2_0 = each.Holi_OT2_0 + each.Work_OT2,
-                    SumOT_3_0 = each.Holi_OT3_0 + each.Holi_OT3_0_Eve,
-                    SumOT = TimeSpan.Zero,
+                    CheckInReal = each.Check_In.ToString("dd/MM/yyyy HH:mm"),
+                    CheckOutReal = each.Check_Out.ToString("dd/MM/yyyy HH:mm"),
+                    CheckInCal = each.Cal_Time_In.ToString("dd/MM/yyyy HH:mm"),
+                    CheckOutCal = each.Cal_Time_Out.ToString("dd/MM/yyyy HH:mm"),
+                    WorkingHours = each.Work_Reg.ToString("HH:mm"),
+                    SumOT_1_5 = (each.Work_OT1_5_Eve + each.Work_OT1_5_Night).ToString("HH:mm"),
+                    SumOT_2_0 = (each.Holi_OT2_0 + each.Work_OT2).ToString("HH:mm"),
+                    SumOT_3_0 = (each.Holi_OT3_0 + each.Holi_OT3_0_Eve).ToString("HH:mm"),
+                    SumOT = TimeSpan.Zero.ToString("HH:mm"),
                     Lunch = each.Lunch,
                     Taxi = each.Taxi
                 };
-                DriverOT.SumOT = DriverOT.SumOT_1_5 + DriverOT.SumOT_2_0 + DriverOT.SumOT_3_0;
+                DriverOT.SumOT = TimeSpan.Parse(DriverOT.SumOT_1_5 + DriverOT.SumOT_2_0 + DriverOT.SumOT_3_0).ToString("HH:mm");
 
                 DriverOTList.Add(DriverOT);
             }
