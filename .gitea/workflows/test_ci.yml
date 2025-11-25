@@ -33,11 +33,11 @@ jobs:
       - name: Deploy Backend to Windows Share
         run: |
           cd backend/publish
-          echo "smbclient '//${{ secrets.WIN_IP }}/${{ secrets.WIN_SHARE_NAME }}' \
-            -U '${{ secrets.WIN_USER }}%${{ secrets.LAN_PASS }}' \
+          echo "smbclient '//${{ secrets.LAN_IP }}/${{ secrets.LAN_SHARE }}' \
+            -U '${{ secrets.LAN_USER }}%${{ secrets.LAN_PASS }}' \
             -c 'prompt OFF; recurse ON; mput *'"
-          smbclient '//${{ secrets.WIN_IP }}/${{ secrets.WIN_SHARE_NAME }}' \
-            -U '${{ secrets.WIN_USER }}%${{ secrets.LAN_PASS }}' \
+          smbclient '//${{ secrets.LAN_IP }}/${{ secrets.LAN_SHARE }}' \
+            -U '${{ secrets.LAN_USER }}%${{ secrets.LAN_PASS }}' \
             -c 'prompt OFF; recurse ON; mput *'
 
       - name: Create .env file for Next.js
