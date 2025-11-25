@@ -33,6 +33,13 @@ jobs:
       - name: Build project
         run: cd backend && dotnet publish -c Release -o \\\\172.20.5.34\\wwwroot\\DriverApi
 
+      - name: Create .env file
+        run: |
+          echo "NEXT_PUBLIC_PROD_API_LINK=${{ secrets.NEXT_PUBLIC_PROD_API_LINK }}" > .env
+          echo "NEXT_PUBLIC_PROD_LOGIN_LINK=${{ secrets.NEXT_PUBLIC_PROD_LOGIN_LINK }}" > .env
+          echo "NEXT_PUBLIC_PROD_SERVICE_LINK=${{ secrets.NEXT_PUBLIC_PROD_SERVICE_LINK }}" > .env
+
+
       # 6. Publish Project NextJS + ASP.NET
       - name: npm install
         run: cd frontend && npm install
