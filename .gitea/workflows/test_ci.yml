@@ -33,7 +33,7 @@ jobs:
       - name: Mount LAN folder
         run: |
           sudo mkdir -p /mnt/driverapi
-          sudo mount -t cifs //172.20.5.34/wwwroot/DriverApi /mnt/driverapi \
+          sudo mount -t cifs //192.168.30.21/wwwroot/DriverApi /mnt/driverapi \
             -o username=${{ secrets.LAN_USER }},password=${{ secrets.LAN_PASS }},rw,uid=$(id -u),gid=$(id -g)
 
       - name: Copy files to LAN
