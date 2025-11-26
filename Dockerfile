@@ -32,6 +32,7 @@ WORKDIR /frontend
 RUN npm install \
     && npm run build
 
+WORKDIR /
 RUN cp -r /frontend/out/* /backend/wwwroot/
 
 # Build runtime image
