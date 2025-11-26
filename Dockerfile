@@ -3,17 +3,16 @@ WORKDIR /
 
 # Copy csproj files
 COPY /backend/*.csproj /backend/
-COPY /tests/*.csproj /tests/
-COPY /frontend/*.esproj /frontend/
-
-# Copy solution files and restore as distinct layers
-COPY *.sln .
+WORKDIR /backend
 RUN dotnet restore
-
-# Copy and build the rest of the application
-COPY . .
 RUN dotnet build -c Release
+
+COPY /tests/*.csproj /tests/
+WORKDIR /tests
+RUN dotnet restore
 RUN dotnet test --no-build -c Release
+
+WORKDIR /backend
 RUN dotnet publish -c Release -o out
 
 # Build runtime image
