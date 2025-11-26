@@ -14,6 +14,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Create .env file
+        run: echo "NEXT_PUBLIC_PROD_API_LINK=${{ secrets.NEXT_PUBLIC_PROD_API_LINK }}" > /frontend/.env
+        run: echo "NEXT_PUBLIC_PROD_LOGIN_LINK=${{ secrets.NEXT_PUBLIC_PROD_LOGIN_LINK }}" >> /frontend/.env
+        run: echo "NEXT_PUBLIC_PROD_SERVICE_LINK=${{ secrets.NEXT_PUBLIC_PROD_SERVICE_LINK }}" >> /frontend/.env
+
       - name: Build Docker image
         run: docker build -t driver_api .
 
