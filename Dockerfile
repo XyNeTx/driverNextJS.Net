@@ -3,6 +3,7 @@ WORKDIR /
 
 COPY /backend/*.csproj /backend/
 COPY /tests/*.csproj /tests/
+COPY /frontend/*.esproj /frontend/
 
 # Copy csproj and restore as distinct layers
 COPY *.sln .
