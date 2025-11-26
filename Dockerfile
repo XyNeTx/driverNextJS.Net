@@ -21,7 +21,7 @@ COPY /frontend /frontend
 RUN dotnet restore backend/driver_api.csproj
 
 RUN dotnet build backend/driver_api.csproj -c Release
-RUN dotnet test tests/driver_test.csproj -c Release
+RUN dotnet test tests/driver_tests.csproj -c Release
 
 RUN dotnet publish backend/driver_api.csproj -c Release -o /out
 
