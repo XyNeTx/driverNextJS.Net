@@ -32,10 +32,16 @@ WORKDIR /frontend
 RUN npm install \
     && npm run build
 
+RUN cp -r /frontend/out/* /backend/wwwroot/
+
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
-# ENV ASPNETCORE_URLS=http://+:5272
-# ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_URLS=http://+:5272
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV NEXT_PUBLIC_PROD_API_LINK=${{secrets.NEXT_PUBLIC_PROD_API_LINK}}
+ENV NEXT_PUBLIC_PROD_LOGIN_LINK=${{secrets.NEXT_PUBLIC_PROD_LOGIN_LINK}}
+ENV NEXT_PUBLIC_PROD_SERVICE_LINK=${{secrets.NEXT_PUBLIC_PROD_SERVICE_LINK}}
+
 WORKDIR /backend
 COPY --from=build-env /backend/out .
 EXPOSE 5272
