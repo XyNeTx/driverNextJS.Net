@@ -18,12 +18,12 @@ COPY /frontend /frontend
 
 
 # Restore ONLY backend, not frontend .esproj
-RUN dotnet restore backend/backend.csproj
+RUN dotnet restore backend/driver_api.csproj
 
-RUN dotnet build backend/backend.csproj -c Release
-RUN dotnet test tests/tests.csproj -c Release
+RUN dotnet build backend/driver_api.csproj -c Release
+RUN dotnet test tests/driver_test.csproj -c Release
 
-RUN dotnet publish backend/backend.csproj -c Release -o /out
+RUN dotnet publish backend/driver_api.csproj -c Release -o /out
 
 WORKDIR /backend
 RUN dotnet publish -c Release -o out

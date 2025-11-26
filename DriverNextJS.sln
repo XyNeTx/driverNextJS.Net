@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "driver_api", "backend\drive
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "driver_ui", "frontend\driver_ui.esproj", "{BDE2BA0F-E721-FE8A-E520-E5AE83D3AE89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "driver_test", "tests\driver_test.csproj", "{435F3BD8-075B-4A74-9204-9728E7C93C06}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "driver_tests", "tests\driver_test.csproj", "{435F3BD8-075B-4A74-9204-9728E7C93C06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
