@@ -1,11 +1,19 @@
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
 WORKDIR /
 
+# Copy csproj files
 COPY /backend/*.csproj /backend/
 COPY /tests/*.csproj /tests/
 COPY /frontend/*.esproj /frontend/
 
-# Copy csproj and restore as distinct layers
+# Build frontend
+WORKDIR /frontend
+RUN npm install
+RUN npm run build
+
+WORKDIR /
+
+# Copy solution files and restore as distinct layers
 COPY *.sln .
 RUN dotnet restore
 
