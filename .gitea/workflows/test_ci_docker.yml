@@ -14,6 +14,12 @@ jobs:
       - name: Build Docker image
         run: docker build -t driver_api .
 
+      - name: Stop existing container
+        run: docker stop driver_api || true
+
+      - name: Remove existing container
+        run: docker rm driver_api || true
+
       - name: Run Docker container
         run: docker run -d --name driver_api -p 5272:5272 driver_api
 

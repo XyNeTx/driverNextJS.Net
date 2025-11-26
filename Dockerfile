@@ -34,6 +34,8 @@ RUN npm install \
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
+ENV ASPNETCORE_URLS=http://+:5272
+ENV ASPNETCORE_ENVIRONMENT=Development
 WORKDIR /backend
 COPY --from=build-env /backend/out .
 EXPOSE 5272
