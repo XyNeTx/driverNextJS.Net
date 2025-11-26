@@ -11,13 +11,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '7.0'
-
       - name: Build Docker image
         run: docker build -t driver_api .
 
       - name: Run Docker container
-        run: docker run -d -p 5272:5272 driver_api
+        run: docker run -d --name driver_api -p 5272:5272 driver_api
+
+      - name: Check container is running
+        run: docker ps | grep driver_api
+
+      - name: Show container logs
+        run: docker logs driver_api

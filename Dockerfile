@@ -1,6 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
 
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+RUN apt-get update \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs \
     && node -v && npm -v
 
