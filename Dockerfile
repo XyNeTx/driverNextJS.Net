@@ -1,4 +1,11 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-
+
+RUN docker pull node:24-alpine
+
+RUN docker run -it --rm --entrypoint sh node:24-alpine
+RUN npm -v
+RUN node -v
+
 WORKDIR /
 
 COPY *.sln /
