@@ -1,8 +1,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
 WORKDIR /
 
-COPY /backend/*.sln /backend/
-COPY /tests/*.sln /tests/
+COPY /backend/*.csproj /backend/
+COPY /tests/*.csproj /tests/
 
 # Copy csproj and restore as distinct layers
 COPY *.sln .
