@@ -6,13 +6,6 @@ COPY /backend/*.csproj /backend/
 COPY /tests/*.csproj /tests/
 COPY /frontend/*.esproj /frontend/
 
-# Build frontend
-WORKDIR /frontend
-RUN npm install
-RUN npm run build
-
-WORKDIR /
-
 # Copy solution files and restore as distinct layers
 COPY *.sln .
 RUN dotnet restore
