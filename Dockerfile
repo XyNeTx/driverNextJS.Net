@@ -27,6 +27,7 @@ RUN npm install \
 
 WORKDIR /
 RUN cp -r /frontend/out/* /backend/out
+RUN cp /frontend/web.config /backend/out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
