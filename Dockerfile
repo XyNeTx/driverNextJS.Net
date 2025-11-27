@@ -12,18 +12,11 @@ COPY /backend /backend
 COPY /tests /tests
 COPY /frontend /frontend
 
-# RUN dotnet restore \
-#     && dotnet build -c Release \
-#     && dotnet test -c Release
-
-
 # Restore ONLY backend, not frontend .esproj
 RUN dotnet restore backend/driver_api.csproj
 
 RUN dotnet build backend/driver_api.csproj -c Release
 RUN dotnet test tests/driver_tests.csproj -c Release
-
-RUN dotnet publish backend/driver_api.csproj -c Release -o /out
 
 WORKDIR /backend
 RUN dotnet publish -c Release -o out
@@ -33,8 +26,7 @@ RUN npm install \
     && npm run build
 
 WORKDIR /
-RUN mkdir -p /backend/out/wwwroot
-RUN cp -r /frontend/out/* /backend/out/wwwroot/
+RUN cp -r /frontend/out/* /backend/out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0

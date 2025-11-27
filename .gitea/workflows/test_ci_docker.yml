@@ -26,8 +26,14 @@ jobs:
       - name: Remove existing container
         run: docker rm driver_api || true
 
+      - name: Stop existing db container
+        run: docker stop postgres || true
+
+      - name: Remove existing db container
+        run: docker rm postgres || true
+
       - name: Run Docker container
-        run: docker run -d --name driver_api -p 5272:5272 driver_api
+        run: docker-compose up -d
 
       - name: Check container is running
         run: docker ps | grep driver_api
