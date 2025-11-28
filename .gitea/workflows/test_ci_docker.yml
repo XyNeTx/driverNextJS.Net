@@ -20,6 +20,9 @@ jobs:
       - name: Stop & remove Docker container
         run: docker-compose down -v
 
+      - name: Remove Docker image
+        run: docker rmi driver_api
+
       - name: Build Docker image
         run: docker-compose build
 
