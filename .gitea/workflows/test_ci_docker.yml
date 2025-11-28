@@ -32,6 +32,12 @@ jobs:
       - name: Remove existing db container
         run: docker rm postgres || true
 
+      - name: Stop existing db container
+        run: docker stop pgadmin || true
+
+      - name: Remove existing db container
+        run: docker rm pgadmin || true
+
       - name: Run Docker container
         run: docker-compose up -d
 
