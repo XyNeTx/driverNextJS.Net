@@ -42,10 +42,10 @@
 # Build frontend development without .env file
 FROM node:22 AS frontend
 WORKDIR /frontend
+COPY frontend/package*.json ./
+RUN npm install
 COPY frontend .
-ENV NODE_ENV=development
-RUN npm install \
-    && npm run build
+RUN npm run build
 
 # Build backend development without .env file
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS backend
