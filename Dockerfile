@@ -44,14 +44,14 @@ FROM node:22 AS frontend
 WORKDIR /frontend
 COPY frontend/package*.json ./
 RUN npm install
-COPY frontend .
+COPY frontend/ .
 ENV NODE_ENV=development
 RUN npm run build
 
 # Build backend development without .env file
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS backend
 WORKDIR /backend
-COPY backend .
+COPY backend/ ./
 RUN dotnet publish -c Release -o out
 
 # Copy Next.js generated files into ASP.NET wwwroot
