@@ -45,6 +45,7 @@ WORKDIR /frontend
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend .
+ENV NODE_ENV=development
 RUN npm run build
 
 # Build backend development without .env file
