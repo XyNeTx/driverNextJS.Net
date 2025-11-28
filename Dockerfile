@@ -22,7 +22,6 @@ WORKDIR /backend
 RUN dotnet publish -c Release -o out
 
 WORKDIR /frontend
-ENV NODE_ENV=development
 RUN npm install \
     && npm run build
 
