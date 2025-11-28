@@ -726,7 +726,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
             }
 
             var data = await _wfContext.Driver_Outsource.AsNoTracking().Where(x=>x.EmployeeCode == EmployeeCode
-                && x.Check_In.Month == DateTime.Now.Month
+                && x.Check_In.Month == 9
                 && x.Check_In.Year == DateTime.Now.Year
                 ).ToListAsync();
 
@@ -752,15 +752,17 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                     CheckOutReal = each.Check_Out.ToString("dd/MM/yyyy HH:mm"),
                     CheckInCal = each.Cal_Time_In.ToString("dd/MM/yyyy HH:mm"),
                     CheckOutCal = each.Cal_Time_Out.ToString("dd/MM/yyyy HH:mm"),
-                    WorkingHours = each.Work_Reg.ToString("HH:mm"),
-                    SumOT_1_5 = (each.Work_OT1_5_Eve + each.Work_OT1_5_Night).ToString("HH:mm"),
-                    SumOT_2_0 = (each.Holi_OT2_0 + each.Work_OT2).ToString("HH:mm"),
-                    SumOT_3_0 = (each.Holi_OT3_0 + each.Holi_OT3_0_Eve).ToString("HH:mm"),
-                    SumOT = TimeSpan.Zero.ToString("HH:mm"),
+                    WorkingHours = each.Work_Reg.ToString("hh\\:mm"),
+                    SumOT_1_5 = (each.Work_OT1_5_Eve + each.Work_OT1_5_Night).ToString("hh\\:mm"),
+                    SumOT_2_0 = (each.Holi_OT2_0 + each.Work_OT2).ToString("hh\\:mm"),
+                    SumOT_3_0 = (each.Holi_OT3_0 + each.Holi_OT3_0_Eve).ToString("hh\\:mm"),
+                    SumOT = TimeSpan.Zero.ToString("hh\\:mm"),
                     Lunch = each.Lunch,
                     Taxi = each.Taxi
                 };
-                DriverOT.SumOT = TimeSpan.Parse(DriverOT.SumOT_1_5 + DriverOT.SumOT_2_0 + DriverOT.SumOT_3_0).ToString("HH:mm");
+                DriverOT.SumOT = (each.Work_OT1_5_Eve + each.Work_OT1_5_Night
+                    + each.Holi_OT2_0 + each.Work_OT2
+                    + each.Holi_OT3_0 + each.Holi_OT3_0_Eve).ToString("hh\\:mm");
 
                 DriverOTList.Add(DriverOT);
             }

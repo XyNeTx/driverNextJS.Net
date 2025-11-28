@@ -5,6 +5,7 @@
 /backend/obj
 /backend/bin
 /backend/Logs
+/backend/out
 /.vs
 
 #tests

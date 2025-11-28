@@ -73,7 +73,7 @@ export default function Sidebar() {
     return (
         <>
         <div className="p-2 fixed w-full bg-indigo-900 text-white dark:bg-black dark:text-white">
-            <div className="ml-4 flex flex-row items-center justify-between w-full">
+            <div className="lg:ml-4 flex flex-row items-center justify-between w-full">
                 <div className="not-lg:hidden">
                     <a href="https://hmmtweb01.hinothailand.com/Drivers/Home.aspx" className="logo">
                         <AppImage src="/bus-driver.png" alt="Logo" width={50} height={50} />
@@ -81,7 +81,9 @@ export default function Sidebar() {
                     </a>
                 </div>
                 <div className="not-lg:pl-1 not-lg:pr-1 lg:pl-6 lg:pr-6">
-                    <h3 className="col font-bold text-lg">Driver Tracking</h3>
+                    <a href="https://hmmtweb01.hinothailand.com/Drivers/Home.aspx">
+                        <h3 className="col font-bold text-lg">Driver Tracking</h3>
+                    </a>
                 </div>
                 <div className="not-lg:hidden">
                     <a title="toggleSidebar" href="#" onClick={toggleSidebar} >
@@ -98,7 +100,7 @@ export default function Sidebar() {
                     }
                 </div>
                 <ThemeToggle/>
-                <div className="ms-2 mr-8">
+                <div className="lg:ms-2 lg:mr-8">
                     <a href="#" onClick={Logout} className="btn-logout font-bold">{userName}</a>
                 </div>
             </div>

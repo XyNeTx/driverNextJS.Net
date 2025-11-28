@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "next": "concurrently \"npm run next\" \"npm run dotnet\"",
-    "publish": "concurrently \"npm run build\"  \"npm run netpubTest\"",
+    "publish": "concurrently \"npm run build\"  \"npm run netpub\"",
     "dev": "next dev",
     "dotnet": "cd .. && dotnet test",
-    "build": "next build",
+    "build": "next build && robocopy out \\\\192.168.30.21\\wwwroot\\DriverApi\\wwwroot /MIR || exit 0",
     "netpub": "cd ../backend && dotnet publish -c Release -o \\\\192.168.30.21\\wwwroot\\DriverApi",
     "netpubTest" : "cd ../backend && dotnet publish -c Release -o \\\\172.20.5.34\\wwwroot\\DriverApi",
     "start": "next start",

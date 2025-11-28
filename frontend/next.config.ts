@@ -6,8 +6,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   output: 'export',
   trailingSlash: false,
-  basePath: isProd ? '/NewDriver' : '', // ✅ Matches your IIS virtual path
-  assetPrefix: isProd ? '/NewDriver' : '', // ✅ Ensures assets use the virtual path
+  basePath: isProd ? '/DriverApi' : '', // ✅ Matches your IIS virtual path
+  assetPrefix: isProd ? '/DriverApi' : '', // ✅ Ensures assets use the virtual path
   //basePath: '/NewDriver',
   //assetPrefix: '/NewDriver'
 };

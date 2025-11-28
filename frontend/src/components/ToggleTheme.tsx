@@ -20,8 +20,8 @@ export default function ThemeToggle() {
     }, [theme]);
 
     return (
-        <div className="flex-1 ps-4 ">
-            <Lineicons icon={theme === "dark" ? Sun1Bulk : MoonHalfRight5Bulk} size={20} onClick={() => setTheme((t) => (t === "light" ? "dark" : "light"))} />
+        <div className="lg:flex-1 lg:ps-4 justify-content-center">
+            <Lineicons className="text-center" icon={theme === "dark" ? Sun1Bulk : MoonHalfRight5Bulk} size={20} onClick={() => setTheme((t) => (t === "light" ? "dark" : "light"))} />
         </div>
   );
 }

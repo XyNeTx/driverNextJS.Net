@@ -8,7 +8,7 @@ interface AppImageProps extends Omit<ImageProps, 'src'> {
 }
 
 export default function AppImage({ src, alt, ...props }: AppImageProps) {
-  const basePath = isProd ? '/NewDriver' : '';
+  const basePath = isProd ? '/DriverApi' : '';
 
   // Add basePath if src starts with /
   const imageSrc = src.startsWith('/') ? `${basePath}${src}` : src;
