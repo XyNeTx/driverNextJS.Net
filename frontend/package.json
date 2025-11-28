@@ -6,6 +6,7 @@
     "next": "concurrently \"npm run build:dev\" \"npm run netpub\"",
     "publish": "concurrently \"npm run build:prod\"  \"npm run netpub\"",
     "dev": "next dev",
+    "build": "next build",
     "build:dev": "cp .env.dev .env && next build",
     "build:prod": "cp .env.prod .env && next build && robocopy out \\\\192.168.30.21\\wwwroot\\DriverApi\\wwwroot /MIR || exit 0",
     "netpub": "cd ../backend && dotnet publish -c Release -o \\\\192.168.30.21\\wwwroot\\DriverApi",

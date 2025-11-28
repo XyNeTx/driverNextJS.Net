@@ -39,14 +39,16 @@
 # EXPOSE 5272
 # ENTRYPOINT ["dotnet", "driver_api.dll"]
 
+# Build frontend development without .env file
 FROM node:22 AS frontend
 WORKDIR /frontend
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend .
 ENV NODE_ENV=development
-RUN npm run build:dev
+RUN npm run build
 
+# Build backend development without .env file
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS backend
 WORKDIR /backend
 COPY backend .
