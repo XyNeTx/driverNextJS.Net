@@ -23,6 +23,7 @@ services:
     depends_on:
       - db
   driver_api:
+    build: .
     image: driver_api
     container_name: driver_api
     ports:
