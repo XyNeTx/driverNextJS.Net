@@ -3,10 +3,10 @@
 	"tasks": [
 		{
 			"type": "npm",
-			"script": "dotnet",
+			"script": "prepublishOnly",
 			"path": "frontend",
 			"problemMatcher": [],
-			"label": "npm: dotnet - frontend",
+			"label": "npm: dotnet - prepublishOnly",
 			"detail": "cd .. && dotnet test"
 		}
 	]

@@ -3,15 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "next": "concurrently \"npm run next\" \"npm run dotnet\"",
-    "publish": "concurrently \"npm run build\"  \"npm run netpub\"",
+    "next": "concurrently \"npm run build:dev\" \"npm run netpub\"",
+    "publish": "concurrently \"npm run build:prod\"  \"npm run netpub\"",
     "dev": "next dev",
-    "dotnet": "cd .. && dotnet test",
-    "build": "next build && robocopy out \\\\192.168.30.21\\wwwroot\\DriverApi\\wwwroot /MIR || exit 0",
+    "build:dev": "cp .env.dev .env && next build",
+    "build:prod": "cp .env.prod .env && next build && robocopy out \\\\192.168.30.21\\wwwroot\\DriverApi\\wwwroot /MIR || exit 0",
     "netpub": "cd ../backend && dotnet publish -c Release -o \\\\192.168.30.21\\wwwroot\\DriverApi",
-    "netpubTest" : "cd ../backend && dotnet publish -c Release -o \\\\172.20.5.34\\wwwroot\\DriverApi",
     "start": "next start",
-    "lint": "eslint",
     "prepublishOnly": "cd .. && dotnet test"
   },
   "dependencies": {

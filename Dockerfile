@@ -44,7 +44,8 @@ WORKDIR /frontend
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend .
-RUN npm run build
+ENV NODE_ENV=development
+RUN npm run build:dev
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS backend
 WORKDIR /backend
