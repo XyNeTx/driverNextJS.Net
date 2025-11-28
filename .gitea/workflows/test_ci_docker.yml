@@ -17,17 +17,11 @@ jobs:
           echo "NEXT_PUBLIC_PROD_LOGIN_LINK=${{ secrets.NEXT_PUBLIC_PROD_LOGIN_LINK }}" >> frontend/.env
           echo "NEXT_PUBLIC_PROD_SERVICE_LINK=${{ secrets.NEXT_PUBLIC_PROD_SERVICE_LINK }}" >> frontend/.env
 
-      # - name: Stop & remove old containers
-      #   run: docker-compose down -v
-
-      - name: Stop only app container (not DB)
-        run: docker-compose stop driver_api || true
-
-      - name: Remove only app container (not DB)
-        run: docker-compose rm -f driver_api || true
+      - name: Stop & remove old containers
+        run: docker-compose down -v
 
       - name: Build fresh images
-        run: docker-compose build driver_api --no-cache
+        run: docker-compose build --no-cache
 
       - name: Start stack
         run: docker-compose up -d
