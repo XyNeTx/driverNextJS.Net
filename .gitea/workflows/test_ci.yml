@@ -1,30 +1,54 @@
 name: Local Gitea CI (No Checkout Folder)
 
-on:
-  push:
-    branches:
-      - Feature
-  workflow_dispatch:
+# on:
+#   push:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Show workspace path and files
-      - name: Show workspace
-        run: |
-          echo "Workspace path: $GITHUB_WORKSPACE"
-          ls -la $GITHUB_WORKSPACE
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      # 2. Install .NET SDK (check version)
-      - name: Install .NET SDK
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '7.0'
+
+      - name: Check .NET Version
         run: dotnet --version
 
-      # 3. Restore NuGet dependencies
       - name: Restore dependencies
         run: dotnet restore $GITHUB_WORKSPACE/DriverNextJS.sln
 
-      # 4. Build ASP.NET project
-      - name: Build project
-        run: dotnet build $GITHUB_WORKSPACE/DriverNextJS.sln --configuration Release
+      - name: Test project
+        run: dotnet test $GITHUB_WORKSPACE/DriverNextJS.sln --configuration Release
+
+      - name: Publish Backend
+        run: |
+          cd backend
+          dotnet publish -c Release -o publish
+
+      - name: Deploy Backend to Windows Share
+        run: |
+          cd backend/publish
+          echo "smbclient '//${{ secrets.LAN_IP }}/${{ secrets.LAN_SHARE }}' \
+            -U '${{ secrets.LAN_USER }}%${{ secrets.LAN_PASS }}' \
+            -c 'prompt OFF; recurse ON; mput *'"
+          smbclient '//${{ secrets.LAN_IP }}/${{ secrets.LAN_SHARE }}' \
+            -U '${{ secrets.LAN_USER }}%${{ secrets.LAN_PASS }}' \
+            -c 'prompt OFF; recurse ON; mput *'
+
+      - name: Create .env file for Next.js
+        run: |
+          cd frontend
+          echo "NEXT_PUBLIC_PROD_API_LINK=${{ secrets.NEXT_PUBLIC_PROD_API_LINK }}" >> .env
+          echo "NEXT_PUBLIC_PROD_LOGIN_LINK=${{ secrets.NEXT_PUBLIC_PROD_LOGIN_LINK }}" >> .env
+          echo "NEXT_PUBLIC_PROD_SERVICE_LINK=${{ secrets.NEXT_PUBLIC_PROD_SERVICE_LINK }}" >> .env
+
+      - name: Install frontend dependencies
+        run: cd frontend && npm install
+
+      - name: Build Next.js
+        run: cd frontend && npm run build

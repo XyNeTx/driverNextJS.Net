@@ -73,24 +73,26 @@ export default function Sidebar() {
     return (
         <>
         <div className="p-2 fixed w-full bg-indigo-900 text-white dark:bg-black dark:text-white">
-            <div className="ml-4 flex flex-row items-center justify-between w-full">
-                <div>
+            <div className="lg:ml-4 flex flex-row items-center justify-between w-full">
+                <div className="not-lg:hidden">
                     <a href="https://hmmtweb01.hinothailand.com/Drivers/Home.aspx" className="logo">
                         <AppImage src="/bus-driver.png" alt="Logo" width={50} height={50} />
                         <span className="sr-only">Driver NextJS</span>
                     </a>
                 </div>
-                <div className="pl-6 pr-6">
-                    <h3 className="col font-bold text-lg">Driver Tracking</h3>
+                <div className="not-lg:pl-1 not-lg:pr-1 lg:pl-6 lg:pr-6">
+                    <a href="https://hmmtweb01.hinothailand.com/Drivers/Home.aspx">
+                        <h3 className="col font-bold text-lg">Driver Tracking</h3>
+                    </a>
                 </div>
-                <div>
+                <div className="not-lg:hidden">
                     <a title="toggleSidebar" href="#" onClick={toggleSidebar} >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                         </svg>
                     </a>
                 </div>
-                <div className="ps-6">
+                <div className="ps-6 not-lg:hidden">
                     {currentPage &&
                         (
                             <h3 className="font-bold text-lg">{currentPage.name}</h3>
@@ -98,12 +100,12 @@ export default function Sidebar() {
                     }
                 </div>
                 <ThemeToggle/>
-                <div className="ms-2 mr-8">
+                <div className="lg:ms-2 lg:mr-8">
                     <a href="#" onClick={Logout} className="btn-logout font-bold">{userName}</a>
                 </div>
             </div>
 
-            <aside className="w-48 h-[calc(100vh-40px)] lg:fixed top-16.5 left-0 p-2 pt-4 border-r bg-indigo-900 text-white dark:bg-black dark:text-white">
+            <aside className="w-48 h-[calc(100vh-40px)] fixed not-lg:hidden top-16.5 left-0 p-2 pt-4 border-r bg-indigo-900 text-white dark:bg-black dark:text-white">
                 <nav className="flex flex-col gap-4 ">
                     <ul className="">
                         <li className="flex flex-row">

@@ -59,7 +59,7 @@
 
 main
 {
-    @apply pl-52 pt-24 p-4
+    @apply not-lg:pt-16 lg:pt-24 p-4 lg:pl-52 not-lg:pl-4
 }
 
 main.sidebar-hidden

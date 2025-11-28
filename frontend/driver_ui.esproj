@@ -2,6 +2,10 @@
   <PropertyGroup>
     <StartupCommand>npm run dev</StartupCommand>
     <JavaScriptTestRoot>src\</JavaScriptTestRoot>
-	<ShouldRunBuildScript>false</ShouldRunBuildScript>
+    <ShouldRunBuildScript>false</ShouldRunBuildScript>
+    <ShouldRunTestScript>false</ShouldRunTestScript>
+    <SkipJavaScriptBuild>true</SkipJavaScriptBuild>
+    <SkipJavaScriptTest>true</SkipJavaScriptTest>
+    <SkipJavaScriptPublish>true</SkipJavaScriptPublish>
   </PropertyGroup>
 </Project>

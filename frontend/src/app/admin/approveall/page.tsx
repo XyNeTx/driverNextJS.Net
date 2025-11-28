@@ -13,7 +13,7 @@ export default function ApproveAllPage() {
                 <ButtonApproveAll/>
 
             </div>
-            
+
             <TableShowWaitingData/>
         </>
     );

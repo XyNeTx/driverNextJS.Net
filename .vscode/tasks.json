@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "prepublishOnly",
+			"path": "frontend",
+			"problemMatcher": [],
+			"label": "npm: dotnet - prepublishOnly",
+			"detail": "cd .. && dotnet test"
+		}
+	]
+}

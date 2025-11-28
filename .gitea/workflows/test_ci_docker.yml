@@ -1,0 +1,77 @@
+name: Local Gitea CI
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create .env file
+        run: |
+          echo "NEXT_PUBLIC_PROD_API_LINK=${{ secrets.NEXT_PUBLIC_PROD_API_LINK }}" > frontend/.env
+          echo "NEXT_PUBLIC_PROD_LOGIN_LINK=${{ secrets.NEXT_PUBLIC_PROD_LOGIN_LINK }}" >> frontend/.env
+          echo "NEXT_PUBLIC_PROD_SERVICE_LINK=${{ secrets.NEXT_PUBLIC_PROD_SERVICE_LINK }}" >> frontend/.env
+
+      - name: Stop & remove old containers
+        run: docker-compose down -v
+
+      - name: Build fresh images
+        run: docker-compose build --no-cache
+
+      - name: Start stack
+        run: docker-compose up -d
+
+      - name: List containers
+        run: docker ps
+
+      - name: Show driver_api logs
+        run: docker logs driver_api
+
+      - name: Show postgres logs (optional)
+        run: docker logs postgres || true
+
+      - name: Show pgadmin logs (optional)
+        run: docker logs pgadmin || true
+
+# name: Local Gitea CI
+
+# on:
+#   push:
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+
+#       - name: Create .env file
+#         run: |
+#           echo "NEXT_PUBLIC_PROD_API_LINK=${{ secrets.NEXT_PUBLIC_PROD_API_LINK }}" > frontend/.env
+#           echo "NEXT_PUBLIC_PROD_LOGIN_LINK=${{ secrets.NEXT_PUBLIC_PROD_LOGIN_LINK }}" >> frontend/.env
+#           echo "NEXT_PUBLIC_PROD_SERVICE_LINK=${{ secrets.NEXT_PUBLIC_PROD_SERVICE_LINK }}" >> frontend/.env
+
+#       - name: Stop only app container (not DB)
+#         run: docker-compose stop driver_api || true
+
+#       - name: Remove only app container (not DB)
+#         run: docker-compose rm -f driver_api || true
+
+#       - name: Fresh build ONLY app image
+#         run: docker-compose build driver_api --no-cache
+
+#       - name: Start ONLY app (DB & pgAdmin keep running)
+#         run: docker-compose up -d driver_api
+
+#       - name: Check app container
+#         run: docker ps | grep driver_api
+
+#       - name: Show driver_api logs
+#         run: docker logs driver_api
+
