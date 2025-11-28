@@ -17,41 +17,14 @@ jobs:
           echo "NEXT_PUBLIC_PROD_LOGIN_LINK=${{ secrets.NEXT_PUBLIC_PROD_LOGIN_LINK }}" >> frontend/.env
           echo "NEXT_PUBLIC_PROD_SERVICE_LINK=${{ secrets.NEXT_PUBLIC_PROD_SERVICE_LINK }}" >> frontend/.env
 
+      - name: Stop & remove Docker container
+        run: docker-compose down -v
+
       - name: Build Docker image
-        run: docker build -t driver_api .
-
-      - name: Close Docker container
-        run: docker-compose down || true
-
-      - name: Remove Docker container
-        run: docker-compose rm -v || true
-
-      - name: Remove Docker image
-        run: docker rmi postgres:18.1-alpine || true
-
-      - name: Remove Docker image
-        run: docker rmi dpage/pgadmin4 || true
-
-      # - name: Stop existing container
-      #   run: docker stop driver_api || true
-
-      # - name: Remove existing container
-      #   run: docker rm driver_api || true
-
-      # - name: Stop existing db container
-      #   run: docker stop postgres || true
-
-      # - name: Remove existing db container
-      #   run: docker rm postgres || true
-
-      # - name: Stop existing db container
-      #   run: docker stop pgadmin || true
-
-      # - name: Remove existing db container
-      #   run: docker rm pgadmin || true
+        run: docker-compose build
 
       - name: Run Docker container
-        run: docker-compose up -d
+        run: docker-compose up -d 
 
       - name: Check container is running
         run: docker ps | grep driver_api
