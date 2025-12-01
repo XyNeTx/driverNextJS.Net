@@ -15,7 +15,7 @@
             "name": "C#: DriverNextJS Debug",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "npm: dotnet - frontend", // Optional: Build before launching
+            "preLaunchTask": "npm: dotnet - prepublishOnly", // Optional: Build before launching
             "program": "${workspaceFolder}/backend/bin/Debug/net7.0/driver_api.dll", // Adjust path and framework
             "args": [
             ],

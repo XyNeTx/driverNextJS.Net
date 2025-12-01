@@ -1,6 +1,7 @@
+'use client'
 import CallAxios from "@/utils/CallAxios";
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "./ui/table";
-import ButtonApproveAll from "./ButtonApproveAll";
+import { useEffect, useState } from "react";
 
 interface Driver_TimeAttendanceDTO
 {
@@ -29,8 +30,16 @@ async function GetWaitingData() : Promise<Driver_TimeAttendanceDTO[]>{
     }
 }
 
-export default async function TableShowWaitingData() {
-    const data = await GetWaitingData();
+export default  function TableShowWaitingData() {
+    const [data,setData] = useState<Driver_TimeAttendanceDTO[]>([]);
+    useEffect(()=>{
+            const fetchData = async () => {
+                const result = await GetWaitingData();
+                setData(result)
+            }
+            fetchData();
+        },[]
+    )
     //console.log({data});
     //console.log(unApproveList);
     return (

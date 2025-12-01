@@ -38,6 +38,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         catch (Exception ex)
         {
             _logger.LogError("Error retrieving driver list {ex.Message}",ex.Message);
+            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
             throw new Exception("Error retrieving driver list", ex);
         }
     }
@@ -67,6 +68,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         catch (Exception ex)
         {
             _logger.LogError("Cant get Report Driver Outsource {ex.Message}",ex.Message);
+            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
             throw new Exception("Cant get Report Driver Outsource");
         }
     }
@@ -129,6 +131,10 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                     if (workList.Count >= 2)
                     {
                         each = workList.Where(x => !string.IsNullOrWhiteSpace(x.Time_Driver_UpdateTime)).FirstOrDefault();
+                        if(each == null)
+                        {
+                            each = workList.OrderByDescending(x=>x.Time_Id).FirstOrDefault();
+                        }
                     }
                     else
                     {
@@ -469,7 +475,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
-            _logger.LogError("Error calculating outsource report {ex.Message}",ex.Message);
+            _logger.LogError("Error calculating outsource report {ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
             throw new Exception("Error calculating outsource report", ex);
         }
     }
@@ -545,6 +551,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
+            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
             throw new Exception("Sum Calculated Data Error !" + ex.Message);
         }
     }
@@ -588,6 +595,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
+            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
             throw new Exception("Please Login then Try Again ", ex.InnerException ?? ex);
         }
     }
@@ -636,6 +644,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
+            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
             throw new Exception("Can't Get not Approved Data ", ex.InnerException ?? ex);
         }
     }
@@ -662,6 +671,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
+            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
             throw new Exception("Can't Approve Data ", ex.InnerException ?? ex);
         }
     }
@@ -705,6 +715,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
+            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
             throw new Exception("Please Login then Try Again ", ex.InnerException ?? ex);
         }
     }
@@ -772,6 +783,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         catch (Exception ex)
         {
             _logger.LogError("Can not Get Driver OT Time {ex}", ex);
+            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
             throw new Exception("Can not Get Driver OT Time");
         }
     }
