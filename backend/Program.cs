@@ -83,11 +83,12 @@ app.Use(async (context, next) =>
     if (path != "/" && !Path.HasExtension(path))
     {
         string wwwroot = app.Environment.WebRootPath!;
-        string target = Path.Combine(wwwroot, path.TrimStart('/') + ".html");
-
-        if (File.Exists(target))
-        {
-            context.Request.Path = path + ".html";
+        if(!string.IsNullOrWhiteSpace(wwwroot)){
+            string target = Path.Combine(wwwroot, path.TrimStart('/') + ".html");
+            if (File.Exists(target))
+            {
+                context.Request.Path = path + ".html";
+            }
         }
     }
 
