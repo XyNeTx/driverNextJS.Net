@@ -16,4 +16,6 @@ public interface IReportOutSourceRepo
     Task ApproveAllData(List<int> ApproveIdList, string UserName);
     Task<string> AuthenDriver(string brownserID, string brownserCurrent, string brownserDevices);
     Task<List<DriverOT_DTOs>> GetDriverOTTime(string UserName);
+    Task<VM_Driver_Outsource_Report> GetFormatedResult(VM_CalReport vM);
+    Task<MemoryStream> GenerateExcelReport(VM_CalReport vM);
 }
