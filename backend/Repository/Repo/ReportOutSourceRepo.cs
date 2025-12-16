@@ -1,8 +1,10 @@
+using ClosedXML.Excel;
 using driver_api.Models;
 using driver_api.Models.DTOs;
 using driver_api.Models.ViewModels;
 using driver_api.Repository.IRepo;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 
 namespace driver_api.Repository.Repo;
@@ -23,7 +25,9 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         try
         {
             var driverList = await _wfContext.Driver_Employee.AsNoTracking()
-                .Where(x => x.Driver_Position!.ToLower() == "driver")
+                .Where(x => x.Driver_Position!.ToLower() == "driver"
+                    && x.Driver_Status == "1")
+                .OrderBy(x=>x.Driver_name)
                 .ToListAsync();
 
             var data = driverList.Select(x => new DriverDTO
@@ -120,7 +124,10 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                 .ExecuteDeleteAsync();
 
             var addList = new List<Driver_Outsource>();
-
+            if(EmployeeCode == "20193749")
+            {
+                
+            }
             foreach (var date in calendarData)
             {
                 var workList = attendanceData.Where(x => x.Time_TodayIN.Value.Date == date.CalendarDay.Date).ToList();
@@ -130,7 +137,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                     Driver_TimeAttendance each = new Driver_TimeAttendance();
                     if (workList.Count >= 2)
                     {
-                        each = workList.Where(x => !string.IsNullOrWhiteSpace(x.Time_Driver_UpdateTime)).FirstOrDefault();
+                        each = workList.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x.Time_Driver_UpdateTime));
                         if(each == null)
                         {
                             each = workList.OrderByDescending(x=>x.Time_Id).FirstOrDefault();
@@ -467,6 +474,12 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                 }
 
             }
+            var errorList = addList.Where(x=>x.All_Total_OT > TimeSpan.MaxValue).ToList();
+            if(errorList.Count > 0)
+            {
+                string errorListJSON = JsonConvert.SerializeObject(errorList,Formatting.Indented);
+                throw new Exception("Some Data Have Over 24hr of All Total Overtime" + Environment.NewLine + errorListJSON);
+            }
             await _wfContext.Driver_Outsource.AddRangeAsync(addList);
             await _wfContext.SaveChangesAsync();
 
@@ -475,8 +488,8 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
-            _logger.LogError("Error calculating outsource report {ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
-            throw new Exception("Error calculating outsource report", ex);
+            _logger.LogError("Error calculating outsource report {EmployeeCode} {Year} {Month} {ex.InnerException?.Message} {ex.Message}",EmployeeCode,Year,Month,ex.InnerException?.Message,ex.Message);
+            throw new Exception($"Error calculating outsource report Please check {EmployeeCode} {Year} {Month}", ex);
         }
     }
 
@@ -785,6 +798,218 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
             _logger.LogError("Can not Get Driver OT Time {ex}", ex);
             _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
             throw new Exception("Can not Get Driver OT Time");
+        }
+    }
+
+    public async Task<VM_Driver_Outsource_Report> GetFormatedResult(VM_CalReport vM)
+    {
+        try
+        {
+
+            var result = await RefreshReportDriverOutSourceAsync(vM);
+            var referResult = await SumCalculatedData(vM);
+
+            var formattedResult = result.Select(x => new Formated_Driver_Outsource
+            {
+                ID = x.ID,
+                Check_In = x.Check_In.ToString("dd/MM/yyyy HH:mm"),
+                Check_Out = x.Check_Out.ToString("dd/MM/yyyy HH:mm"),
+                Job_Type = x.Job_Type,
+                Temp_Drive = x.Temp_Drive,
+                Use_NoUse = x.Use_NoUse,
+                Cal_Time_In = x.Cal_Time_In.ToString("dd/MM/yyyy HH:mm"),
+                Cal_Time_Out = x.Cal_Time_Out.ToString("dd/MM/yyyy HH:mm"),
+                Work_OT1_5_Night = x.Work_OT1_5_Night.Hours.ToString("D2") + ":" + x.Work_OT1_5_Night.Minutes.ToString("D2"),
+                Work_Reg = x.Work_Reg.Hours.ToString("D2") + ":" + x.Work_Reg.Minutes.ToString("D2"),
+                Work_OT1_5_Eve = x.Work_OT1_5_Eve.Hours.ToString("D2") + ":" + x.Work_OT1_5_Eve.Minutes.ToString("D2"),
+                Work_OT2 = x.Work_OT2.Hours.ToString("D2") + ":" + x.Work_OT2.Minutes.ToString("D2"),
+                Work_Total_OT = x.Work_Total_OT.Hours.ToString("D2") + ":" + x.Work_Total_OT.Minutes.ToString("D2"),
+                Holi_OT3_0 = x.Holi_OT3_0.Hours.ToString("D2") + ":" + x.Holi_OT3_0.Minutes.ToString("D2"),
+                Holi_OT2_0 = x.Holi_OT2_0.Hours.ToString("D2") + ":" + x.Holi_OT2_0.Minutes.ToString("D2"),
+                Holi_OT3_0_Eve = x.Holi_OT3_0_Eve.Hours.ToString("D2") + ":" + x.Holi_OT3_0_Eve.Minutes.ToString("D2"),
+                Holi_Total_OT = x.Holi_Total_OT.Hours.ToString("D2") + ":" + x.Holi_Total_OT.Minutes.ToString("D2"),
+                All_Total_OT = x.All_Total_OT.Hours.ToString("D2") + ":" + x.All_Total_OT.Minutes.ToString("D2"),
+                Taxi = x.Taxi,
+                Lunch = x.Lunch
+            }).ToList();
+
+            var data = new VM_Driver_Outsource_Report
+            {
+                ReportList = formattedResult,
+                ReferReport = referResult
+            };
+
+            return data;
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Can not Generate Excel file {ex}", ex);
+            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
+            throw new Exception("Can not Get Driver OT Time");
+        }
+    }
+
+    public async Task<MemoryStream> GenerateExcelReport(VM_CalReport vM)
+    {
+        try
+        {
+            var memStream = new MemoryStream();
+            string excelPath = Path.Combine(Directory.GetCurrentDirectory(),"wwwroot","excel_file","Driver_Master_ex.xlsx");
+            DateTime YearMonth = DateTime.ParseExact(vM.Year + vM.Month,"yyyyMM",null);
+            using var excelFile = new XLWorkbook(excelPath);
+            List<VM_CalReport> attendanceData = new List<VM_CalReport>();
+
+            if( string.IsNullOrWhiteSpace(vM.EmployeeCode) )
+            {
+                attendanceData = await _wfContext.Driver_TimeAttendance.AsNoTracking()
+                    .Where(x => x.Time_TodayIN.Value.Year == YearMonth.Year &&
+                    x.Time_TodayIN.Value.Month == YearMonth.Month &&
+                    x.Time_StatusDriver.ToLower() == "end")
+                    .Select(x=> new VM_CalReport
+                    {
+                        EmployeeCode = x.Time_EmployeeCode,
+                        Month = x.Time_TodayIN.Value.Month.ToString("D2"),
+                        Year = x.Time_TodayIN.Value.Year.ToString("D2")
+                    })
+                    .Distinct()
+                    .ToListAsync();
+            }
+            else
+            {
+                attendanceData = await _wfContext.Driver_TimeAttendance.AsNoTracking()
+                    .Where(x => x.Time_TodayIN.Value.Year == YearMonth.Year &&
+                    x.Time_TodayIN.Value.Month == YearMonth.Month &&
+                    x.Time_EmployeeCode == vM.EmployeeCode &&
+                    x.Time_StatusDriver.ToLower() == "end")
+                    .Select(x=> new VM_CalReport
+                    {
+                        EmployeeCode = x.Time_EmployeeCode,
+                        Month = x.Time_TodayIN.Value.Month.ToString("D2"),
+                        Year = x.Time_TodayIN.Value.Year.ToString("D2")
+                    })
+                    .Distinct()
+                    .ToListAsync();
+            }
+
+            if( attendanceData.Count == 0)
+            {
+                throw new Exception($"Attendance Data Driver Not Found {vM.EmployeeCode} {vM.Year} {vM.Month}");
+            }
+
+            foreach (var each in attendanceData)
+            {
+                vM.EmployeeCode = each.EmployeeCode;
+                vM.Month = each.Month;
+                vM.Year = each.Year;
+                var calDataList = await GetFormatedResult(vM);
+
+                var getDriverData = await _wfContext.Driver_Employee.Where(x=>x.Driver_EmployeeCode == each.EmployeeCode)
+                    //.Include(x=>x.Boss)
+                    .OrderByDescending(x=>x.Driver_id)
+                    .FirstOrDefaultAsync();
+
+                if(getDriverData == null)
+                {
+                    throw new Exception("Driver Employee Not Found");
+                }
+
+                var getBossData = await _wfContext.Boss.Where(x=>x.Boss_Id.ToString() == getDriverData.Driver_Boss)
+                    .OrderByDescending(x=>x.Boss_Id).FirstOrDefaultAsync();
+
+                if(getBossData == null)
+                {
+                    throw new Exception("Driver Boss Not Found");
+                }
+
+                var masterExcel = excelFile.Worksheet("Master");
+                var newSheet = masterExcel.CopyTo(getDriverData.Driver_name + "." + getDriverData.Driver_surname);
+                newSheet.Cell("A1").Value = "Report Driver OT by daily";
+                newSheet.Cell("A2").Value = "DRIVER : ";
+                newSheet.Cell("A3").Value = "VENDOR : ";
+                newSheet.Cell("A4").Value = "EMP.CODE : ";
+                newSheet.Cell("A5").Value = "USER : ";
+                newSheet.Cell("A6").Value = "POSITION : ";
+                newSheet.Cell("A7").Value = "COMPANY : ";
+
+                newSheet.Cell("B2").Value = getDriverData.Driver_name + "." + getDriverData.Driver_surname;
+                newSheet.Cell("B3").Value = getDriverData.Driver_Vendor;
+                newSheet.Cell("B4").Value = getDriverData.Driver_EmployeeCode;
+                newSheet.Cell("B5").Value = getBossData.Boss_Name + "." + getBossData.Boss_Sername;
+                newSheet.Cell("B6").Value = getBossData.Boss_Position;
+                newSheet.Cell("B7").Value = getBossData.Boss_Company;
+
+                newSheet.Cell("A9").Value = vM.Year + vM.Month;
+                var indexCalData = 0;
+                for(int i = 14; i <= 44; i++)
+                {
+                    if(indexCalData == calDataList.ReportList.Count)
+                    {
+                        continue;
+                    }
+                    var calData = calDataList.ReportList[indexCalData];
+
+                    newSheet.Cell("A"+i.ToString()).Value = calData.Check_In.Split(" ")[0];
+                    newSheet.Cell("B"+i.ToString()).Value = calData.Job_Type % 2 == 1 ? "Working Day" : "Holiday";
+                    newSheet.Cell("C"+i.ToString()).Value = calData.Temp_Drive;
+                    newSheet.Cell("D"+i.ToString()).Value = calData.Use_NoUse;
+                    newSheet.Cell("E"+i.ToString()).Value = calData.Check_In.Split(" ")[1];
+                    newSheet.Cell("F"+i.ToString()).Value = calData.Check_Out.Split(" ")[1];
+                    newSheet.Cell("G"+i.ToString()).Value = calData.Cal_Time_In.Split(" ")[1];
+                    newSheet.Cell("H"+i.ToString()).Value = calData.Cal_Time_Out.Split(" ")[1];
+                    newSheet.Cell("I"+i.ToString()).Value = calData.Work_OT1_5_Night;
+                    newSheet.Cell("J"+i.ToString()).Value = calData.Work_OT1_5_Eve;
+                    newSheet.Cell("K"+i.ToString()).Value = calData.Work_OT2;
+                    newSheet.Cell("L"+i.ToString()).Value = calData.Work_Total_OT;
+                    newSheet.Cell("O"+i.ToString()).Value = calData.Holi_OT2_0;
+                    //newSheet.Cell("P"+i.ToString()).Value = calData.Holi_OT2_0;
+                    newSheet.Cell("P"+i.ToString()).Value = calData.Holi_OT3_0_Eve;
+                    newSheet.Cell("Q"+i.ToString()).Value = calData.Holi_OT3_0;
+                    newSheet.Cell("R"+i.ToString()).Value = calData.Holi_Total_OT;
+                    newSheet.Cell("S"+i.ToString()).Value = calData.All_Total_OT;
+                    newSheet.Cell("T"+i.ToString()).Value = calData.Taxi;
+
+                    indexCalData++;
+                }
+
+                newSheet.Cell("I45").Value = calDataList.ReferReport.TotalWork_OT1_5_Night;
+                newSheet.Cell("J45").Value = calDataList.ReferReport.TotalWork_OT1_5_Eve;
+                newSheet.Cell("K45").Value = calDataList.ReferReport.TotalWork_OT2;
+                newSheet.Cell("L45").Value = calDataList.ReferReport.TotalWork_Total_OT;
+                newSheet.Cell("O45").Value = calDataList.ReferReport.TotalHoli_OT2_0;
+                //newSheet.Cell("P45").Value = calDataList.ReferReport.TotalHoli_OT2_0;
+                newSheet.Cell("P45").Value = calDataList.ReferReport.TotalHoli_OT3_0_Eve;
+                newSheet.Cell("Q45").Value = calDataList.ReferReport.TotalHoli_OT3_0;
+                newSheet.Cell("R45").Value = calDataList.ReferReport.TotalHoli_Total_OT;
+                newSheet.Cell("S45").Value = calDataList.ReferReport.TotalAll_Total_OT;
+                newSheet.Cell("T45").Value = calDataList.ReferReport.TotalTaxi;
+
+                newSheet.Cell("L46").Value = calDataList.ReferReport.TotalWork_Total_OT.Replace(":15",":25").Replace(":30",":50").Replace(":45",":75").Replace(":",".");
+                //newSheet.Cell("O46").Value = calDataList.ReferReport.TotalHoli_OT2_0.Replace(":15",":25").Replace(":30",":50").Replace(":45",":75").Replace(":",".");
+                newSheet.Cell("R46").Value = calDataList.ReferReport.TotalHoli_Total_OT.Replace(":15",":25").Replace(":30",":50").Replace(":45",":75").Replace(":",".");
+                newSheet.Cell("S46").Value = calDataList.ReferReport.TotalAll_Total_OT.Replace(":15",":25").Replace(":30",":50").Replace(":45",":75").Replace(":",".");
+
+                newSheet.Cell("S47").Value = calDataList.ReferReport.TotalAll_Total_OT;
+                newSheet.Cell("S48").Value = "100:00";
+                var RemainOT_Hours = 100 - int.Parse(calDataList.ReferReport.TotalAll_Total_OT.Split(":")[0]);
+                //var RemainOT_Mins = 00 - int.Parse(calDataList.ReferReport.TotalAll_Total_OT.Split(":")[1]);
+
+                newSheet.Cell("S49").Value = RemainOT_Hours.ToString() + ":" + calDataList.ReferReport.TotalAll_Total_OT.Split(":")[1];
+                newSheet.Cell("F50").Value = calDataList.ReferReport.TotalLunch;
+            }
+
+            //excelFile.SaveAs("Driver_" + vM.Year + vM.Month);
+            excelFile.Worksheet("Master").Delete();
+            excelFile.SaveAs(memStream);
+
+            memStream.Position = 0;
+            return memStream;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Can not Generate Excel file {ex}", ex);
+            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
+            throw new Exception("Can not Get Driver OT Time",ex);
         }
     }
 

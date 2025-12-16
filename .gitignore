@@ -6,6 +6,7 @@
 /backend/bin
 /backend/Logs
 /backend/out
+/backend/wwwroot/excel_file
 /.vs
 
 #tests
