@@ -48,8 +48,8 @@ export default function SelectDriver({value,onChange}: SelectProps) {
             value={value}
             onChange={(e)=> onChange(e.target.value)}
             title="เลือกคนขับรถ" className="border border-gray-300 rounded-md p-2 mr-2">
-                <option> -- เลือกคนขับรถ -- </option>
-                {arrDriverName.length === 0 && <option>ไม่พบข้อมูล</option>}
+                <option value=""> -- เลือกคนขับรถ -- </option>
+                {arrDriverName.length === 0 && <option value="">ไม่พบข้อมูล</option>}
                 {arrDriverName.map((driver) => (
                     <option key={driver.ID} value={driver.EmployeeCode}>{driver.DriverName}</option>
                 ))}

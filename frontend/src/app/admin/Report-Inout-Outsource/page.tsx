@@ -6,6 +6,8 @@ import { useState } from "react";
 import TableReportOutSource, { VM_Driver_Outsource_Report } from "@/components/TableReportOutSource";
 import Swal from "@/utils/SweetAlert2";
 import Axios from "@/utils/CallAxios";
+import axios from "axios";
+import moment from "moment";
 
 
 export interface VM_CallReport {
@@ -64,49 +66,122 @@ export default function ReportInOutOutSource(){
     const [month,setMonth] = useState<string>("");
     const [year,setYear] = useState<string>("");
     const [reportData,setReportData] = useState<VM_Driver_Outsource_Report>({} as VM_Driver_Outsource_Report);
-    const [loading,setLoading] =useState<boolean>(false);
-    const [loading2,setLoading2] =useState<boolean>(false);
+    const [loading,setLoading] = useState<boolean>(false);
+    const [loading2,setLoading2] = useState<boolean>(false);
+    const [loading3,setLoading3] = useState<boolean>(false);
 
     const OnBtnClicked = async () => {
-        if (!empCode || !month || !year){
-            return Swal({
-                icon : "error",
-                title : "Invalid Input",
-                text : "กรุณาเลือก คนขับ เดือน และ ปี ให้ครบก่อน"
-            })
-        }
-        setLoading(true);
-        setReportData({} as VM_Driver_Outsource_Report);
-        const _VM : VM_CallReport = {
-            EmployeeCode : empCode,
-            Year : year,
-            Month : month
-        }
-        const data = await GetReportData<VM_Driver_Outsource_Report>(_VM)
-        setReportData(data);
+        try{
+            if (!empCode || !month || !year){
+                return Swal({
+                    icon : "error",
+                    title : "Invalid Input",
+                    text : "กรุณาเลือก คนขับ เดือน และ ปี ให้ครบก่อน"
+                })
+            }
+            setLoading(true);
+            setReportData({} as VM_Driver_Outsource_Report);
+            const _VM : VM_CallReport = {
+                EmployeeCode : empCode,
+                Year : year,
+                Month : month
+            }
+            const data = await GetReportData<VM_Driver_Outsource_Report>(_VM)
+            setReportData(data);
 
-        setLoading(false);
+            setLoading(false);
+        }
+        catch (error){
+            console.error(error);
+            Swal({
+                icon:'error',
+                title: "Error",
+                text: "Can't Get Report Data"
+            })
+            setLoading(false);
+            return false
+        }
     }
 
     const RefreshClicked = async () => {
-        if (!empCode || !month || !year){
+        try{
+            if (!empCode || !month || !year){
+                return Swal({
+                    icon : "error",
+                    title : "Invalid Input",
+                    text : "กรุณาเลือก คนขับ เดือน และ ปี ให้ครบก่อน"
+                })
+            }
+            setLoading2(true);
+            setReportData({} as VM_Driver_Outsource_Report);
+            const _VM : VM_CallReport = {
+                EmployeeCode : empCode,
+                Year : year,
+                Month : month
+            }
+            const data = await RefreshReportData<VM_Driver_Outsource_Report>(_VM)
+            setReportData(data);
+
+            setLoading2(false);
+        }
+        catch (error){
+            console.error(error);
+            Swal({
+                icon:'error',
+                title: "Error",
+                text: "Can't Get Report Data"
+            })
+            setLoading2(false);
+            return false;
+        }
+    }
+
+    const ExcelBtnClicked = async () =>
+    {
+        if (!month || !year){
             return Swal({
                 icon : "error",
                 title : "Invalid Input",
-                text : "กรุณาเลือก คนขับ เดือน และ ปี ให้ครบก่อน"
+                text : "กรุณาเลือก เดือน และ ปี ก่อนที่จะ Export Excel File"
             })
         }
-        setLoading2(true);
-        setReportData({} as VM_Driver_Outsource_Report);
         const _VM : VM_CallReport = {
             EmployeeCode : empCode,
             Year : year,
             Month : month
         }
-        const data = await RefreshReportData<VM_Driver_Outsource_Report>(_VM)
-        setReportData(data);
 
-        setLoading2(false);
+        setLoading3(true);
+
+        try
+        {
+            const response:Blob = await Axios<Blob>({
+                method: 'POST',
+                url: '/api/ReportOutSource/GenerateExcelReport',
+                data:_VM,
+                responseType: 'blob'
+            });
+            const url = window.URL.createObjectURL(response)
+            const a = document.createElement('a');
+            const now = moment().format("YYYYMMDDhhmmss");
+            a.href = url;
+            a.download = "Driver_Report_"+ now;
+            a.click();
+            URL.revokeObjectURL(url);
+            setLoading3(false);
+            return response;
+        }
+        catch (error){
+            console.error(error);
+            Swal({
+                icon:'error',
+                title: "Error",
+                text: "Can't Export Excel"
+            })
+            setLoading3(false);
+            return new Blob();
+        }
+
     }
 
     return (
@@ -114,14 +189,19 @@ export default function ReportInOutOutSource(){
             <h3 className="font-bold text-2xl">ค้นหาข้อมูลคนขับรถ</h3>
             <div className="flex-row-reverse mt-4 mb-4 flex">
                 <div className="ps-2">
+                    <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onClick={ExcelBtnClicked}>
+                        {loading3 ? 'Exporting Excel ...' : 'Export To Excel'}
+                    </button>
+                </div>
+                <div className="ps-2">
                     <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={RefreshClicked}>
-                        {loading2 ? 'คำนวณข้อมูล...' : 'อัพเดทและค้นหา'}
+                        {loading2 ? 'Updating...' : 'Update'}
                     </button>
                 </div>
                 <div>
                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                         onClick={OnBtnClicked}>
-                        {loading ? 'กำลังค้นหา...' : 'ค้นหา'}
+                        {loading ? 'Searching...' : 'Search'}
                     </button>
                 </div>
                 <SelectDriver value={empCode} onChange={setEmpCode} />

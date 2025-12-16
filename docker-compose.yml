@@ -1,37 +1,42 @@
 version: '3.8'
 
 services:
-  db:
-    image: postgres:18.1-alpine
-    container_name: postgres
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
-    ports:
-      - "5050:80"
-    depends_on:
-      - db
-  driver_api:
-    build: .
-    image: driver_api
-    container_name: driver_api
-    ports:
-      - "5272:5272"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:5272
-    depends_on:
-      - db
-volumes:
-  postgres_data:
+  # db:
+  #   image: postgres:18.1-alpine
+  #   container_name: postgres
+  #   environment:
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=postgres
+  #     - POSTGRES_DB=postgres
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: pgadmin
+  #   environment:
+  #     - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+  #     - PGADMIN_DEFAULT_PASSWORD=admin
+  #   ports:
+  #     - "5050:80"
+  #   depends_on:
+  #     - db
+  build_driver_api_image:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: gitea.example.com:5272/20234111/driver_api:latest
+  # driver_api:
+  #   build: .
+  #   image: driver_api
+  #   container_name: driver_api
+  #   ports:
+  #     - "5272:5272"
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #     - ASPNETCORE_URLS=http://+:5272
+    # depends_on:
+    #   - db
+# volumes:
+#   postgres_data:
