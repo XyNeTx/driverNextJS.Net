@@ -30,7 +30,7 @@ public class ReportOutSourceController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ex.Message);
+            return StatusCode(500,ex);
         }
     }
 
@@ -52,7 +52,7 @@ public class ReportOutSourceController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ex.Message);
+            return StatusCode(500,ex);
         }
     }
 
@@ -103,7 +103,7 @@ public class ReportOutSourceController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ex.Message);
+            return StatusCode(500,ex);
         }
     }
 
@@ -137,7 +137,7 @@ public class ReportOutSourceController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ex.Message);
+            return StatusCode(500,ex);
         }
     }
 
@@ -168,7 +168,7 @@ public class ReportOutSourceController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ex.Message);
+            return StatusCode(500,ex);
         }
     }
 
@@ -203,7 +203,7 @@ public class ReportOutSourceController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ex.Message);
+            return StatusCode(500,ex);
         }
     }
 
@@ -233,9 +233,17 @@ public class ReportOutSourceController : ControllerBase
         {
             var fileMemStream = await _IReportOutSourceRepo.GenerateExcelReport(vM);
 
+
+
             return File(fileMemStream,
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             "Driver_Report_" + DateTime.Now.ToString("ddMMyyyyHHmmss"));
+
+            // return Ok(new
+            // {
+            //     message = "Export Excel Completed",
+            //     File
+            // })
         }
         catch(Exception ex)
         {

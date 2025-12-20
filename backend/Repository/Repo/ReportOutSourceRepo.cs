@@ -4,6 +4,7 @@ using driver_api.Models.DTOs;
 using driver_api.Models.ViewModels;
 using driver_api.Repository.IRepo;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 
@@ -41,9 +42,9 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
-            _logger.LogError("Error retrieving driver list {ex.Message}",ex.Message);
-            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
-            throw new Exception("Error retrieving driver list", ex);
+            _logger.LogError(ex,"Error retrieving driver list");
+            //_logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
+            throw;
         }
     }
 
@@ -71,9 +72,9 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
-            _logger.LogError("Cant get Report Driver Outsource {ex.Message}",ex.Message);
-            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
-            throw new Exception("Cant get Report Driver Outsource");
+            _logger.LogError(ex,"Cant get Report Driver Outsource");
+            //_logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
+            throw;
         }
     }
 
@@ -87,8 +88,8 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
-            _logger.LogError("Cant get Report Driver Outsource {ex.Message}",ex.Message);
-            throw new Exception("Cant get Report Driver Outsource");
+            _logger.LogError(ex,"Cant get Report Driver Outsource");
+            throw;
         }
     }
 
@@ -101,6 +102,9 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         var ts05_30 = new TimeSpan(5, 30, 0);
         var ts07_30 = new TimeSpan(7, 30, 0);
         var ts16_30 = new TimeSpan(16, 30, 0);
+
+        var dateIn = new DateTime();
+        var dateOut = new DateTime();
 
         try
         {
@@ -124,10 +128,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                 .ExecuteDeleteAsync();
 
             var addList = new List<Driver_Outsource>();
-            if(EmployeeCode == "20193749")
-            {
-                
-            }
+
             foreach (var date in calendarData)
             {
                 var workList = attendanceData.Where(x => x.Time_TodayIN.Value.Date == date.CalendarDay.Date).ToList();
@@ -474,7 +475,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                 }
 
             }
-            var errorList = addList.Where(x=>x.All_Total_OT > TimeSpan.MaxValue).ToList();
+            var errorList = addList.Where(x=>x.All_Total_OT > new TimeSpan(23,59,59)).ToList();
             if(errorList.Count > 0)
             {
                 string errorListJSON = JsonConvert.SerializeObject(errorList,Formatting.Indented);
@@ -488,8 +489,8 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
-            _logger.LogError("Error calculating outsource report {EmployeeCode} {Year} {Month} {ex.InnerException?.Message} {ex.Message}",EmployeeCode,Year,Month,ex.InnerException?.Message,ex.Message);
-            throw new Exception($"Error calculating outsource report Please check {EmployeeCode} {Year} {Month}", ex);
+            _logger.LogError(ex,"Error calculating outsource report");
+            throw;
         }
     }
 
@@ -522,7 +523,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
 
             if (raw.Count < 0)
             {
-                throw new Exception("Please Calculate Report Outsource Before !");
+                throw new InvalidOperationException("Please Calculate Report Outsource Before !");
             }
 
             // Aggregate in memory and convert ticks -> minutes
@@ -564,8 +565,8 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
-            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
-            throw new Exception("Sum Calculated Data Error !" + ex.Message);
+            _logger.LogError(ex,"SumCalculatedData Error");
+            throw;
         }
     }
 
@@ -597,19 +598,19 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                 }
                 else
                 {
-                    throw new Exception("User Name Not Found");
+                    throw new KeyNotFoundException("User Name Not Found");
                 }
             }
             else
             {
-                throw new Exception("Login Transaction Not Found");
+                throw new KeyNotFoundException("Login Transaction Not Found");
             }
 
         }
         catch (Exception ex)
         {
-            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
-            throw new Exception("Please Login then Try Again ", ex.InnerException ?? ex);
+            _logger.LogError(ex,"Authen Error");
+            throw;
         }
     }
 
@@ -657,8 +658,8 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
-            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
-            throw new Exception("Can't Get not Approved Data ", ex.InnerException ?? ex);
+            _logger.LogError("GetAllAttendanceWaitingData Error : {ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
+            throw;
         }
     }
 
@@ -684,8 +685,8 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
-            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
-            throw new Exception("Can't Approve Data ", ex.InnerException ?? ex);
+            _logger.LogError(ex,"ApproveAllData Error");
+            throw;
         }
     }
 
@@ -717,19 +718,19 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
                 }
                 else
                 {
-                    throw new Exception("User Name Not Found");
+                    throw new SecurityTokenValidationException("User Name Not Found");
                 }
             }
             else
             {
-                throw new Exception("Login Transaction Not Found");
+                throw new SecurityTokenValidationException("Login Transaction Not Found");
             }
 
         }
         catch (Exception ex)
         {
-            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
-            throw new Exception("Please Login then Try Again ", ex.InnerException ?? ex);
+            _logger.LogError(ex,"AuthenDriver Error");
+            throw;
         }
     }
 
@@ -750,7 +751,7 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
             }
 
             var data = await _wfContext.Driver_Outsource.AsNoTracking().Where(x=>x.EmployeeCode == EmployeeCode
-                && x.Check_In.Month == 9
+                && x.Check_In.Month == DateTime.Now.Month
                 && x.Check_In.Year == DateTime.Now.Year
                 ).ToListAsync();
 
@@ -795,9 +796,9 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
-            _logger.LogError("Can not Get Driver OT Time {ex}", ex);
-            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
-            throw new Exception("Can not Get Driver OT Time");
+            _logger.LogError(ex,"Can not Get Driver OT Time");
+            //_logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
+            throw;
         }
     }
 
@@ -844,9 +845,9 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
-            _logger.LogError("Can not Generate Excel file {ex}", ex);
-            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
-            throw new Exception("Can not Get Driver OT Time");
+            _logger.LogError(ex,"Can not Generate Excel file");
+            //_logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
+            throw;
         }
     }
 
@@ -1007,9 +1008,9 @@ public class ReportOutSourceRepo : IReportOutSourceRepo
         }
         catch (Exception ex)
         {
-            _logger.LogError("Can not Generate Excel file {ex}", ex);
-            _logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
-            throw new Exception("Can not Get Driver OT Time",ex);
+            _logger.LogError(ex,"Can not Generate Excel file");
+            //_logger.LogError("{ex.InnerException?.Message} {ex.Message}",ex.InnerException?.Message,ex.Message);
+            throw;
         }
     }
 

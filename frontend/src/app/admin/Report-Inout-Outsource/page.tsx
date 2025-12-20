@@ -155,7 +155,7 @@ export default function ReportInOutOutSource(){
 
         try
         {
-            const response:Blob = await Axios<Blob>({
+            const response:Blob = await Axios({
                 method: 'POST',
                 url: '/api/ReportOutSource/GenerateExcelReport',
                 data:_VM,
